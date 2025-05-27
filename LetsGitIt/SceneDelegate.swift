@@ -61,34 +61,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     /// 메인 뷰컨트롤러 생성 (임시)
     private func createMainViewController() -> UIViewController {
-        let mainVC = UIViewController()
-        mainVC.view.backgroundColor = .systemBackground
-        
-        let label = UILabel()
-        label.text = "🎉 로그인 성공!\nGitHub API 테스트 준비 완료"
-        label.numberOfLines = 0
-        label.textAlignment = .center
-        label.font = .systemFont(ofSize: 20, weight: .medium)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        let logoutButton = UIButton(type: .system)
-        logoutButton.setTitle("로그아웃", for: .normal)
-        logoutButton.titleLabel?.font = .systemFont(ofSize: 16)
-        logoutButton.addTarget(self, action: #selector(logoutTapped), for: .touchUpInside)
-        logoutButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        mainVC.view.addSubview(label)
-        mainVC.view.addSubview(logoutButton)
-        
-        NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: mainVC.view.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: mainVC.view.centerYAnchor),
-            
-            logoutButton.centerXAnchor.constraint(equalTo: mainVC.view.centerXAnchor),
-            logoutButton.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 30)
-        ])
-        
-        return mainVC
+        MainTabBarController()
     }
     
     @objc private func logoutTapped() {
