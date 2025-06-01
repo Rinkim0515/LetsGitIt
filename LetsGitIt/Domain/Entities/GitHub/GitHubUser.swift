@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct User {
+struct GitHubUser {
     let id: Int
     let login: String
     let name: String?
