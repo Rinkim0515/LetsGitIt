@@ -11,8 +11,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
     
-    
-    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
@@ -22,10 +20,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let initialViewController: UIViewController
         
         if GitHubAuthManager.shared.isLoggedIn {
-            // 이미 로그인되어 있으면 메인 화면으로
-            initialViewController = createMainViewController()
+            // ✅ Clean Architecture: DI Container를 통해 의존성 주입
+            initialViewController = DIContainer.shared.makeMainTabBarController()
         } else {
-            // 로그인이 필요하면 로그인 화면으로
             initialViewController = LoginViewController()
         }
         
@@ -55,7 +52,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     /// 메인 화면으로 이동
     private func navigateToMainScreen() {
         DispatchQueue.main.async {
-            self.window?.rootViewController = self.createMainViewController()
+            // ✅ Clean Architecture: DI Container 사용
+            self.window?.rootViewController = DIContainer.shared.makeMainTabBarController()
         }
     }
     

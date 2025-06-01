@@ -8,39 +8,48 @@
 
 import UIKit
 
-class MainTabBarController: UITabBarController {
+final class MainTabBarController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupTabBar()
+        setupTabBarStyle()
     }
     
-    private func setupTabBar() {
-        // 프로필 탭
-        let profileVC = ProfileViewController()
-        profileVC.tabBarItem = UITabBarItem(
-            title: "프로필",
-            image: UIImage(systemName: "person.circle"),
-            selectedImage: UIImage(systemName: "person.circle.fill")
-        )
-        
-        // 레포지토리 탭
-        let repoVC = ViewController()
-        repoVC.tabBarItem = UITabBarItem(
-            title: "레포지토리",
-            image: UIImage(systemName: "folder"),
-            selectedImage: UIImage(systemName: "folder.fill")
-        )
-        
-        // 네비게이션 컨트롤러로 감싸기
-        let profileNav = UINavigationController(rootViewController: profileVC)
-        let repoNav = UINavigationController(rootViewController: repoVC)
-        
-        // 탭바에 설정
-        viewControllers = [profileNav, repoNav]
-        
-        // 탭바 스타일 설정
+    private func setupTabBarStyle() {
         tabBar.tintColor = .systemBlue
         tabBar.backgroundColor = .systemBackground
+    }
+}
+
+// MARK: - 임시 RepositoryListViewController
+final class RepositoryListViewController: UIViewController {
+    private let getUserRepositoriesUseCase: GetUserRepositoriesUseCase
+    
+    init(getUserRepositoriesUseCase: GetUserRepositoriesUseCase) {
+        self.getUserRepositoriesUseCase = getUserRepositoriesUseCase
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        title = "레포지토리"
+        view.backgroundColor = .systemBackground
+        
+        // TODO: 나중에 제대로 구현
+        let label = UILabel()
+        label.text = "레포지토리 목록\n(Clean Architecture 적용 완료!)"
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(label)
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
     }
 }

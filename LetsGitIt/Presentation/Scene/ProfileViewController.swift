@@ -4,17 +4,16 @@
 //
 //  Created by KimRin on 5/27/25.
 //
-
-import Foundation
-// ViewControllers/ProfileViewController.swift
 import UIKit
 
-class ProfileViewController: UIViewController {
+final class ProfileViewController: UIViewController {
     
+    // MARK: - Dependencies (Clean Architecture)
+    private let getCurrentUserUseCase: GetCurrentUserUseCase
+    
+    // MARK: - UI Components
     private let scrollView = UIScrollView()
     private let contentView = UIView()
-    
-    // UI 요소들
     private let avatarImageView = UIImageView()
     private let nameLabel = UILabel()
     private let usernameLabel = UILabel()
@@ -25,12 +24,25 @@ class ProfileViewController: UIViewController {
     private let followingCountLabel = UILabel()
     private let logoutButton = UIButton(type: .system)
     
+    // MARK: - Initialization (의존성 주입)
+    init(getCurrentUserUseCase: GetCurrentUserUseCase) {
+        self.getCurrentUserUseCase = getCurrentUserUseCase
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupConstraints()
         loadUserProfile()
     }
     
+    // MARK: - Setup
     private func setupUI() {
         title = "프로필"
         view.backgroundColor = .systemBackground
@@ -86,8 +98,6 @@ class ProfileViewController: UIViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
         }
-        
-        setupConstraints()
     }
     
     private func setupConstraints() {
@@ -141,18 +151,25 @@ class ProfileViewController: UIViewController {
         ])
     }
     
+    // MARK: - Business Logic (Clean Architecture)
     private func loadUserProfile() {
-        GitHubAPIManager.shared.getCurrentUser { [weak self] result in
-            switch result {
-            case .success(let user):
-                self?.updateUI(with: user)
-            case .failure(let error):
-                print("❌ 사용자 정보 로딩 실패: \(error)")
-                // TODO: 에러 알림 표시
+        Task {
+            do {
+                // ✅ UseCase를 통해 비즈니스 로직 실행
+                let user = try await getCurrentUserUseCase.execute()
+                // ✅ Domain Entity 받아서 UI 업데이트
+                await MainActor.run {
+                    updateUI(with: user)
+                }
+            } catch {
+                await MainActor.run {
+                    showError(error)
+                }
             }
         }
     }
     
+    // MARK: - UI Update (Domain Entity 사용)
     private func updateUI(with user: GitHubUser) {
         nameLabel.text = user.name ?? "이름 없음"
         usernameLabel.text = "@\(user.login)"
@@ -163,20 +180,31 @@ class ProfileViewController: UIViewController {
         followersCountLabel.text = "\(user.followers)\n팔로워"
         followingCountLabel.text = "\(user.following)\n팔로잉"
         
-        // 아바타 이미지 로드
-        loadAvatarImage(from: user.avatarUrl)
+        // ✅ Domain Entity의 avatarURL 사용 (Clean Architecture)
+        loadAvatarImage(from: user.avatarURL)
     }
     
     private func loadAvatarImage(from urlString: String) {
         guard let url = URL(string: urlString) else { return }
         
-        URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-            guard let data = data, let image = UIImage(data: data) else { return }
-            
-            DispatchQueue.main.async {
-                self?.avatarImageView.image = image
+        Task {
+            do {
+                let (data, _) = try await URLSession.shared.data(from: url)
+                if let image = UIImage(data: data) {
+                    await MainActor.run {
+                        self.avatarImageView.image = image
+                    }
+                }
+            } catch {
+                print("이미지 로딩 실패: \(error)")
             }
-        }.resume()
+        }
+    }
+    
+    private func showError(_ error: Error) {
+        let alert = UIAlertController(title: "오류", message: error.localizedDescription, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
     }
     
     @objc private func logoutTapped() {
