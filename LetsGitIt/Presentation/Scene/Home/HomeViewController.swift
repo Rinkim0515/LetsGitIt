@@ -6,7 +6,7 @@
 //
 import UIKit
 
-final class ProfileViewController: UIViewController {
+final class HomeViewController: UIViewController {
     
     // MARK: - Dependencies (Clean Architecture)
     private let getCurrentUserUseCase: GetCurrentUserUseCase

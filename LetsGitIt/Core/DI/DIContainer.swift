@@ -39,8 +39,8 @@ final class DIContainer {
     }()
     
     // MARK: - Presentation Layer Factory Methods
-    func makeProfileViewController() -> ProfileViewController {
-        return ProfileViewController(getCurrentUserUseCase: getCurrentUserUseCase)
+    func makeProfileViewController() -> HomeViewController {
+        return HomeViewController(getCurrentUserUseCase: getCurrentUserUseCase)
     }
     
     func makeRepositoryListViewController() -> RepositoryListViewController {
