@@ -51,26 +51,34 @@ final class DIContainer {
         let tabBarController = MainTabBarController()
         
         // 프로필 탭
-        let profileVC = makeProfileViewController()
-        profileVC.tabBarItem = UITabBarItem(
-            title: "프로필",
-            image: UIImage(systemName: "person.circle"),
-            selectedImage: UIImage(systemName: "person.circle.fill")
+        let homeVC = makeProfileViewController()
+        homeVC.tabBarItem = UITabBarItem(
+            title: "홈",
+            image: UIImage(systemName: "house"),
+            selectedImage: UIImage(systemName: "house.fill")
         )
         
         // 레포지토리 탭
-        let repoVC = makeRepositoryListViewController()
-        repoVC.tabBarItem = UITabBarItem(
-            title: "레포지토리",
+        let dashBoardVC = makeRepositoryListViewController()
+        dashBoardVC.tabBarItem = UITabBarItem(
+            title: "대시보드",
             image: UIImage(systemName: "folder"),
             selectedImage: UIImage(systemName: "folder.fill")
         )
+        let settingVC = UIViewController()
+        settingVC.tabBarItem = UITabBarItem(
+            title: "세팅",
+            image: UIImage(systemName: "gearshape"),
+            selectedImage: UIImage(systemName: "gearshape.fill")
+        )
+        
         
         // 네비게이션 컨트롤러로 감싸기
-        let profileNav = UINavigationController(rootViewController: profileVC)
-        let repoNav = UINavigationController(rootViewController: repoVC)
+        let homeNav = UINavigationController(rootViewController: homeVC)
+        let dashBoardNav = UINavigationController(rootViewController: dashBoardVC)
+        let settingNav = UINavigationController(rootViewController: settingVC)
         
-        tabBarController.viewControllers = [profileNav, repoNav]
+        tabBarController.viewControllers = [homeNav, dashBoardNav, settingVC]
         
         return tabBarController
     }
