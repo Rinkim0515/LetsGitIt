@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension GitHubRepositoryResponse {
+extension GitHubRepositoryDTO {
     func toDomain() -> GitHubRepository {
         return GitHubRepository(
             id: id,

@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension GitHubLabelResponse {
+extension GitHubLabelDTO {
     func toDomain() -> GitHubLabel {
         return GitHubLabel(
             id: id,

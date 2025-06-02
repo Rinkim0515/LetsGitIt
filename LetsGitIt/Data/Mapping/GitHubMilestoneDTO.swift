@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension GitHubMilestoneResponse {
+extension GitHubMilestoneDTO {
     func toDomain() -> GitHubMilestone {
         let dueDate: Date?
         if let dueOn = dueOn {

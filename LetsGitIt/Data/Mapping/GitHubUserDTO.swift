@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension GitHubUserResponse {
+extension GitHubUserDTO {
     func toDomain() -> GitHubUser {
         return GitHubUser(
             id: id,

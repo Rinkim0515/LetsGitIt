@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension GitHubIssueResponse {
+extension GitHubIssueDTO {
     func toDomain() -> GitHubIssue {
         return GitHubIssue(
             id: id,

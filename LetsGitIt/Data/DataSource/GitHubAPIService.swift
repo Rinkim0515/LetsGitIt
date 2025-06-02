@@ -32,41 +32,41 @@ final class GitHubAPIService {
     }
     
     // MARK: - User API
-    func getCurrentUser() async throws -> GitHubUserResponse {
+    func getCurrentUser() async throws -> GitHubUserDTO {
         guard let request = createRequest(for: "/user") else {
             throw GitHubAPIError.invalidURL
         }
         
         let (data, _) = try await session.data(for: request)
-        return try JSONDecoder().decode(GitHubUserResponse.self, from: data)
+        return try JSONDecoder().decode(GitHubUserDTO.self, from: data)
     }
     
-    func getUser(login: String) async throws -> GitHubUserResponse {
+    func getUser(login: String) async throws -> GitHubUserDTO {
         guard let request = createRequest(for: "/users/\(login)") else {
             throw GitHubAPIError.invalidURL
         }
         
         let (data, _) = try await session.data(for: request)
-        return try JSONDecoder().decode(GitHubUserResponse.self, from: data)
+        return try JSONDecoder().decode(GitHubUserDTO.self, from: data)
     }
     
     // MARK: - Repository API
-    func getUserRepositories() async throws -> [GitHubRepositoryResponse] {
+    func getUserRepositories() async throws -> [GitHubRepositoryDTO] {
         guard let request = createRequest(for: "/user/repos") else {
             throw GitHubAPIError.invalidURL
         }
         
         let (data, _) = try await session.data(for: request)
-        return try JSONDecoder().decode([GitHubRepositoryResponse].self, from: data)
+        return try JSONDecoder().decode([GitHubRepositoryDTO].self, from: data)
     }
     
-    func getRepository(owner: String, name: String) async throws -> GitHubRepositoryResponse {
+    func getRepository(owner: String, name: String) async throws -> GitHubRepositoryDTO {
         guard let request = createRequest(for: "/repos/\(owner)/\(name)") else {
             throw GitHubAPIError.invalidURL
         }
         
         let (data, _) = try await session.data(for: request)
-        return try JSONDecoder().decode(GitHubRepositoryResponse.self, from: data)
+        return try JSONDecoder().decode(GitHubRepositoryDTO.self, from: data)
     }
     
     func getRepositoryLanguages(owner: String, name: String) async throws -> [String: Int] {
@@ -78,12 +78,12 @@ final class GitHubAPIService {
         return try JSONDecoder().decode([String: Int].self, from: data)
     }
     
-    func getRepositoryContributors(owner: String, name: String) async throws -> [GitHubUserResponse] {
+    func getRepositoryContributors(owner: String, name: String) async throws -> [GitHubUserDTO] {
         guard let request = createRequest(for: "/repos/\(owner)/\(name)/contributors") else {
             throw GitHubAPIError.invalidURL
         }
         
         let (data, _) = try await session.data(for: request)
-        return try JSONDecoder().decode([GitHubUserResponse].self, from: data)
+        return try JSONDecoder().decode([GitHubUserDTO].self, from: data)
     }
 }
