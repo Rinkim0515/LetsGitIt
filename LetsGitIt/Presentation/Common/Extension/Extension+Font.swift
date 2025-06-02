@@ -9,24 +9,21 @@ import UIKit
 
 extension UIFont {
     
-    // MARK: - Pretendard Font
+    // MARK: - Pretendard Font (3가지 고정)
     
     enum PretendardWeight {
+        case light
         case regular
-        case medium
         case semiBold
-        case bold
         
         var fontName: String {
             switch self {
+            case .light:
+                return "Pretendard-Light"
             case .regular:
                 return "Pretendard-Regular"
-            case .medium:
-                return "Pretendard-Medium"
             case .semiBold:
                 return "Pretendard-SemiBold"
-            case .bold:
-                return "Pretendard-Bold"
             }
         }
     }
@@ -39,15 +36,16 @@ extension UIFont {
         return font
     }
     
+    // MARK: - 편의 메서드 (GitHub 앱용 - 3가지 폰트 활용)
     
     /// 제목용 폰트 (SemiBold, 18pt)
     static var titleFont: UIFont {
         return pretendard(.semiBold, size: 18)
     }
     
-    /// 헤더용 폰트 (Bold, 16pt)
+    /// 헤더용 폰트 (SemiBold, 16pt)
     static var headerFont: UIFont {
-        return pretendard(.bold, size: 16)
+        return pretendard(.semiBold, size: 16)
     }
     
     /// 본문용 폰트 (Regular, 14pt)
@@ -55,13 +53,18 @@ extension UIFont {
         return pretendard(.regular, size: 14)
     }
     
-    /// 강조용 폰트 (Medium, 14pt)
+    /// 강조용 폰트 (SemiBold, 14pt)
     static var emphasizedFont: UIFont {
-        return pretendard(.medium, size: 14)
+        return pretendard(.semiBold, size: 14)
     }
     
-    /// 캡션용 폰트 (Regular, 12pt)
+    /// 캡션용 폰트 (Light, 12pt)
     static var captionFont: UIFont {
-        return pretendard(.regular, size: 12)
+        return pretendard(.light, size: 12)
+    }
+    
+    /// 가벼운 텍스트용 폰트 (Light, 14pt)
+    static var lightFont: UIFont {
+        return pretendard(.light, size: 14)
     }
 }

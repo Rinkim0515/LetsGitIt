@@ -65,7 +65,7 @@ final class MilestoneCardCell: UICollectionViewCell {
         containerView.layer.cornerRadius = 12
         
         // 제목 라벨
-        titleLabel.font = .systemFont(ofSize: 16, weight: .bold)
+        titleLabel.font = .pretendard(.semiBold, size: 16)
         titleLabel.textColor = UIColor(named: "PrimaryText") ?? .label
         titleLabel.numberOfLines = 1
         
@@ -75,11 +75,11 @@ final class MilestoneCardCell: UICollectionViewCell {
         ddayContainerView.backgroundColor = .clear
         
         // D-Day 라벨
-        ddayLabel.font = .systemFont(ofSize: 12, weight: .bold)
+        ddayLabel.font = .pretendard(.semiBold, size: 12)
         ddayLabel.textAlignment = .center
         
         // 설명 라벨
-        descriptionLabel.font = .systemFont(ofSize: 14, weight: .regular)
+        descriptionLabel.font = .pretendard(.regular, size: 14)
         descriptionLabel.textColor = UIColor(named: "SecondaryText") ?? .secondaryLabel
         descriptionLabel.numberOfLines = 2
         

@@ -57,19 +57,19 @@ final class IssueCardCell: UICollectionViewCell {
         containerView.layer.borderColor = UIColor(named: "Separator")?.cgColor ?? UIColor.separator.cgColor
         
         // 제목 라벨
-        titleLabel.font = .systemFont(ofSize: 16, weight: .bold)
+        titleLabel.font = .pretendard(.semiBold, size: 16)
         titleLabel.textColor = UIColor(named: "PrimaryText") ?? .label
         titleLabel.numberOfLines = 2
         
         // 이슈 번호 라벨
-        numberLabel.font = .systemFont(ofSize: 14, weight: .medium)
+        numberLabel.font = .pretendard(.regular, size: 14)
         numberLabel.textColor = UIColor(named: "SecondaryText") ?? .secondaryLabel
         
-        mileStoneLabel.font = .systemFont(ofSize: 14, weight: .bold)
+        mileStoneLabel.font = .pretendard(.semiBold, size: 14)
         mileStoneLabel.textColor = UIColor(named: "PrimaryText") ?? .secondaryLabel
         
         // 작성자 라벨
-        authorLabel.font = .systemFont(ofSize: 12, weight: .medium)
+        authorLabel.font = .pretendard(.regular, size: 12)
         authorLabel.textColor = UIColor(named: "SecondaryText") ?? .secondaryLabel
         
         // 뷰 계층 구성

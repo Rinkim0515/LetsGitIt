@@ -41,14 +41,14 @@ final class SectionHeaderView: UIView {
         backgroundColor = .clear
         
         // 제목 라벨 설정
-        titleLabel.font = .systemFont(ofSize: 20, weight: .bold)
+        titleLabel.font = .pretendard(.semiBold, size: 20)
         titleLabel.textColor = UIColor(named: "PrimaryText") ?? .label
         titleLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
         titleLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         
         // 더보기 버튼 설정
         moreButton.setTitle("더보기", for: .normal)
-        moreButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+        moreButton.titleLabel?.font = .pretendard(.regular, size: 16)
         moreButton.setTitleColor(UIColor(named: "BrandMainColor") ?? .systemBlue, for: .normal)
         moreButton.addTarget(self, action: #selector(moreButtonTapped), for: .touchUpInside)
         moreButton.setContentHuggingPriority(.required, for: .horizontal)
@@ -102,27 +102,3 @@ final class SectionHeaderView: UIView {
         }
     }
 }
-
-// MARK: - 사용 예시
-/*
- 사용법:
- 
- // 기본 사용 (더보기 버튼 있음)
- let milestoneHeader = SectionHeaderView()
- milestoneHeader.configure(title: "중요한 마일스톤")
- milestoneHeader.onMoreTapped = {
-     print("마일스톤 더보기 클릭")
-     // 마일스톤 전체 목록 화면으로 이동
- }
- 
- // 더보기 버튼 없는 버전
- let settingsHeader = SectionHeaderView()
- settingsHeader.configure(title: "계정 설정", showMoreButton: false)
- 
- // 스택뷰에 추가
- stackView.addArrangedSubview(milestoneHeader)
- stackView.addArrangedSubview(milestonePreviewView)
- 
- stackView.addArrangedSubview(issueHeader)
- stackView.addArrangedSubview(issuePreviewView)
- */

@@ -83,11 +83,11 @@ final class UserProfileHeaderView: UIView {
         avatarImageView.image = diamondImage
         
         
-        nameLabel.font = .systemFont(ofSize: 20, weight: .bold)
+        nameLabel.font = .pretendard(.semiBold, size: 20)
         nameLabel.textColor = UIColor(named: "PrimaryText") ?? .label
         
         // 부제목 라벨 설정
-        rankingLabel.font = .systemFont(ofSize: 14, weight: .medium)
+        rankingLabel.font = .pretendard(.regular, size: 14)
         rankingLabel.textColor = UIColor(named: "SecondaryText") ?? .secondaryLabel
         
         // 통계 스택뷰 설정
@@ -96,17 +96,14 @@ final class UserProfileHeaderView: UIView {
         statsStackView.alignment = .trailing
         
         // 완료 마일스톤 라벨
-        completedMilestoneLabel.font = .systemFont(ofSize: 12, weight: .medium)
+        completedMilestoneLabel.font = .pretendard(.regular, size: 12)
         completedMilestoneLabel.textColor = UIColor(named: "SecondaryText") ?? .secondaryLabel
         completedMilestoneLabel.textAlignment = .right
         
         // 저장 마일스톤 라벨
-        savedMilestoneLabel.font = .systemFont(ofSize: 12, weight: .medium)
+        savedMilestoneLabel.font = .pretendard(.regular, size: 12)
         savedMilestoneLabel.textColor = UIColor(named: "SecondaryText") ?? .secondaryLabel
         savedMilestoneLabel.textAlignment = .right
-        
-        // 상태 배지 설정
-        
         
         
         
@@ -117,8 +114,9 @@ final class UserProfileHeaderView: UIView {
         
         
         // 상태 라벨 설정
-        statusLabel.font = .systemFont(ofSize: 14, weight: .medium)
+        statusLabel.font = .pretendard(.regular, size: 14)
         statusLabel.textColor = .white
+        statusLabel.textAlignment = .center
         
         // 뷰 계층 구성
         addSubview(containerView)
@@ -177,14 +175,13 @@ final class UserProfileHeaderView: UIView {
             
             // 상태 아이콘
             statusIconImageView.centerYAnchor.constraint(equalTo: statusBadgeView.centerYAnchor),
-            statusIconImageView.leadingAnchor.constraint(equalTo: statusBadgeView.leadingAnchor, constant: 16),
+            statusIconImageView.trailingAnchor.constraint(equalTo: statusLabel.leadingAnchor, constant: -5),
             statusIconImageView.widthAnchor.constraint(equalToConstant: 16),
             statusIconImageView.heightAnchor.constraint(equalToConstant: 16),
             
             // 상태 라벨
             statusLabel.centerYAnchor.constraint(equalTo: statusBadgeView.centerYAnchor),
-            statusLabel.leadingAnchor.constraint(equalTo: statusIconImageView.trailingAnchor, constant: 8),
-            statusLabel.trailingAnchor.constraint(equalTo: statusBadgeView.trailingAnchor, constant: -16)
+            statusLabel.centerXAnchor.constraint(equalTo: statusBadgeView.centerXAnchor)
         ])
     }
 
