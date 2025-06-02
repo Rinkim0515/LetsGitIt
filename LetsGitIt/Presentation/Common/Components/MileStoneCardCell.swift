@@ -128,9 +128,18 @@ final class MilestoneCardCell: UICollectionViewCell {
             ddayLabel.centerXAnchor.constraint(equalTo: ddayContainerView.centerXAnchor),
             ddayLabel.centerYAnchor.constraint(equalTo: ddayContainerView.centerYAnchor),
             
+
+            
+
+            
+            // 설명 (프로그레스바 아래)
+            descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
+            descriptionLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            descriptionLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
             // 프로그레스 바 (제목 아래)
-            progressBar.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
-            progressBar.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            
+            progressBar.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 8),
+            progressBar.leadingAnchor.constraint(equalTo: descriptionLabel.leadingAnchor),
             progressBar.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
             progressBar.heightAnchor.constraint(equalToConstant: 4),
             
@@ -138,12 +147,6 @@ final class MilestoneCardCell: UICollectionViewCell {
             progressIndicator.leadingAnchor.constraint(equalTo: progressBar.leadingAnchor),
             progressIndicator.bottomAnchor.constraint(equalTo: progressBar.bottomAnchor),
             // width는 updateProgress에서 설정
-            
-            // 설명 (프로그레스바 아래)
-            descriptionLabel.topAnchor.constraint(equalTo: progressBar.bottomAnchor, constant: 12),
-            descriptionLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            descriptionLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
-            
             
         ])
     }

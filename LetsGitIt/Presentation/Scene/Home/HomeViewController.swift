@@ -7,7 +7,7 @@
 // 이슈는 4개까지만 보여주고
 // 마일스톤은 2개까지만
 
-// Presentation/Scene/Home/HomeViewController.swift
+
 import UIKit
 
 final class HomeViewController: UIViewController {
@@ -16,11 +16,12 @@ final class HomeViewController: UIViewController {
     private let getCurrentUserUseCase: GetCurrentUserUseCase
     
     // MARK: - UI Components
+    // 🔸 프로필 헤더 (고정)
+    private let profileHeaderView = UserProfileHeaderView()
+    
+    // 🔸 스크롤 가능한 컨텐츠
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
-    
-    // 프로필 섹션
-    private let profileHeaderView = UserProfileHeaderView()
     
     // 마일스톤 섹션
     private let milestoneSectionHeader = SectionHeaderView()
@@ -29,14 +30,14 @@ final class HomeViewController: UIViewController {
         edgeInsets: MilestonePreviewView.EdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
     )
     
-    // 이슈 섹션 ✅ 추가
+    // 이슈 섹션
     private let issueSectionHeader = SectionHeaderView()
     private let issuePreviewView = IssuePreviewView(
         maxDisplayCount: 2,
         edgeInsets: IssuePreviewView.EdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
     )
     
-    // MARK: - Initialization (의존성 주입)
+    // MARK: - Initialization
     init(getCurrentUserUseCase: GetCurrentUserUseCase) {
         self.getCurrentUserUseCase = getCurrentUserUseCase
         super.init(nibName: nil, bundle: nil)
@@ -54,7 +55,6 @@ final class HomeViewController: UIViewController {
         setupActions()
         loadData()
         self.view.backgroundColor = .cardBackground
-        scrollView.backgroundColor = .backgroundColor2
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -69,37 +69,38 @@ final class HomeViewController: UIViewController {
     
     // MARK: - Setup
     private func setupUI() {
-        view.backgroundColor = UIColor(named: "PrimaryBackground") ?? .systemBackground
+        view.backgroundColor = .backgroundSecondary
         
-        // 스크롤뷰 설정
+        // 🔸 스크롤뷰 설정
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = true
+        scrollView.backgroundColor = .backgroundSecondary
         
-        // 스택뷰 설정
+        // 🔸 스택뷰 설정 (프로필 제외)
         stackView.axis = .vertical
         stackView.spacing = 0
         stackView.alignment = .fill
         stackView.distribution = .fill
-        // 스택뷰안에 profile headerview를 빼면됨
-        // 섹션 헤더들 설정
-        milestoneSectionHeader.configure(title: "중요한 마일스톤", showMoreButton: true)
-        issueSectionHeader.configure(title: "미완료 이슈", showMoreButton: true)
         
-        // 뷰 계층 구성
-        view.addSubview(scrollView)
+        // 섹션 헤더들 설정
+        milestoneSectionHeader.configure(title: "종료임박 마일스톤", showMoreButton: true)
+        issueSectionHeader.configure(title: "미완료 이슈", showMoreButton: false)
+        
+        // 🔸 뷰 계층 구성 - 프로필과 스크롤뷰 분리
+        view.addSubview(profileHeaderView)  // 상단 고정
+        view.addSubview(scrollView)         // 프로필 아래
         scrollView.addSubview(stackView)
         
-        // 스택뷰에 컴포넌트 추가
-        stackView.addArrangedSubview(profileHeaderView)
-        stackView.addArrangedSubview(createSpacerView(height: 24))
+        // 🔸 스택뷰에 컴포넌트 추가 (프로필 제외)
+        stackView.addArrangedSubview(createSpacerView(height: 10))
         
         // 마일스톤 섹션
         stackView.addArrangedSubview(milestoneSectionHeader)
         stackView.addArrangedSubview(createSpacerView(height: 8))
         stackView.addArrangedSubview(milestonePreviewView)
         
-        // 이슈 섹션 ✅ 추가
-        stackView.addArrangedSubview(createSpacerView(height: 32))
+        // 이슈 섹션
+        stackView.addArrangedSubview(createSpacerView(height: 10))
         stackView.addArrangedSubview(issueSectionHeader)
         stackView.addArrangedSubview(createSpacerView(height: 8))
         stackView.addArrangedSubview(issuePreviewView)
@@ -109,18 +110,23 @@ final class HomeViewController: UIViewController {
     }
     
     private func setupConstraints() {
-        [scrollView, stackView].forEach {
+        [profileHeaderView, scrollView, stackView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
         NSLayoutConstraint.activate([
-            // 스크롤뷰
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            // 🔸 프로필 헤더 (상단 고정)
+            profileHeaderView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            profileHeaderView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            profileHeaderView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            // 🔸 스크롤뷰 (프로필 아래부터 시작)
+            scrollView.topAnchor.constraint(equalTo: profileHeaderView.bottomAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            // 스택뷰
+            // 🔸 스택뷰 (스크롤뷰 내부)
             stackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
@@ -135,7 +141,7 @@ final class HomeViewController: UIViewController {
             self?.navigateToMilestoneList()
         }
         
-        // 이슈 섹션 헤더 더보기 버튼 ✅ 추가
+        // 이슈 섹션 헤더 더보기 버튼
         issueSectionHeader.onMoreTapped = { [weak self] in
             self?.navigateToIssueList()
         }
@@ -145,7 +151,7 @@ final class HomeViewController: UIViewController {
             self?.navigateToMilestoneDetail(milestone)
         }
         
-        // 이슈 카드 선택 ✅ 추가
+        // 이슈 카드 선택
         issuePreviewView.onIssueSelected = { [weak self] issue in
             self?.navigateToIssueDetail(issue)
         }
@@ -155,7 +161,7 @@ final class HomeViewController: UIViewController {
     private func loadData() {
         loadUserProfile()
         loadMilestones()
-        loadIssues() // ✅ 추가
+        loadIssues()
     }
     
     private func loadUserProfile() {
@@ -174,15 +180,11 @@ final class HomeViewController: UIViewController {
     }
     
     private func loadMilestones() {
-        // TODO: 실제 UseCase로 교체
-        // 현재는 Mock 데이터 사용
         let mockMilestones = MilestoneItem.mockData
         milestonePreviewView.updateMilestones(mockMilestones)
     }
     
     private func loadIssues() {
-        // TODO: 실제 UseCase로 교체
-        // 현재는 Mock 데이터 사용
         let mockIssues = IssueItem.mockData
         issuePreviewView.updateIssues(mockIssues)
     }
@@ -192,8 +194,8 @@ final class HomeViewController: UIViewController {
         profileHeaderView.configure(
             name: user.name ?? "이름 없음",
             subtitle: "@\(user.login)",
-            completedCount: 5, // TODO: 실제 데이터로 교체
-            savedCount: 11076, // TODO: 실제 데이터로 교체
+            completedCount: 5,
+            savedCount: 11076,
             statusText: "현재 코어 타임 09:30:15 남았습니다."
         )
     }
@@ -201,34 +203,18 @@ final class HomeViewController: UIViewController {
     // MARK: - Navigation
     private func navigateToMilestoneList() {
         print("📍 마일스톤 전체 목록으로 이동")
-        
-        // TODO: 마일스톤 전체 목록 화면으로 이동
-        // let milestoneListVC = MilestoneListViewController()
-        // navigationController?.pushViewController(milestoneListVC, animated: true)
     }
     
     private func navigateToIssueList() {
         print("📍 이슈 전체 목록으로 이동")
-        
-        // TODO: 이슈 전체 목록 화면으로 이동
-        // let issueListVC = IssueListViewController()
-        // navigationController?.pushViewController(issueListVC, animated: true)
     }
     
     private func navigateToMilestoneDetail(_ milestone: MilestoneItem) {
         print("📍 마일스톤 상세로 이동: \(milestone.title)")
-        
-        // TODO: 마일스톤 상세 화면으로 이동
-        // let detailVC = MilestoneDetailViewController(milestone: milestone)
-        // navigationController?.pushViewController(detailVC, animated: true)
     }
     
     private func navigateToIssueDetail(_ issue: IssueItem) {
         print("📍 이슈 상세로 이동: #\(issue.number) \(issue.title)")
-        
-        // TODO: 이슈 상세 화면으로 이동
-        // let detailVC = IssueDetailViewController(issue: issue)
-        // navigationController?.pushViewController(detailVC, animated: true)
     }
     
     // MARK: - Helper Methods
@@ -246,7 +232,7 @@ final class HomeViewController: UIViewController {
     }
 }
 
-// MARK: - Pull to Refresh (선택사항)
+// MARK: - Pull to Refresh
 extension HomeViewController {
     private func setupRefreshControl() {
         let refreshControl = UIRefreshControl()
@@ -263,33 +249,26 @@ extension HomeViewController {
     }
 }
 
-// MARK: - 최종 화면 구조 주석
+// MARK: - 레이아웃 구조
 /*
- 🎉 완성된 HomeViewController 구조:
+ 🏗️ 새로운 레이아웃 구조:
  
  📱 HomeViewController
- └── ScrollView
+ ├── 👤 UserProfileHeaderView (상단 고정) ✨
+ └── ScrollView (프로필 아래부터 스크롤)
      └── StackView
-         ├── 👤 UserProfileHeaderView (프로필 정보)
          ├── ➖ Spacer (24pt)
-         ├── 📋 SectionHeaderView ("중요한 마일스톤" + 더보기)
+         ├── 📋 SectionHeaderView ("중요한 마일스톤")
          ├── ➖ Spacer (8pt)
-         ├── 🎯 MilestonePreviewView (마일스톤 카드 2개)
+         ├── 🎯 MilestonePreviewView
          ├── ➖ Spacer (32pt)
-         ├── 📋 SectionHeaderView ("미완료 이슈" + 더보기) ✅
+         ├── 📋 SectionHeaderView ("미완료 이슈")
          ├── ➖ Spacer (8pt)
-         ├── 🐛 IssuePreviewView (이슈 카드 2개) ✅
+         ├── 🐛 IssuePreviewView
          └── ➖ Spacer (32pt)
  
- ✨ 완성된 기능들:
- - 프로필 정보 표시 (실제 API 연동)
- - 마일스톤 미리보기 (Mock 데이터)
- - 이슈 미리보기 (Mock 데이터) ✅ 신규 추가
- - 각 섹션별 더보기 버튼
- - 카드 선택 시 네비게이션 (TODO로 남겨둠)
- 
- 🚀 다음 단계:
- - 실제 마일스톤/이슈 UseCase 연동
- - 상세 화면들 구현
- - 목록 화면들 구현
+ ✨ 변경사항:
+ - 프로필 헤더가 상단에 고정됨
+ - 스크롤할 때 프로필은 보이고 컨텐츠만 스크롤됨
+ - 더 명확한 레이아웃 분리
  */

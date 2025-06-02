@@ -16,7 +16,7 @@ final class IssueCardCell: UICollectionViewCell {
     private let titleLabel = UILabel()
     private let numberLabel = UILabel()
     private let authorLabel = UILabel()
-    
+    private let mileStoneLabel = UILabel()
     // MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -38,11 +38,11 @@ final class IssueCardCell: UICollectionViewCell {
     }
     
     // MARK: - Public Methods
-    func configure(title: String, number: Int, author: String) {
+    func configure(title: String, number: Int, author: String, mileStone: String?) {
         titleLabel.text = title
         numberLabel.text = "#\(number)"
         authorLabel.text = "by \(author)"
-        
+        mileStoneLabel.text = "임시용 마일스톤"
         
     }
     
@@ -65,6 +65,9 @@ final class IssueCardCell: UICollectionViewCell {
         numberLabel.font = .systemFont(ofSize: 14, weight: .medium)
         numberLabel.textColor = UIColor(named: "SecondaryText") ?? .secondaryLabel
         
+        mileStoneLabel.font = .systemFont(ofSize: 14, weight: .bold)
+        mileStoneLabel.textColor = UIColor(named: "PrimaryText") ?? .secondaryLabel
+        
         // 작성자 라벨
         authorLabel.font = .systemFont(ofSize: 12, weight: .medium)
         authorLabel.textColor = UIColor(named: "SecondaryText") ?? .secondaryLabel
@@ -74,13 +77,15 @@ final class IssueCardCell: UICollectionViewCell {
         containerView.addSubview(titleLabel)
         containerView.addSubview(numberLabel)
         containerView.addSubview(authorLabel)
+        containerView.addSubview(mileStoneLabel)
+        
 
         
     }
     
     private func setupConstraints() {
         [containerView, titleLabel, numberLabel,
-         authorLabel].forEach {
+         authorLabel, mileStoneLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
@@ -96,14 +101,18 @@ final class IssueCardCell: UICollectionViewCell {
             numberLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
             
             // 제목 (번호 아래)
-            titleLabel.topAnchor.constraint(equalTo: numberLabel.bottomAnchor, constant: 8),
-            titleLabel.leadingAnchor.constraint(equalTo: numberLabel.leadingAnchor),
-            titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
+            titleLabel.centerYAnchor.constraint(equalTo: numberLabel.centerYAnchor)
+            ,
+            titleLabel.leadingAnchor.constraint(equalTo: numberLabel.trailingAnchor, constant: 10),
+            
             
             // 작성자 (하단 좌측)
-            authorLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
-            authorLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            authorLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -16),
+            mileStoneLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
+            mileStoneLabel.leadingAnchor.constraint(equalTo: numberLabel.leadingAnchor),
+            
+            authorLabel.topAnchor.constraint(equalTo: mileStoneLabel.bottomAnchor, constant: 8),
+            authorLabel.leadingAnchor.constraint(equalTo: numberLabel.leadingAnchor),
+            
             
             // 생성일 (하단 우측)
         ])

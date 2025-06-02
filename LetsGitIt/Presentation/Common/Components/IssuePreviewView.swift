@@ -131,7 +131,8 @@ extension IssuePreviewView: UICollectionViewDataSource {
         cell.configure(
             title: issue.title,
             number: issue.number,
-            author: issue.author
+            author: issue.author,
+            mileStone: nil
         )
         
         return cell

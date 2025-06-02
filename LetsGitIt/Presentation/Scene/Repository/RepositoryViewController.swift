@@ -7,6 +7,6 @@
 
 import UIKit
 
-class RespositoryViewController: UIViewController {
+class DashboardViewController: UIViewController {
     
 }

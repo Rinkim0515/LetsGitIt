@@ -44,14 +44,18 @@ final class UserProfileHeaderView: UIView {
         super.layoutSubviews()
         
         if statusBadgeView.layer.sublayers?.first(where: { $0.name == "GradientLayer" }) == nil {
-             statusBadgeView.applyBrandGradient(direction: .horizontal)
-         }
+                statusBadgeView.applyBrandGradient(direction: .horizontal)
+                if let gradientLayer = statusBadgeView.layer.sublayers?.first(where: { $0.name == "GradientLayer" }) {
+                    gradientLayer.cornerRadius = 16
+                    gradientLayer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+                }
+            }
     }
     
     // MARK: - Public Methods
     func configure(name: String, subtitle: String, completedCount: Int, savedCount: Int, statusText: String) {
         nameLabel.text = name
-        rankingLabel.text = subtitle
+        rankingLabel.text = "랭킹: \(subtitle)등"
         completedMilestoneLabel.text = "완료 마일스톤 \(completedCount)개"
         savedMilestoneLabel.text = "저장 마일스톤 \(savedCount.formatted())개"
         statusLabel.text = statusText
@@ -75,11 +79,10 @@ final class UserProfileHeaderView: UIView {
         avatarImageView.layer.cornerRadius = 25
         avatarImageView.backgroundColor = .systemBlue
         
-        // 기본 다이아몬드 모양 이미지 설정
-        let diamondImage = createDiamondImage()
+        let diamondImage = createDiamondImage() // 뱃지 이미지
         avatarImageView.image = diamondImage
         
-        // 이름 라벨 설정
+        
         nameLabel.font = .systemFont(ofSize: 20, weight: .bold)
         nameLabel.textColor = UIColor(named: "PrimaryText") ?? .label
         
@@ -103,7 +106,7 @@ final class UserProfileHeaderView: UIView {
         savedMilestoneLabel.textAlignment = .right
         
         // 상태 배지 설정
-        statusBadgeView.layer.cornerRadius = 12
+        
         
         
         
@@ -111,6 +114,7 @@ final class UserProfileHeaderView: UIView {
         statusIconImageView.image = UIImage(systemName: "bolt.fill")
         statusIconImageView.tintColor = .white
         statusIconImageView.contentMode = .scaleAspectFit
+        
         
         // 상태 라벨 설정
         statusLabel.font = .systemFont(ofSize: 14, weight: .medium)
@@ -168,7 +172,7 @@ final class UserProfileHeaderView: UIView {
             statusBadgeView.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 12),
             statusBadgeView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             statusBadgeView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            statusBadgeView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
+            statusBadgeView.bottomAnchor.constraint(equalTo: bottomAnchor),
             statusBadgeView.heightAnchor.constraint(equalToConstant: 44),
             
             // 상태 아이콘
@@ -190,19 +194,3 @@ final class UserProfileHeaderView: UIView {
     }
 }
 
-// MARK: - 사용 예시
-/*
- 사용법:
- 
- let profileHeader = UserProfileHeaderView()
- profileHeader.configure(
-     name: "김서빈",
-     subtitle: "항인 12등",
-     completedCount: 5,
-     savedCount: 11076,
-     statusText: "현재 코어 타임 09:30-15시 붕"
- )
- 
- // 커스텀 아바타 이미지 설정 (선택사항)
- profileHeader.setAvatarImage(customImage)
- */

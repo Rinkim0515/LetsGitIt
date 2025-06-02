@@ -43,9 +43,11 @@ final class DIContainer {
         return HomeViewController(getCurrentUserUseCase: getCurrentUserUseCase)
     }
     
-    func makeRepositoryListViewController() -> RepositoryListViewController {
-        return RepositoryListViewController(getUserRepositoriesUseCase: getUserRepositoriesUseCase)
+    func makeDashboardVC() -> DashboardViewController {
+        return DashboardViewController()
     }
+    
+    
     
     func makeMainTabBarController() -> MainTabBarController {
         let tabBarController = MainTabBarController()
@@ -59,7 +61,7 @@ final class DIContainer {
         )
         
         // 레포지토리 탭
-        let dashBoardVC = makeRepositoryListViewController()
+        let dashBoardVC = makeDashboardVC()
         dashBoardVC.tabBarItem = UITabBarItem(
             title: "대시보드",
             image: UIImage(systemName: "folder"),
