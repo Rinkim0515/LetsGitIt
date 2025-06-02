@@ -40,6 +40,13 @@ final class UserProfileHeaderView: UIView {
         setupUI()
         setupConstraints()
     }
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        if statusBadgeView.layer.sublayers?.first(where: { $0.name == "GradientLayer" }) == nil {
+             statusBadgeView.applyBrandGradient(direction: .horizontal)
+         }
+    }
     
     // MARK: - Public Methods
     func configure(name: String, subtitle: String, completedCount: Int, savedCount: Int, statusText: String) {
@@ -97,7 +104,8 @@ final class UserProfileHeaderView: UIView {
         
         // 상태 배지 설정
         statusBadgeView.layer.cornerRadius = 12
-        setupStatusBadgeGradient()
+        
+        
         
         // 상태 아이콘 설정
         statusIconImageView.image = UIImage(systemName: "bolt.fill")
@@ -175,10 +183,7 @@ final class UserProfileHeaderView: UIView {
             statusLabel.trailingAnchor.constraint(equalTo: statusBadgeView.trailingAnchor, constant: -16)
         ])
     }
-    
-    private func setupStatusBadgeGradient() {
 
-    }
     
     private func createDiamondImage() -> UIImage? {
         return UIImage(named: "suit.diamond")
