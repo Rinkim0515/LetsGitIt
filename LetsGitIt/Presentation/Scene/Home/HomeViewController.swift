@@ -53,6 +53,8 @@ final class HomeViewController: UIViewController {
         setupConstraints()
         setupActions()
         loadData()
+        self.view.backgroundColor = .cardBackground
+        scrollView.backgroundColor = .backgroundColor2
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -78,7 +80,7 @@ final class HomeViewController: UIViewController {
         stackView.spacing = 0
         stackView.alignment = .fill
         stackView.distribution = .fill
-        
+        // 스택뷰안에 profile headerview를 빼면됨
         // 섹션 헤더들 설정
         milestoneSectionHeader.configure(title: "중요한 마일스톤", showMoreButton: true)
         issueSectionHeader.configure(title: "미완료 이슈", showMoreButton: true)
@@ -192,7 +194,7 @@ final class HomeViewController: UIViewController {
             subtitle: "@\(user.login)",
             completedCount: 5, // TODO: 실제 데이터로 교체
             savedCount: 11076, // TODO: 실제 데이터로 교체
-            statusText: "현재 코어 타임 09:30-15시 붕"
+            statusText: "현재 코어 타임 09:30:15 남았습니다."
         )
     }
     

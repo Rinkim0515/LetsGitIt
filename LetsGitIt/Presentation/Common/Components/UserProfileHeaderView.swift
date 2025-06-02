@@ -59,8 +59,8 @@ final class UserProfileHeaderView: UIView {
         backgroundColor = .clear
         
         // 컨테이너 뷰 설정
-        containerView.backgroundColor = UIColor(named: "BackgroundColor1") ?? .secondarySystemBackground
-        containerView.layer.cornerRadius = 16
+        containerView.backgroundColor = .cardBackground
+        
         
         // 아바타 이미지뷰 설정
         avatarImageView.contentMode = .scaleAspectFill
@@ -132,9 +132,9 @@ final class UserProfileHeaderView: UIView {
         
         NSLayoutConstraint.activate([
             // 컨테이너 뷰
-            containerView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            containerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            containerView.topAnchor.constraint(equalTo: topAnchor),
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
             containerView.heightAnchor.constraint(equalToConstant: 80),
             
             // 아바타 이미지

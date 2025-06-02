@@ -131,10 +131,7 @@ extension IssuePreviewView: UICollectionViewDataSource {
         cell.configure(
             title: issue.title,
             number: issue.number,
-            status: issue.status,
-            author: issue.author,
-            createdDate: issue.createdDate,
-            labels: issue.labels
+            author: issue.author
         )
         
         return cell
@@ -165,37 +162,20 @@ extension IssueItem {
             id: "1",
             title: "앱 크래시 이슈 수정",
             number: 42,
-            status: .open,
-            author: "developer1",
-            createdDate: "2일 전",
-            labels: [
-                IssueLabel(name: "bug", color: "d73a49"),
-                IssueLabel(name: "high priority", color: "b60205")
-            ]
+            author: "developer1"
+
         ),
         IssueItem(
             id: "2",
             title: "UI 개선 작업",
             number: 41,
-            status: .open,
-            author: "designer1",
-            createdDate: "3일 전",
-            labels: [
-                IssueLabel(name: "enhancement", color: "a2eeef"),
-                IssueLabel(name: "ui", color: "0052cc"),
-                IssueLabel(name: "design", color: "5319e7")
-            ]
+            author: "designer1"
         ),
         IssueItem(
             id: "3",
             title: "API 연동 완료",
             number: 40,
-            status: .closed,
-            author: "backend-dev",
-            createdDate: "1주 전",
-            labels: [
-                IssueLabel(name: "feature", color: "0e8a16")
-            ]
+            author: "backend-dev"
         )
     ]
 }

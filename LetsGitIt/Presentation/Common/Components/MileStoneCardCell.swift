@@ -18,8 +18,6 @@ final class MilestoneCardCell: UICollectionViewCell {
     private let ddayLabel = UILabel()
     private let ddayContainerView = UIView()
     private let descriptionLabel = UILabel()
-    private let tagLabel = UILabel()
-    private let tagContainerView = UIView()
     private let progressBar = UIView()
     private let progressIndicator = UIView()
     
@@ -40,7 +38,6 @@ final class MilestoneCardCell: UICollectionViewCell {
         super.prepareForReuse()
         titleLabel.text = nil
         descriptionLabel.text = nil
-        tagLabel.text = nil
         ddayLabel.text = nil
     }
     
@@ -48,11 +45,9 @@ final class MilestoneCardCell: UICollectionViewCell {
     func configure(title: String, description: String, tag: String, tagColor: UIColor, dday: String, ddayType: DDayType, progress: Double) {
         titleLabel.text = title
         descriptionLabel.text = description
-        tagLabel.text = tag
         ddayLabel.text = dday
         
-        // 태그 색상 설정
-        tagContainerView.backgroundColor = tagColor
+        
         
         // D-Day 스타일 설정
         setupDDayStyle(for: ddayType)
@@ -88,14 +83,6 @@ final class MilestoneCardCell: UICollectionViewCell {
         descriptionLabel.textColor = UIColor(named: "SecondaryText") ?? .secondaryLabel
         descriptionLabel.numberOfLines = 2
         
-        // 태그 컨테이너
-        tagContainerView.layer.cornerRadius = 4
-        
-        // 태그 라벨
-        tagLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        tagLabel.textColor = .white
-        tagLabel.textAlignment = .center
-        
         // 프로그레스 바 배경
         progressBar.backgroundColor = UIColor(named: "Disable") ?? .systemGray5
         progressBar.layer.cornerRadius = 2
@@ -110,16 +97,13 @@ final class MilestoneCardCell: UICollectionViewCell {
         containerView.addSubview(ddayContainerView)
         containerView.addSubview(progressBar)
         containerView.addSubview(descriptionLabel)
-        containerView.addSubview(tagContainerView)
-        
         ddayContainerView.addSubview(ddayLabel)
-        tagContainerView.addSubview(tagLabel)
         progressBar.addSubview(progressIndicator)
     }
     
     private func setupConstraints() {
         [containerView, titleLabel, ddayContainerView, ddayLabel, progressBar,
-         progressIndicator, descriptionLabel, tagContainerView, tagLabel].forEach {
+         progressIndicator, descriptionLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
@@ -160,16 +144,7 @@ final class MilestoneCardCell: UICollectionViewCell {
             descriptionLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             descriptionLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
             
-            // 태그 (하단)
-            tagContainerView.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 12),
-            tagContainerView.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            tagContainerView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -16),
-            tagContainerView.heightAnchor.constraint(equalToConstant: 20),
             
-            tagLabel.topAnchor.constraint(equalTo: tagContainerView.topAnchor, constant: 2),
-            tagLabel.leadingAnchor.constraint(equalTo: tagContainerView.leadingAnchor, constant: 8),
-            tagLabel.trailingAnchor.constraint(equalTo: tagContainerView.trailingAnchor, constant: -8),
-            tagLabel.bottomAnchor.constraint(equalTo: tagContainerView.bottomAnchor, constant: -2)
         ])
     }
     
