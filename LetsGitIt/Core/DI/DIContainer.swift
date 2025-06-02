@@ -78,7 +78,7 @@ final class DIContainer {
         let dashBoardNav = UINavigationController(rootViewController: dashBoardVC)
         let settingNav = UINavigationController(rootViewController: settingVC)
         
-        tabBarController.viewControllers = [homeNav, dashBoardNav, settingVC]
+        tabBarController.viewControllers = [homeNav, dashBoardNav, settingNav]
         
         return tabBarController
     }

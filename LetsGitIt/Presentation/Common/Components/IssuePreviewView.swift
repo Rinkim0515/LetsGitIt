@@ -1,5 +1,5 @@
 //
-//  MileStonePreview.swift
+//  IssuePreviewView.swift
 //  LetsGitIt
 //
 //  Created by KimRin on 6/2/25.
@@ -7,20 +7,21 @@
 
 import UIKit
 
-final class MilestonePreviewView: UIView {
+// MARK: - IssuePreviewView
+final class IssuePreviewView: UIView {
     
     // MARK: - UI Components
     private let collectionView: UICollectionView
     private let flowLayout = UICollectionViewFlowLayout()
     
     // MARK: - Properties
-    private var milestones: [MilestoneItem] = []
+    private var issues: [IssueItem] = []
     private let maxDisplayCount: Int
     
     // MARK: - Callbacks
-    var onMilestoneSelected: ((MilestoneItem) -> Void)?
+    var onIssueSelected: ((IssueItem) -> Void)?
     
-    // MARK: - Properties
+    // MARK: - Edge Insets
     struct EdgeInsets {
         let top: CGFloat
         let left: CGFloat
@@ -44,17 +45,26 @@ final class MilestonePreviewView: UIView {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        self.maxDisplayCount = 3
+        self.edgeInsets = .default
+        self.collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
+        super.init(coder: coder)
+        setupUI()
+        setupConstraints()
     }
     
-
-    
     // MARK: - Public Methods
-    func updateMilestones(_ milestones: [MilestoneItem]) {
-        // 최대 표시 개수만큼만 저장
-        self.milestones = Array(milestones.prefix(maxDisplayCount))
+    func updateIssues(_ issues: [IssueItem]) {
+        self.issues = Array(issues.prefix(maxDisplayCount))
         collectionView.reloadData()
         updateHeight()
+    }
+    
+    func updateEdgeInsets(_ newInsets: EdgeInsets) {
+        edgeInsets = newInsets
+        collectionView.removeFromSuperview()
+        addSubview(collectionView)
+        setupConstraints()
     }
     
     // MARK: - Private Methods
@@ -69,14 +79,13 @@ final class MilestonePreviewView: UIView {
         // CollectionView 설정
         collectionView.backgroundColor = .clear
         collectionView.showsVerticalScrollIndicator = false
-        collectionView.isScrollEnabled = false // 스크롤 비활성화 (미리보기용)
+        collectionView.isScrollEnabled = false
         collectionView.delegate = self
         collectionView.dataSource = self
         
         // Cell 등록
-        collectionView.register(MilestoneCardCell.self, forCellWithReuseIdentifier: MilestoneCardCell.identifier)
+        collectionView.register(IssueCardCell.self, forCellWithReuseIdentifier: IssueCardCell.identifier)
         
-        // 뷰 계층 구성
         addSubview(collectionView)
     }
     
@@ -91,26 +100,14 @@ final class MilestonePreviewView: UIView {
         ])
     }
     
-    // MARK: - Public Methods (오프셋 업데이트)
-    func updateEdgeInsets(_ newInsets: EdgeInsets) {
-        edgeInsets = newInsets
-        
-        // 기존 제약조건 제거 후 재설정
-        collectionView.removeFromSuperview()
-        addSubview(collectionView)
-        setupConstraints()
-    }
-    
     private func updateHeight() {
-        // 아이템 개수에 따라 높이 동적 조정
-        let itemCount = milestones.count
+        let itemCount = issues.count
         guard itemCount > 0 else { return }
         
-        let itemHeight: CGFloat = 120 // 카드 높이
+        let itemHeight: CGFloat = 110
         let spacing: CGFloat = 12
         let totalHeight = CGFloat(itemCount) * itemHeight + CGFloat(itemCount - 1) * spacing
         
-        // 높이 제약조건 업데이트
         constraints.forEach { constraint in
             if constraint.firstAttribute == .height {
                 constraint.isActive = false
@@ -122,24 +119,22 @@ final class MilestonePreviewView: UIView {
 }
 
 // MARK: - UICollectionViewDataSource
-extension MilestonePreviewView: UICollectionViewDataSource {
+extension IssuePreviewView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return milestones.count
+        return issues.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MilestoneCardCell.identifier, for: indexPath) as! MilestoneCardCell
-        
-        let milestone = milestones[indexPath.item]
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: IssueCardCell.identifier, for: indexPath) as! IssueCardCell
+        let issue = issues[indexPath.item]
         
         cell.configure(
-            title: milestone.title,
-            description: milestone.description,
-            tag: milestone.tag,
-            tagColor: milestone.tagColor,
-            dday: milestone.dday,
-            ddayType: milestone.ddayType,
-            progress: milestone.progress
+            title: issue.title,
+            number: issue.number,
+            status: issue.status,
+            author: issue.author,
+            createdDate: issue.createdDate,
+            labels: issue.labels
         )
         
         return cell
@@ -147,85 +142,60 @@ extension MilestonePreviewView: UICollectionViewDataSource {
 }
 
 // MARK: - UICollectionViewDelegate
-extension MilestonePreviewView: UICollectionViewDelegate {
+extension IssuePreviewView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let milestone = milestones[indexPath.item]
-        onMilestoneSelected?(milestone)
+        let issue = issues[indexPath.item]
+        onIssueSelected?(issue)
     }
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
-extension MilestonePreviewView: UICollectionViewDelegateFlowLayout {
+extension IssuePreviewView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.frame.width
-        let height: CGFloat = 120 // 카드 높이
+        let height: CGFloat = 110
         return CGSize(width: width, height: height)
     }
 }
 
-// MARK: - Data Model
-struct MilestoneItem {
-    let id: String
-    let title: String
-    let description: String
-    let tag: String
-    let tagColor: UIColor
-    let dday: String
-    let ddayType: DDayType
-    let progress: Double
-}
 
-// MARK: - Mock Data
-extension MilestoneItem {
+extension IssueItem {
     static let mockData = [
-        MilestoneItem(
+        IssueItem(
             id: "1",
-            title: "마일스톤 제목",
-            description: "마일스톤 내용마일스톤 내용마일스톤 내용마일스톤 내용마일스톤 내용",
-            tag: "Mobile App",
-            tagColor: .systemPink,
-            dday: "D+3",
-            ddayType: .overdue,
-            progress: 0.7
+            title: "앱 크래시 이슈 수정",
+            number: 42,
+            status: .open,
+            author: "developer1",
+            createdDate: "2일 전",
+            labels: [
+                IssueLabel(name: "bug", color: "d73a49"),
+                IssueLabel(name: "high priority", color: "b60205")
+            ]
         ),
-        MilestoneItem(
+        IssueItem(
             id: "2",
-            title: "마일스톤 제목",
-            description: "마일스톤 내용마일스톤 내용마일스톤 내용마일스톤 내용마일스톤 내용",
-            tag: "PC Web",
-            tagColor: .systemBlue,
-            dday: "D-3",
-            ddayType: .upcoming,
-            progress: 0.4
+            title: "UI 개선 작업",
+            number: 41,
+            status: .open,
+            author: "designer1",
+            createdDate: "3일 전",
+            labels: [
+                IssueLabel(name: "enhancement", color: "a2eeef"),
+                IssueLabel(name: "ui", color: "0052cc"),
+                IssueLabel(name: "design", color: "5319e7")
+            ]
         ),
-        MilestoneItem(
+        IssueItem(
             id: "3",
-            title: "추가 마일스톤",
-            description: "세 번째 마일스톤 설명입니다",
-            tag: "Backend",
-            tagColor: .systemGreen,
-            dday: "D-7",
-            ddayType: .upcoming,
-            progress: 0.2
+            title: "API 연동 완료",
+            number: 40,
+            status: .closed,
+            author: "backend-dev",
+            createdDate: "1주 전",
+            labels: [
+                IssueLabel(name: "feature", color: "0e8a16")
+            ]
         )
     ]
 }
-
-// MARK: - 사용 예시
-/*
- 사용법:
- 
- let milestonePreview = MilestonePreviewView(maxDisplayCount: 2)
- 
- // 데이터 업데이트
- milestonePreview.updateMilestones(MilestoneItem.mockData)
- 
- // 마일스톤 선택 이벤트
- milestonePreview.onMilestoneSelected = { milestone in
-     print("선택된 마일스톤: \(milestone.title)")
-     // 상세 화면으로 이동
- }
- 
- // StackView에 추가
- stackView.addArrangedSubview(milestonePreview)
- */
