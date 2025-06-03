@@ -67,7 +67,7 @@ final class DIContainer {
             image: UIImage(systemName: "folder"),
             selectedImage: UIImage(systemName: "folder.fill")
         )
-        let settingVC = UIViewController()
+        let settingVC = SettingViewController()
         settingVC.tabBarItem = UITabBarItem(
             title: "세팅",
             image: UIImage(systemName: "gearshape"),
