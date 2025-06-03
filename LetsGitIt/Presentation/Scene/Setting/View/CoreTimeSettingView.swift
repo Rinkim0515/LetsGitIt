@@ -47,7 +47,7 @@ final class CoreTimeSettingsView: UIView {
     
     // MARK: - Setup
     private func setupUI() {
-        backgroundColor = .backgroundPrimary
+        backgroundColor = .backgroundColor2
         
         // 스택뷰 설정
         stackView.axis = .vertical

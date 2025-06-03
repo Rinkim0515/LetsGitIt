@@ -58,7 +58,7 @@ final class SettingsTableViewCell: UITableViewCell {
     
     // MARK: - Private Methods
     private func setupUI() {
-        backgroundColor = .backgroundPrimary
+        backgroundColor = .backgroundColor2
         
         // 제목 라벨 설정
         titleLabel.font = .pretendard(.regular, size: 16)

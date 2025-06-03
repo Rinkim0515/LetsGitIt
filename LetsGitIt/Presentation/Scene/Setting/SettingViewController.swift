@@ -12,12 +12,9 @@ final class SettingViewController: UIViewController {
     // MARK: - UI Components
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
-    
+    private let titleLabel = UILabel()
     // 상단 코어타임 설정 섹션
     private let coreTimeSettingsView = CoreTimeSettingsView()
-    
-    // 구분선
-    private let separatorView = UIView()
     
     // 하단 테이블뷰 섹션
     private let tableView = UITableView(frame: .zero, style: .grouped)
@@ -28,7 +25,13 @@ final class SettingViewController: UIViewController {
     private let logoutButton = UIButton(type: .system)
     
     // MARK: - Properties
-    private let sections: [SettingsSection] = SettingsSection.allCases
+    private let settingsItems: [SettingsItem] = [
+        .repositoryDetail,
+        .repositoryChange,
+        .termsOfService,
+        .privacyPolicy,
+        .version
+    ]
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -37,24 +40,24 @@ final class SettingViewController: UIViewController {
         setupConstraints()
         setupTableView()
         setupActions()
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = true
     }
-    
     override func viewWillDisappear(_ animated: Bool) {
         navigationController?.navigationBar.isHidden = false
     }
+    
     // MARK: - Setup
     private func setupUI() {
-        view.backgroundColor = .backgroundColor2
-        title = "설정"
+        view.backgroundColor = .backgroundSecondary
+        titleLabel.textColor = .white
+        titleLabel.font = .pretendard(.semiBold, size: 20)
+        titleLabel.text = "설정"
         
-        // 네비게이션 바 설정
-        navigationController?.navigationBar.prefersLargeTitles = false
+        
         
         // 스크롤뷰 설정
         scrollView.showsVerticalScrollIndicator = false
@@ -65,9 +68,6 @@ final class SettingViewController: UIViewController {
         stackView.spacing = 0
         stackView.alignment = .fill
         stackView.distribution = .fill
-        
-        // 구분선 설정
-        separatorView.backgroundColor = .separator
         
         // 테이블뷰 설정
         tableView.backgroundColor = .clear
@@ -80,10 +80,10 @@ final class SettingViewController: UIViewController {
         
         // 뷰 계층 구성
         view.addSubview(scrollView)
+        view.addSubview(titleLabel)
         scrollView.addSubview(stackView)
         
         stackView.addArrangedSubview(coreTimeSettingsView)
-        stackView.addArrangedSubview(separatorView)
         stackView.addArrangedSubview(tableView)
         stackView.addArrangedSubview(footerView)
     }
@@ -108,13 +108,16 @@ final class SettingViewController: UIViewController {
     }
     
     private func setupConstraints() {
-        [scrollView, stackView, separatorView, withdrawButton, logoutButton].forEach {
+        // Auto Layout 비활성화
+        [scrollView, stackView, withdrawButton, logoutButton, titleLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
         NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,constant: 20),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             // 스크롤뷰
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor,constant: 10),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -127,10 +130,7 @@ final class SettingViewController: UIViewController {
             stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             
             // 구분선
-            separatorView.heightAnchor.constraint(equalToConstant: 8),
             
-            // 테이블뷰 높이 (동적으로 계산)
-            tableView.heightAnchor.constraint(equalToConstant: calculateTableViewHeight()),
             
             // Footer View 높이
             footerView.heightAnchor.constraint(equalToConstant: 120),
@@ -147,6 +147,11 @@ final class SettingViewController: UIViewController {
             logoutButton.widthAnchor.constraint(equalTo: footerView.widthAnchor, multiplier: 0.4, constant: -15),
             logoutButton.heightAnchor.constraint(equalToConstant: 50)
         ])
+        
+        // 테이블뷰 높이를 뷰가 로드된 후에 설정
+        DispatchQueue.main.async { [weak self] in
+            self?.updateTableViewHeight()
+        }
     }
     
     private func setupTableView() {
@@ -162,8 +167,20 @@ final class SettingViewController: UIViewController {
     
     // MARK: - Helper Methods
     private func calculateTableViewHeight() -> CGFloat {
-        let numberOfRows = sections.reduce(0) { $0 + $1.items.count }
+        // 단일 섹션이므로 총 아이템 개수만 계산
+        let numberOfRows = settingsItems.count
         return CGFloat(numberOfRows) * 56 // 각 셀 높이 56pt
+    }
+    
+    private func updateTableViewHeight() {
+        let height = calculateTableViewHeight()
+        tableView.constraints.forEach { constraint in
+            if constraint.firstAttribute == .height {
+                constraint.isActive = false
+            }
+        }
+        tableView.heightAnchor.constraint(equalToConstant: height).isActive = true
+        view.layoutIfNeeded()
     }
     
     // MARK: - Actions
@@ -191,17 +208,17 @@ final class SettingViewController: UIViewController {
 extension SettingViewController: UITableViewDataSource, UITableViewDelegate {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return sections.count
+        return 1 // 단일 섹션
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return sections[section].items.count
+        return settingsItems.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.identifier, for: indexPath) as! SettingsTableViewCell
         
-        let item = sections[indexPath.section].items[indexPath.row]
+        let item = settingsItems[indexPath.row]
         cell.configure(with: item)
         
         return cell
@@ -214,18 +231,8 @@ extension SettingViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let item = sections[indexPath.section].items[indexPath.row]
+        let item = settingsItems[indexPath.row]
         handleSettingsItemTap(item)
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return section == 0 ? 0 : 20 // 첫 번째 섹션은 헤더 없음
-    }
-    
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerView = UIView()
-        headerView.backgroundColor = .clear
-        return headerView
     }
 }
 

@@ -20,6 +20,7 @@ final class SettingsActionRow: UIView {
         setupUI()
         setupConstraints()
         setupGesture()
+        
     }
     
     required init?(coder: NSCoder) {
