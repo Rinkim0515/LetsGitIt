@@ -55,7 +55,7 @@ extension UIColor {
     // MARK: - Semantic Colors (의미적 컬러)
     /// 카드 배경색
     static var cardBackground: UIColor {
-        return subColor2
+        return contentSub2
     }
     
     /// 구분선 색상

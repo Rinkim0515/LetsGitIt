@@ -39,7 +39,7 @@ final class DIContainer {
     }()
     
     // MARK: - Presentation Layer Factory Methods
-    func makeProfileViewController() -> HomeViewController {
+    func makeHomeVC() -> HomeViewController {
         return HomeViewController(getCurrentUserUseCase: getCurrentUserUseCase)
     }
     
@@ -53,7 +53,7 @@ final class DIContainer {
         let tabBarController = MainTabBarController()
         
         // 프로필 탭
-        let homeVC = makeProfileViewController()
+        let homeVC = makeHomeVC()
         homeVC.tabBarItem = UITabBarItem(
             title: "홈",
             image: UIImage(systemName: "house"),

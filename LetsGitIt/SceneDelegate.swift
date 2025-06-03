@@ -62,10 +62,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         MainTabBarController()
     }
     
-    @objc private func logoutTapped() {
-        GitHubAuthManager.shared.logout()
-        window?.rootViewController = LoginViewController()
-    }
 
     
     func sceneDidDisconnect(_ scene: UIScene) {
