@@ -133,7 +133,7 @@ final class IssueDetailViewController: UIViewController {
     }
     
     private func setupNavigationBar() {
-        title = "#45"
+        title = "#\(issue.number)" // 이슈 번호 표시
         navigationController?.navigationBar.prefersLargeTitles = false
         
         // 뒤로가기 버튼
@@ -144,13 +144,61 @@ final class IssueDetailViewController: UIViewController {
             action: #selector(backButtonTapped)
         )
         
-        // 공유 버튼
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "square.and.arrow.up"),
-            style: .plain,
-            target: self,
-            action: #selector(shareButtonTapped)
-        )
+        // Open/Close 상태 버튼 (우측)
+        setupStatusButton()
+    }
+    
+    private func setupStatusButton() {
+        // Mock 데이터로 현재는 Open 상태로 설정
+        let isOpen = true // 실제로는 issue.isOpen 등으로 가져올 예정
+        
+        let statusButton = UIButton(type: .system)
+        statusButton.titleLabel?.font = .pretendard(.semiBold, size: 16)
+        statusButton.layer.cornerRadius = 16
+        
+        // 패딩을 더 크게 설정
+        statusButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
+        
+        // Closed 텍스트를 고려해서 최소 너비를 더 크게 설정
+        statusButton.translatesAutoresizingMaskIntoConstraints = false
+        statusButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 100).isActive = true // 80 → 100
+        statusButton.heightAnchor.constraint(equalToConstant: 36).isActive = true
+        
+        // 텍스트가 잘리지 않도록 설정
+        statusButton.titleLabel?.adjustsFontSizeToFitWidth = true
+        statusButton.titleLabel?.minimumScaleFactor = 0.8
+        
+        if isOpen {
+            statusButton.setTitle("Open", for: .normal)
+            statusButton.backgroundColor = .systemGreen
+            statusButton.setTitleColor(.white, for: .normal)
+        } else {
+            statusButton.setTitle("Closed", for: .normal)
+            statusButton.backgroundColor = .systemRed
+            statusButton.setTitleColor(.white, for: .normal)
+        }
+        
+        // 상태 변경 액션 (나중에 구현)
+        statusButton.addTarget(self, action: #selector(statusButtonTapped), for: .touchUpInside)
+        
+        // NavigationBar에 추가
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: statusButton)
+    }
+    
+    @objc private func statusButtonTapped() {
+        // TODO: 이슈 상태 변경 기능
+        print("🔄 이슈 상태 변경")
+        
+        // 임시 상태 토글 (실제로는 API 호출)
+        if let button = navigationItem.rightBarButtonItem?.customView as? UIButton {
+            if button.titleLabel?.text == "Open" {
+                button.setTitle("Closed", for: .normal)
+                button.backgroundColor = .systemRed
+            } else {
+                button.setTitle("Open", for: .normal)
+                button.backgroundColor = .systemGreen
+            }
+        }
     }
     
     private func setupCollectionViews() {

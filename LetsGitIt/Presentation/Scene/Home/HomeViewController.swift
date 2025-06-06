@@ -205,6 +205,8 @@ final class HomeViewController: UIViewController {
     // MARK: - Navigation
     private func navigateToMilestoneList() {
         print("📍 마일스톤 전체 목록으로 이동")
+        let milestoneVC = MilestoneViewController(repositoryName: "LetsGitIt")
+        navigationController?.pushViewController(milestoneVC, animated: true)
     }
     
     private func navigateToIssueList() {

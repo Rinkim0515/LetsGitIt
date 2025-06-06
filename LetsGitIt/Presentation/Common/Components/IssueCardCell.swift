@@ -128,6 +128,7 @@ struct IssueItem {
     let title: String
     let number: Int
     let author: String
+    let isOpen: Bool = true
 }
 
 
