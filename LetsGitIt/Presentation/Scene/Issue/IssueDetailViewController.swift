@@ -24,9 +24,10 @@ final class IssueDetailViewController: UIViewController {
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
     
-    // 1번째 섹션: 이슈 본문 (고정된 단일 뷰)
-    private let issueContentView = UIView()
-    private let issueContentCell = ContentCell()
+    private let issueSectionHeader = SectionHeaderView()
+    // 1번째 섹션: 이슈 본문용 CollectionView (셀 1개)
+    private let issueContentCollectionView: UICollectionView
+    private let issueContentFlowLayout = UICollectionViewFlowLayout()
     
     // 2번째 섹션: 이슈 세부정보
     private let issueDetailSection = IssueDetailSection()
@@ -37,16 +38,17 @@ final class IssueDetailViewController: UIViewController {
     // 3번째 섹션: 코멘트들
     private let commentSectionHeader = SectionHeaderView()
     private let commentCollectionView: UICollectionView
-    private let flowLayout = UICollectionViewFlowLayout()
+    private let commentFlowLayout = UICollectionViewFlowLayout()
     
     // MARK: - Data
+    private var issueContent: CommentData?
     private var comments: [CommentItem] = []
     
     // MARK: - Initialization
     init(issue: IssueItem) {
         self.issue = issue
-        self.commentCollectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-        self.issueContentCell.configure(with: )
+        self.issueContentCollectionView = UICollectionView(frame: .zero, collectionViewLayout: issueContentFlowLayout)
+        self.commentCollectionView = UICollectionView(frame: .zero, collectionViewLayout: commentFlowLayout)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -60,7 +62,7 @@ final class IssueDetailViewController: UIViewController {
         setupUI()
         setupConstraints()
         setupNavigationBar()
-        setupCommentCollectionView()
+        setupCollectionViews()
         loadData()
     }
     
@@ -80,42 +82,24 @@ final class IssueDetailViewController: UIViewController {
         
         // 구분선 설정
         separatorView.backgroundColor = UIColor(named: "Separator") ?? .separator
-        
+        issueSectionHeader.configure(title: "이슈상세", showMoreButton: false)
         // 코멘트 섹션 헤더 설정
         commentSectionHeader.configure(title: "코멘트", showMoreButton: false)
-        
-        // 1번째 섹션: 이슈 본문 뷰 설정
-        setupIssueContentView()
         
         // 뷰 계층 구성
         view.addSubview(scrollView)
         scrollView.addSubview(stackView)
         
-        // 스택뷰에 컴포넌트 추가 (올바른 순서)
-        stackView.addArrangedSubview(createSpacerView(height: 16))
-        stackView.addArrangedSubview(issueContentView)      // 1번째 섹션: 이슈 본문
-        stackView.addArrangedSubview(issueDetailSection)    // 2번째 섹션: 세부정보
-        stackView.addArrangedSubview(separatorView)
-        stackView.addArrangedSubview(commentSectionHeader)  // 3번째 섹션 헤더
+        // 스택뷰에 컴포넌트 추가
         stackView.addArrangedSubview(createSpacerView(height: 8))
-        stackView.addArrangedSubview(commentCollectionView) // 3번째 섹션: 코멘트들
+        stackView.addArrangedSubview(issueSectionHeader)
+        stackView.addArrangedSubview(issueContentCollectionView) // 1번째 섹션: 이슈 본문 (1개 셀)
+        stackView.addArrangedSubview(issueDetailSection)         // 2번째 섹션: 세부정보
+        
+        stackView.addArrangedSubview(commentSectionHeader)       // 3번째 섹션 헤더
+        
+        stackView.addArrangedSubview(commentCollectionView)      // 3번째 섹션: 코멘트들
         stackView.addArrangedSubview(createSpacerView(height: 32))
-    }
-    
-    private func setupIssueContentView() {
-        // 이슈 본문을 담을 컨테이너 뷰
-        issueContentView.backgroundColor = .clear
-        
-        // ContentCell을 뷰로 사용 (CollectionView 없이)
-        issueContentView.addSubview(issueContentCell)
-        issueContentCell.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            issueContentCell.topAnchor.constraint(equalTo: issueContentView.topAnchor),
-            issueContentCell.leadingAnchor.constraint(equalTo: issueContentView.leadingAnchor),
-            issueContentCell.trailingAnchor.constraint(equalTo: issueContentView.trailingAnchor),
-            issueContentCell.bottomAnchor.constraint(equalTo: issueContentView.bottomAnchor)
-        ])
     }
     
     private func setupConstraints() {
@@ -140,13 +124,16 @@ final class IssueDetailViewController: UIViewController {
             // 구분선
             separatorView.heightAnchor.constraint(equalToConstant: 8),
             
+            // 이슈 본문 CollectionView 높이 (1개 셀 고정)
+            issueContentCollectionView.heightAnchor.constraint(equalToConstant: 200),
+            
             // 코멘트 CollectionView 높이 (동적 계산)
             commentCollectionView.heightAnchor.constraint(equalToConstant: calculateCommentsHeight())
         ])
     }
     
     private func setupNavigationBar() {
-        title = "이슈 상세"
+        title = "#45"
         navigationController?.navigationBar.prefersLargeTitles = false
         
         // 뒤로가기 버튼
@@ -157,7 +144,7 @@ final class IssueDetailViewController: UIViewController {
             action: #selector(backButtonTapped)
         )
         
-        // 공유 버튼 (선택사항)
+        // 공유 버튼
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "square.and.arrow.up"),
             style: .plain,
@@ -166,28 +153,40 @@ final class IssueDetailViewController: UIViewController {
         )
     }
     
-    private func setupCommentCollectionView() {
-        // FlowLayout 설정
-        flowLayout.scrollDirection = .vertical
-        flowLayout.minimumLineSpacing = 12
-        flowLayout.minimumInteritemSpacing = 0
-        flowLayout.estimatedItemSize = CGSize(width: view.frame.width, height: 100)
+    private func setupCollectionViews() {
+        // 1번째 섹션: 이슈 본문 CollectionView 설정
+        issueContentFlowLayout.scrollDirection = .vertical
+        issueContentFlowLayout.minimumLineSpacing = 0
+        issueContentFlowLayout.minimumInteritemSpacing = 0
         
-        // CollectionView 설정
+        issueContentCollectionView.backgroundColor = .clear
+        issueContentCollectionView.showsVerticalScrollIndicator = false
+        issueContentCollectionView.isScrollEnabled = false
+        issueContentCollectionView.delegate = self
+        issueContentCollectionView.dataSource = self
+        issueContentCollectionView.tag = 1 // 구분용 태그
+        
+        // 3번째 섹션: 코멘트 CollectionView 설정
+        commentFlowLayout.scrollDirection = .vertical
+        commentFlowLayout.minimumLineSpacing = 12
+        commentFlowLayout.minimumInteritemSpacing = 0
+        
         commentCollectionView.backgroundColor = .clear
         commentCollectionView.showsVerticalScrollIndicator = false
-        commentCollectionView.isScrollEnabled = false // 메인 스크롤뷰 안에 있으므로
+        commentCollectionView.isScrollEnabled = false
         commentCollectionView.delegate = self
         commentCollectionView.dataSource = self
+        commentCollectionView.tag = 2 // 구분용 태그
         
-        // 셀 등록 (CommentCell 사용 - 기존 이름 유지)
+        // 셀 등록 (두 CollectionView 모두 CommentCell 사용)
+        issueContentCollectionView.register(ContentCell.self, forCellWithReuseIdentifier: ContentCell.identifier)
         commentCollectionView.register(ContentCell.self, forCellWithReuseIdentifier: ContentCell.identifier)
     }
     
     // MARK: - Data Loading
     private func loadData() {
-        // 1번째 섹션: 이슈 본문 설정
-        issueContentCell.configure(
+        // 1번째 섹션: 이슈 본문 데이터 준비
+        issueContent = CommentData(
             author: issue.author,
             createdAt: Date(), // Mock 데이터
             content: "**버그 발생!** 앱이 _정말_ 이상하게 동작합니다.\n\n재현 방법:\n1. 로그인\n2. **설정** 페이지 이동\n3. `다크모드` 버튼 클릭\n\n급하게 수정 부탁드립니다! 🙏"
@@ -205,7 +204,11 @@ final class IssueDetailViewController: UIViewController {
         
         // 3번째 섹션: 코멘트들 로드
         comments = CommentItem.mockComments
+        
+        // CollectionView 리로드
+        issueContentCollectionView.reloadData()
         commentCollectionView.reloadData()
+        
         updateCommentsHeight()
     }
     
@@ -219,24 +222,22 @@ final class IssueDetailViewController: UIViewController {
     
     private func calculateCommentsHeight() -> CGFloat {
         let commentCount = comments.count
-        let estimatedCommentHeight: CGFloat = 150 // 예상 코멘트 높이
+        let estimatedCommentHeight: CGFloat = 150
         let spacing: CGFloat = 12
         
         return CGFloat(commentCount) * estimatedCommentHeight + CGFloat(max(0, commentCount - 1)) * spacing
     }
     
     private func updateCommentsHeight() {
-        // 실제 셀 높이 계산 후 업데이트
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             
             self.commentCollectionView.layoutIfNeeded()
             let contentHeight = self.commentCollectionView.collectionViewLayout.collectionViewContentSize.height
             
-            // 높이 제약조건 업데이트
             self.commentCollectionView.constraints.forEach { constraint in
                 if constraint.firstAttribute == .height {
-                    constraint.constant = max(contentHeight, 100) // 최소 높이 보장
+                    constraint.constant = max(contentHeight, 100)
                 }
             }
             
@@ -250,7 +251,6 @@ final class IssueDetailViewController: UIViewController {
     }
     
     @objc private func shareButtonTapped() {
-        // TODO: 이슈 공유 기능
         print("🔗 이슈 공유하기")
     }
 }
@@ -258,15 +258,28 @@ final class IssueDetailViewController: UIViewController {
 // MARK: - UICollectionViewDataSource
 extension IssueDetailViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return comments.count // 실제 코멘트들만
+        if collectionView.tag == 1 { // 이슈 본문 CollectionView
+            return issueContent != nil ? 1 : 0
+        } else { // 코멘트 CollectionView
+            return comments.count
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ContentCell.identifier, for: indexPath) as! ContentCell
-        let comment = comments[indexPath.item]
         
-        // 기존 CommentCell의 메서드 사용
-        cell.configure(with: comment)
+        if collectionView.tag == 1 { // 이슈 본문 CollectionView
+            if let issueContent = issueContent {
+                cell.configure(
+                    author: issueContent.author,
+                    createdAt: issueContent.createdAt,
+                    content: issueContent.content
+                )
+            }
+        } else { // 코멘트 CollectionView
+            let comment = comments[indexPath.item]
+            cell.configure(with: comment)
+        }
         
         return cell
     }
@@ -276,6 +289,18 @@ extension IssueDetailViewController: UICollectionViewDataSource {
 extension IssueDetailViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.frame.width
-        return CGSize(width: width, height: 200) // 임시 고정 높이
+        
+        if collectionView.tag == 1 { // 이슈 본문 CollectionView
+            return CGSize(width: width, height: 200) // 이슈 본문 고정 높이
+        } else { // 코멘트 CollectionView
+            return CGSize(width: width, height: 200) // 코멘트 고정 높이
+        }
     }
+}
+
+// MARK: - CommentData Model
+struct CommentData {
+    let author: String
+    let createdAt: Date
+    let content: String
 }
