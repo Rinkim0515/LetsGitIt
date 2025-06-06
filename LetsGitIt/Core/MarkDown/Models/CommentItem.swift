@@ -16,9 +16,11 @@ struct CommentItem {
     let originalContent: String // 원본 Markdown
     
     // 파싱된 콘텐츠 (lazy 계산 - 필요할 때만 파싱)
-    lazy var parsedContent: ParsedContent = {
-        return MarkdownParser.parse(originalContent)
-    }()
+    var parsedContent: ParsedContent {
+        get {
+            return MarkdownParser.parse(originalContent)
+        }
+    }
 }
 
 // MARK: - Mock Data

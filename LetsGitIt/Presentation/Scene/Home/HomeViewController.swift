@@ -50,7 +50,7 @@ final class HomeViewController: UIViewController {
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
-        testDown()
+        
         super.viewDidLoad()
         setupUI()
         setupConstraints()
@@ -217,6 +217,9 @@ final class HomeViewController: UIViewController {
     
     private func navigateToIssueDetail(_ issue: IssueItem) {
         print("📍 이슈 상세로 이동: #\(issue.number) \(issue.title)")
+            
+            let issueDetailVC = IssueDetailViewController(issue: issue)
+            navigationController?.pushViewController(issueDetailVC, animated: true)
     }
     
     // MARK: - Helper Methods
