@@ -8,9 +8,9 @@
 
 import UIKit
 
-final class CommentCell: UICollectionViewCell {
+final class ContentCell: UICollectionViewCell {
     
-    static let identifier = "CommentCell"
+    static let identifier = "ContentCell"
     
     // MARK: - UI Components
     private let containerView = UIView()
@@ -65,20 +65,30 @@ final class CommentCell: UICollectionViewCell {
         imageContainerView.isHidden = false
     }
     
-    // MARK: - Configuration
-    func configure(with comment: CommentItem) {
+    // MARK: - Configuration (범용화된 메서드)
+    func configure(
+        author: String,
+        createdAt: Date,
+        content: String,
+        avatarURL: String? = nil
+    ) {
         // 기본 정보 설정
-        authorLabel.text = comment.author
+        authorLabel.text = author
         
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy. MM. dd"
-        dateLabel.text = formatter.string(from: comment.createdAt)
+        dateLabel.text = formatter.string(from: createdAt)
         
-        // 아바타 설정 (임시)
-        avatarImageView.backgroundColor = .systemBlue
+        // 아바타 설정 (임시 - 나중에 이미지 로딩 라이브러리 사용)
+        if let _ = avatarURL {
+            // TODO: 실제 이미지 로딩
+            avatarImageView.backgroundColor = .systemBlue
+        } else {
+            avatarImageView.backgroundColor = .systemGray
+        }
         
-        // 파싱된 콘텐츠 적용
-        let parsed = comment.parsedContent
+        // 마크다운 파싱
+        let parsed = MarkdownParser.parse(content)
         
         // 텍스트 영역 설정
         if parsed.hasText, let attributedText = parsed.attributedText {
@@ -97,7 +107,17 @@ final class CommentCell: UICollectionViewCell {
             imageContainerView.isHidden = true
         }
         
-        print("💬 \(comment.author): 텍스트=\(parsed.hasText), 이미지=\(parsed.images.count)개")
+        print("💬 \(author): 텍스트=\(parsed.hasText), 이미지=\(parsed.images.count)개")
+    }
+    
+    // MARK: - Legacy Method (기존 호환성)
+    func configure(with comment: CommentItem) {
+        configure(
+            author: comment.author,
+            createdAt: comment.createdAt,
+            content: comment.originalContent,
+            avatarURL: comment.avatarURL
+        )
     }
     
     // MARK: - Setup UI
@@ -217,7 +237,7 @@ final class CommentCell: UICollectionViewCell {
 }
 
 // MARK: - UICollectionViewDataSource
-extension CommentCell: UICollectionViewDataSource {
+extension ContentCell: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return images.count
     }
@@ -231,7 +251,7 @@ extension CommentCell: UICollectionViewDataSource {
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
-extension CommentCell: UICollectionViewDelegateFlowLayout {
+extension ContentCell: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         // 이미지 셀 크기 (정사각형)
         let height = collectionView.frame.height

@@ -17,7 +17,7 @@
 			<string>com.yourname.letsgitit.oauth</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>letsGitIt</string>
+				<string>letsgitit</string>
 			</array>
 		</dict>
 		<dict>
