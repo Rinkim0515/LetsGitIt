@@ -206,6 +206,7 @@ final class HomeViewController: UIViewController {
     private func navigateToMilestoneList() {
         print("📍 마일스톤 전체 목록으로 이동")
         let milestoneVC = MilestoneViewController(repositoryName: "LetsGitIt")
+        milestoneVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(milestoneVC, animated: true)
     }
     
@@ -221,6 +222,7 @@ final class HomeViewController: UIViewController {
         print("📍 이슈 상세로 이동: #\(issue.number) \(issue.title)")
             
             let issueDetailVC = IssueDetailViewController(issue: issue)
+        issueDetailVC.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(issueDetailVC, animated: true)
     }
     
