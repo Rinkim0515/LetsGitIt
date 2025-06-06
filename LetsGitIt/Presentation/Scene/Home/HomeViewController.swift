@@ -10,6 +10,7 @@
 
 import UIKit
 
+
 final class HomeViewController: UIViewController {
     
     // MARK: - Dependencies (Clean Architecture)
@@ -49,6 +50,7 @@ final class HomeViewController: UIViewController {
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
+        testDown()
         super.viewDidLoad()
         setupUI()
         setupConstraints()
@@ -66,7 +68,7 @@ final class HomeViewController: UIViewController {
         super.viewWillDisappear(animated)
         navigationController?.navigationBar.isHidden = false
     }
-    
+
     // MARK: - Setup
     private func setupUI() {
         view.backgroundColor = .backgroundSecondary
