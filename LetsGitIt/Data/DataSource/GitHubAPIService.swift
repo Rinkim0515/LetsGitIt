@@ -13,8 +13,10 @@ final class GitHubAPIService {
     
     private var headers: [String: String] {
         guard let token = UserDefaults.standard.string(forKey: "github_access_token") else {
+            print("❌ Access Token이 없습니다")
             return [:]
         }
+        print("✅ Access Token 존재: \(token.prefix(10))...")
         return ["Authorization": "Bearer \(token)"]
     }
     
@@ -52,12 +54,40 @@ final class GitHubAPIService {
     
     // MARK: - Repository API
     func getUserRepositories() async throws -> [GitHubRepositoryDTO] {
+        print("🔧 getUserRepositories 호출됨")
+        
         guard let request = createRequest(for: "/user/repos") else {
+            print("❌ 잘못된 URL")
             throw GitHubAPIError.invalidURL
         }
         
-        let (data, _) = try await session.data(for: request)
-        return try JSONDecoder().decode([GitHubRepositoryDTO].self, from: data)
+        // 헤더 확인
+        print("📋 요청 헤더: \(request.allHTTPHeaderFields ?? [:])")
+        print("📍 요청 URL: \(request.url?.absoluteString ?? "없음")")
+        
+        do {
+            let (data, response) = try await session.data(for: request)
+            
+            // HTTP 응답 상태 확인
+            if let httpResponse = response as? HTTPURLResponse {
+                print("📈 HTTP 상태 코드: \(httpResponse.statusCode)")
+                
+                if httpResponse.statusCode != 200 {
+                    print("❌ HTTP 오류 응답: \(httpResponse.statusCode)")
+                    if let responseString = String(data: data, encoding: .utf8) {
+                        print("응답 내용: \(responseString)")
+                    }
+                }
+            }
+            
+            let repositories = try JSONDecoder().decode([GitHubRepositoryDTO].self, from: data)
+            print("✅ 리포지토리 \(repositories.count)개 로드됨")
+            return repositories
+            
+        } catch {
+            print("❌ API 호출 오류: \(error)")
+            throw GitHubAPIError.networkError(error)
+        }
     }
     
     func getRepository(owner: String, name: String) async throws -> GitHubRepositoryDTO {

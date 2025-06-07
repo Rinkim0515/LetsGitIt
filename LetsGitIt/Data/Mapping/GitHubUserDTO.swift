@@ -13,11 +13,11 @@ extension GitHubUserDTO {
             id: id,
             login: login,
             name: name,
-            avatarURL: avatarUrl,  // API의 snake_case → Domain의 camelCase
+            avatarURL: avatarUrl,
             bio: bio,
-            publicRepos: publicRepos,
-            followers: followers,
-            following: following
+            publicRepos: publicRepos ?? 0,    // ✅ 기본값 0
+            followers: followers ?? 0,        // ✅ 기본값 0
+            following: following ?? 0         // ✅ 기본값 0
         )
     }
 }

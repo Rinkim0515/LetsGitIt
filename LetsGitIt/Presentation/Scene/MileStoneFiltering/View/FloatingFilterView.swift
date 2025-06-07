@@ -22,7 +22,7 @@ final class FloatingFilterView: UIView {
     private var currentFilter: IssueFilter = .all
     var onFilterChanged: ((IssueFilter) -> Void)?
     
-    private let segmentWidth: CGFloat = 40
+    private let segmentWidth: CGFloat = 60
     
     // MARK: - Initializers
     override init(frame: CGRect) {
@@ -75,7 +75,7 @@ final class FloatingFilterView: UIView {
         
         for (index, label) in labels.enumerated() {
             label.text = titles[index]
-            label.font = .pretendard(.semiBold, size: 12)
+            label.font = .pretendard(.semiBold, size: 14)  // ✅ 12 → 14로 증가
             label.textAlignment = .center
             label.isUserInteractionEnabled = true
         }
@@ -101,10 +101,10 @@ final class FloatingFilterView: UIView {
             backgroundView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             backgroundView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
             
-            // 움직이는 인디케이터
+            // ✅ 움직이는 인디케이터 (크기 증가)
             movingIndicator.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 4),
             movingIndicator.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -4),
-            movingIndicator.widthAnchor.constraint(equalToConstant: 32),
+            movingIndicator.widthAnchor.constraint(equalToConstant: 52),  // 32 → 52
             
             // All 라벨
             allLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),

@@ -13,14 +13,15 @@ struct GitHubUserDTO: Codable {
     let name: String?
     let avatarUrl: String
     let bio: String?
-    let publicRepos: Int
-    let followers: Int
-    let following: Int
+    let publicRepos: Int?      // ✅ Optional로 변경
+    let followers: Int?        // ✅ Optional로 변경
+    let following: Int?        // ✅ Optional로 변경
     
     enum CodingKeys: String, CodingKey {
-        case id, login, name, bio, followers, following
+        case id, login, name, bio
         case avatarUrl = "avatar_url"
         case publicRepos = "public_repos"
+        case followers, following
     }
 }
 

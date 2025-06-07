@@ -107,11 +107,11 @@ final class MilestoneViewController: UIViewController {
             issueListCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             issueListCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            // 하단: 플로팅 버튼
-            floatingFilterView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            // ✅ 하단: 플로팅 버튼 (중앙 + 크게)
+            floatingFilterView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             floatingFilterView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-            floatingFilterView.widthAnchor.constraint(equalToConstant: 120),
-            floatingFilterView.heightAnchor.constraint(equalToConstant: 40)
+            floatingFilterView.widthAnchor.constraint(equalToConstant: 180),  // 120 → 180
+            floatingFilterView.heightAnchor.constraint(equalToConstant: 50)   // 40 → 50
         ])
     }
     
