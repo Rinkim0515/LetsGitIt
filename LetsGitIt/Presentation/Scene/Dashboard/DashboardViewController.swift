@@ -14,16 +14,12 @@ final class DashboardViewController: UIViewController {
     private let stackView = UIStackView()
     
     // 1번째 섹션: 주간 요약
-    private let weeklySummaryView = WeeklySummaryView()
-    
-    // 2번째 섹션: 현재 설정/기록
+    private let weeklySummaryHeader = SectionHeaderView()
+    private let weeklyCalendarView = WeeklyCalendarView()
     private let currentStatsView = CurrentStatsView()
+    private let weeklyGraphView = MockGraphView() // 기존 MockGraphView 재사용
     
-    // 3번째 섹션: 그래프 (Mock)
-    private let graphSectionHeader = SectionHeaderView()
-    private let graphView = MockGraphView()
-    
-    // 4번째 섹션: 누적 기록
+    // 2번째 섹션: 누적 기록
     private let recordSectionHeader = SectionHeaderView()
     private let recordStatsView = RecordStatsView()
     
@@ -32,28 +28,25 @@ final class DashboardViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
-        setupNavigationBar()
         loadData()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        DispatchQueue.main.async {
+            self.weeklyGraphView.redraw()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = true
     }
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        // 그래프 강제 다시 그리기
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.graphView.redrawGraph() // ← MockGraphView의 public 메서드 호출
-        }
-    }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.navigationBar.isHidden = false
     }
-
     
     // MARK: - Setup
     private func setupUI() {
@@ -65,13 +58,12 @@ final class DashboardViewController: UIViewController {
         
         // 스택뷰 설정
         stackView.axis = .vertical
-        stackView.spacing = 20
+        stackView.spacing = 16
         stackView.alignment = .fill
         stackView.distribution = .fill
         
         // 섹션 헤더 설정
-        graphSectionHeader.configure(title: "그래프", showMoreButton: false)
-        recordSectionHeader.configure(title: "누적 기록", showMoreButton: false)
+        setupSectionHeaders()
         
         // 뷰 계층 구성
         view.addSubview(scrollView)
@@ -79,13 +71,33 @@ final class DashboardViewController: UIViewController {
         
         // 스택뷰에 컴포넌트 추가
         stackView.addArrangedSubview(createSpacerView(height: 20))
-        stackView.addArrangedSubview(weeklySummaryView)     // 1번째: 주간 요약
-        stackView.addArrangedSubview(currentStatsView)     // 2번째: 현재 설정/기록
-        stackView.addArrangedSubview(graphSectionHeader)   // 3번째: 그래프 헤더
-        stackView.addArrangedSubview(graphView)            // 3번째: 그래프
-        stackView.addArrangedSubview(recordSectionHeader)  // 4번째: 누적 기록 헤더
-        stackView.addArrangedSubview(recordStatsView)      // 4번째: 누적 기록
+        
+        // 주간 요약 섹션
+        stackView.addArrangedSubview(weeklySummaryHeader)    // 헤더
+        stackView.addArrangedSubview(weeklyCalendarView)     // 달력 (배경 없음)
+        stackView.addArrangedSubview(currentStatsView)       // 현재 설정/기록 (배경 있음)
+        stackView.addArrangedSubview(weeklyGraphView)        // 그래프 (배경 있음)
+        
+        // 누적 기록 섹션
+        stackView.addArrangedSubview(recordSectionHeader)    // 헤더
+        stackView.addArrangedSubview(recordStatsView)        // 누적 기록 (배경 있음)
+        
         stackView.addArrangedSubview(createSpacerView(height: 32))
+    }
+    
+    private func setupSectionHeaders() {
+        // 현재 날짜 포맷팅
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy.MM.dd E"
+        formatter.locale = Locale(identifier: "ko_KR")
+        let currentDateString = formatter.string(from: Date())
+        
+        // 주간 요약 헤더
+        weeklySummaryHeader.configure(title: "주간 요약", showMoreButton: false)
+        // 우측에 현재 날짜 표시를 위해 커스텀 설정이 필요하다면 별도 구현
+        
+        // 누적 기록 헤더
+        recordSectionHeader.configure(title: "누적 기록", showMoreButton: false)
     }
     
     private func setupConstraints() {
@@ -109,15 +121,14 @@ final class DashboardViewController: UIViewController {
         ])
     }
     
-    private func setupNavigationBar() {
-        // 네비게이션 바 숨김 (TabBar의 대시보드이므로)
-    }
-    
     // MARK: - Data Loading
     private func loadData() {
-        // Mock 데이터 로드
-        weeklySummaryView.configure(with: WeeklyData.mockData)
-        currentStatsView.configure(with: CurrentStatsData.mockData)
+        let weeklyData = WeeklyData.mockData
+        
+        // 각 뷰에 데이터 전달
+        weeklyCalendarView.configure(with: weeklyData)
+        currentStatsView.configure(with: weeklyData)
+        weeklyGraphView.configure(with: weeklyData) // ✅ 추가
         recordStatsView.configure(with: RecordStatsData.mockData)
     }
     
@@ -130,30 +141,9 @@ final class DashboardViewController: UIViewController {
     }
 }
 
-// MARK: - Mock Data Models
-struct WeeklyData {
-    let weekRange: String
-    let dailyStatus: [Bool] // 7개 (일~토)
-    
-    static let mockData = WeeklyData(
-        weekRange: "2025.06.01 ~ 2025.06.08",
-        dailyStatus: [true, false, true, false, true, true, false]
-    )
-}
 
-struct CurrentStatsData {
-    let stats: [String]
-    
-    static let mockData = CurrentStatsData(
-        stats: [
-            "금주 요약: 5/7 (71.4%)",
-            "현재 Streak: 3일",
-            "주간 코어 타임: 23시간 40분",
-            "코어 타임 설정: 10:00 ~ 18:00"
-        ]
-    )
-}
 
+// MARK: - 기존 Mock 데이터 업데이트
 struct RecordStatsData {
     let records: [String]
     

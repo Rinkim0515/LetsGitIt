@@ -27,7 +27,7 @@ final class CurrentStatsView: UIView {
     }
     
     // MARK: - Public Methods
-    func configure(with data: CurrentStatsData) {
+    func configure(with data: WeeklyData) {
         // 기존 뷰들 제거
         stackView.arrangedSubviews.forEach { view in
             stackView.removeArrangedSubview(view)
@@ -35,12 +35,19 @@ final class CurrentStatsView: UIView {
         }
         
         // 새로운 스탯 뷰들 추가
-        for (index, stat) in data.stats.enumerated() {
-            let statView = createStatView(text: stat)
+        let statsData = [
+            ("금주 이슈", data.summary),
+            ("최대 연속", "\(data.currentStreak) Streak"),
+            ("주간 코어 타임", data.weeklyTotalHours),
+            ("코어 타임", data.coreTimeSettings)
+        ]
+        
+        for (index, (title, value)) in statsData.enumerated() {
+            let statView = createStatView(title: title, value: value)
             stackView.addArrangedSubview(statView)
             
             // 마지막 항목이 아니면 구분선 추가
-            if index < data.stats.count - 1 {
+            if index < statsData.count - 1 {
                 let separator = createSeparator()
                 stackView.addArrangedSubview(separator)
             }
@@ -51,7 +58,7 @@ final class CurrentStatsView: UIView {
     private func setupUI() {
         backgroundColor = .clear
         
-        // 컨테이너 설정
+        // 컨테이너 설정 (배경 있음)
         containerView.backgroundColor = UIColor(named: "BackgroundColor1") ?? .secondarySystemBackground
         containerView.layer.cornerRadius = 12
         
@@ -86,28 +93,44 @@ final class CurrentStatsView: UIView {
         ])
     }
     
-    private func createStatView(text: String) -> UIView {
+    private func createStatView(title: String, value: String) -> UIView {
         let statView = UIView()
-        let label = UILabel()
+        let titleLabel = UILabel()
+        let valueLabel = UILabel()
         
-        // 라벨 설정
-        label.text = text
-        label.font = .pretendard(.regular, size: 16)
-        label.textColor = UIColor(named: "PrimaryText") ?? .label
-        label.numberOfLines = 1
+        // 제목 라벨 설정
+        titleLabel.text = title
+        titleLabel.font = .pretendard(.regular, size: 16)
+        titleLabel.textColor = UIColor(named: "PrimaryText") ?? .label
+        titleLabel.setContentHuggingPriority(.required, for: .horizontal)
+        
+        // 값 라벨 설정
+        valueLabel.text = value
+        valueLabel.font = .pretendard(.semiBold, size: 16)
+        valueLabel.textColor = UIColor(named: "AccentColor") ?? .systemBlue
+        valueLabel.textAlignment = .right
+        valueLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         
         // 뷰 계층 구성
-        statView.addSubview(label)
-        label.translatesAutoresizingMaskIntoConstraints = false
+        statView.addSubview(titleLabel)
+        statView.addSubview(valueLabel)
+        
+        [titleLabel, valueLabel].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         
         NSLayoutConstraint.activate([
             // 높이 고정
             statView.heightAnchor.constraint(equalToConstant: 56),
             
-            // 라벨 위치
-            label.leadingAnchor.constraint(equalTo: statView.leadingAnchor, constant: 20),
-            label.trailingAnchor.constraint(equalTo: statView.trailingAnchor, constant: -20),
-            label.centerYAnchor.constraint(equalTo: statView.centerYAnchor)
+            // 제목 라벨 (좌측)
+            titleLabel.leadingAnchor.constraint(equalTo: statView.leadingAnchor, constant: 20),
+            titleLabel.centerYAnchor.constraint(equalTo: statView.centerYAnchor),
+            
+            // 값 라벨 (우측)
+            valueLabel.trailingAnchor.constraint(equalTo: statView.trailingAnchor, constant: -20),
+            valueLabel.centerYAnchor.constraint(equalTo: statView.centerYAnchor),
+            valueLabel.leadingAnchor.constraint(greaterThanOrEqualTo: titleLabel.trailingAnchor, constant: 12)
         ])
         
         return statView

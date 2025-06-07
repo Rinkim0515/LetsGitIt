@@ -16,6 +16,7 @@ final class MockGraphView: UIView {
     // X축 라벨들 (요일)
     private let xAxisStackView = UIStackView()
     private let weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    private var weeklyData: WeeklyData?
     
     // 그래프 점들과 선
     private var dotViews: [UIView] = []
@@ -114,14 +115,19 @@ final class MockGraphView: UIView {
             xAxisStackView.heightAnchor.constraint(equalToConstant: 20)
         ])
     }
-    func redrawGraph() {
-        DispatchQueue.main.async {
+    
+    func configure(with weeklyData: WeeklyData) {
+        self.weeklyData = weeklyData
+        drawGraph()
+    }
+    
+    func redraw() {
+        DispatchQueue.main.async{
             self.drawGraph()
         }
     }
+    
     private func drawGraph() {
-        print("🔧 drawGraph 호출됨")
-            print("📏 graphAreaView 크기: \(graphAreaView.bounds)")
         // 기존 그래프 요소들 제거
         lineLayer?.removeFromSuperlayer()
         dotViews.forEach { $0.removeFromSuperview() }
@@ -131,21 +137,36 @@ final class MockGraphView: UIView {
         
         let graphWidth = graphAreaView.bounds.width
         let graphHeight = graphAreaView.bounds.height
-        let pointSpacing = graphWidth / CGFloat(mockData.count - 1)
+        let pointSpacing = graphWidth / CGFloat(7)
         
         // 선을 그리기 위한 패스 생성
         let linePath = UIBezierPath()
         var points: [CGPoint] = []
+        var statuses: [DayStatus] = []
         
-        // 각 데이터 포인트에 대해 점과 좌표 계산
-        for (index, value) in mockData.enumerated() {
-            let x = CGFloat(index) * pointSpacing
-            let y = graphHeight - (value * graphHeight) // Y축 뒤집기 (위쪽이 높은 값)
+        // WeeklyData가 있으면 실제 데이터 사용, 없으면 Mock 데이터
+        let dataToUse = weeklyData?.dailyStatuses ?? mockData.enumerated().map { index, value in
+            return value > 0.5 ? DayStatus.past(isClosed: true) : DayStatus.past(isClosed: false)
+        }
+        
+        // 각 데이터 포인트 좌표 계산
+        for (index, status) in dataToUse.enumerated() {
+            let x = (CGFloat(index) + 0.5) * pointSpacing
+            
+            let yValue: CGFloat
+            switch status {
+            case .past(let isClosed):
+                yValue = isClosed ? 1.0 : 0.0
+            case .today:
+                yValue = 0.5
+            case .future:
+                yValue = 0.5
+            }
+            
+            let y = graphHeight - (yValue * graphHeight)
             let point = CGPoint(x: x, y: y)
             points.append(point)
-            
-            // 점 생성
-            createDot(at: point, isActive: value > 0.5)
+            statuses.append(status)
             
             // 선 패스에 포인트 추가
             if index == 0 {
@@ -155,11 +176,18 @@ final class MockGraphView: UIView {
             }
         }
         
-        // 선 그리기
+        // ✅ 1. 먼저 선 그리기
         drawLine(with: linePath)
+        
+        // ✅ 2. 그 다음 점들 그리기 (선 위에 올라감)
+        for (index, point) in points.enumerated() {
+            createDot(at: point, status: statuses[index])
+        }
     }
     
-    private func createDot(at point: CGPoint, isActive: Bool) {
+    
+    
+    private func createDot(at point: CGPoint, status: DayStatus) {
         let dotSize: CGFloat = 8
         let dot = UIView()
         
@@ -170,10 +198,19 @@ final class MockGraphView: UIView {
             height: dotSize
         )
         
-        dot.backgroundColor = isActive ? .systemBlue : .systemGray3
+        // 상태에 따른 색상 결정
+        switch status {
+        case .past(let isClosed):
+            dot.backgroundColor = isClosed ? .systemBlue : .systemRed
+        case .today:
+            dot.backgroundColor = .systemBlue // 오늘은 파란색
+        case .future:
+            dot.backgroundColor = .systemGray // 미래는 회색
+        }
+        
         dot.layer.cornerRadius = dotSize / 2
-        dot.layer.borderWidth = 2
-        dot.layer.borderColor = UIColor.white.cgColor
+        // ✅ 테두리 제거
+        dot.layer.borderWidth = 0
         
         graphAreaView.addSubview(dot)
         dotViews.append(dot)
@@ -182,7 +219,8 @@ final class MockGraphView: UIView {
     private func drawLine(with path: UIBezierPath) {
         lineLayer = CAShapeLayer()
         lineLayer!.path = path.cgPath
-        lineLayer!.strokeColor = UIColor.systemBlue.cgColor
+        // ✅ 선 색상을 회색으로 변경
+        lineLayer!.strokeColor = UIColor.systemGray3.cgColor
         lineLayer!.fillColor = UIColor.clear.cgColor
         lineLayer!.lineWidth = 2
         lineLayer!.lineCap = .round
