@@ -46,7 +46,12 @@ final class DIContainer {
     func makeDashboardVC() -> DashboardViewController {
         return DashboardViewController()
     }
-    
+    func makeRepositorySelectionViewController() -> RepositorySelectionViewController {
+        return RepositorySelectionViewController(
+            getCurrentUserUseCase: getCurrentUserUseCase,
+            getUserRepositoriesUseCase: getUserRepositoriesUseCase
+        )
+    }
     
     
     func makeMainTabBarController() -> MainTabBarController {
