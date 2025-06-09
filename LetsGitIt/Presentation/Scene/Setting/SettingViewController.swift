@@ -12,7 +12,7 @@ final class SettingViewController: UIViewController {
     // MARK: - UI Components
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
-    private let titleView = HeaderLabelView()
+    private let titleView = TitleHeaderView()
     // 상단 코어타임 설정 섹션
     private let coreTimeSettingsView = CoreTimeSettingsView()
     
@@ -189,15 +189,10 @@ final class SettingViewController: UIViewController {
     @objc private func logoutButtonTapped() {
         // TODO: 로그아웃 로직
         print("로그아웃 버튼 클릭")
-        GitHubAuthManager.shared.logout()
         
-        // 로그인 화면으로 이동
-        DispatchQueue.main.async {
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let window = windowScene.windows.first {
-                window.rootViewController = LoginViewController()
-            }
-        }
+        didTapLogout()
+        
+        
     }
 }
 
@@ -258,4 +253,37 @@ extension SettingViewController {
             break
         }
     }
+}
+
+
+extension SettingViewController: CustomAlertActionDelegate {
+    
+    private func didTapLogout() {
+        
+        let alert = CustomAlert.builder()
+            .title("로그아웃")
+            .message("로그아웃 하시겠어요?")
+            .dualAction(secondary: "취소", primary: "확인")
+            .delegate(self)
+            .build()
+        alert.show(on: self)
+    }
+    
+    func customAlertDidTapPrimary() {
+        print("확인/Primary 버튼 클릭")
+        GitHubAuthManager.shared.logout()
+        // 로그인 화면으로 이동
+        DispatchQueue.main.async {
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first {
+                window.rootViewController = LoginViewController()
+            }
+        }
+    }
+    
+    func customAlertDidTapSecondary() {
+        print("취소/Secondary 버튼 클릭")
+        self.dismiss(animated: true)
+    }
+    
 }

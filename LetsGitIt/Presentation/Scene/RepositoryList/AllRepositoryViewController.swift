@@ -10,7 +10,7 @@ import UIKit
 final class AllRepositoryViewController: UIViewController {
     
     // MARK: - UI Components
-    private let titleView = HeaderLabelView()
+    private let titleView = TitleHeaderView()
     private let tableView = UITableView()
     private let loadingIndicator = UIActivityIndicatorView(style: .large)
     private let refreshControl = UIRefreshControl()

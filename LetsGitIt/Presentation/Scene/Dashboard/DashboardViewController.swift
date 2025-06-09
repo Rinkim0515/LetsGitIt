@@ -14,13 +14,13 @@ final class DashboardViewController: UIViewController {
     private let stackView = UIStackView()
     
     // 1번째 섹션: 주간 요약
-    private let weeklySummaryHeader = HeaderLabelView()
+    private let weeklySummaryHeader = TitleHeaderView()
     private let weeklyCalendarView = WeeklyCalendarView()
     private let currentStatsView = CurrentStatsView()
     private let weeklyGraphView = MockGraphView() // 기존 MockGraphView 재사용
     
     // 2번째 섹션: 누적 기록
-    private let recordSectionHeader = HeaderLabelView()
+    private let recordSectionHeader = TitleHeaderView()
     private let recordStatsView = RecordStatsView()
     
     // MARK: - Lifecycle

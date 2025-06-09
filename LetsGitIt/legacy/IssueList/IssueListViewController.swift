@@ -23,7 +23,7 @@ final class IssueListViewController: UIViewController {
     private let issueListFlowLayout = UICollectionViewFlowLayout()
     
     // 섹션 헤더
-    private let sectionHeaderView = HeaderLabelView()
+    private let sectionHeaderView = TitleHeaderView()
     
     // 하단: 플로팅 버튼
     private let floatingFilterView = FloatingFilterView()

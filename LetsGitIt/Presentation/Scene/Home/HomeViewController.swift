@@ -25,14 +25,14 @@ final class HomeViewController: UIViewController {
     private let stackView = UIStackView()
     
     // 마일스톤 섹션
-    private let milestoneSectionHeader = HeaderLabelView()
+    private let milestoneSectionHeader = TitleHeaderView()
     private let milestonePreviewView = MilestonePreviewView(
         maxDisplayCount: 2,
         edgeInsets: MilestonePreviewView.EdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
     )
     
     // 이슈 섹션
-    private let issueSectionHeader = HeaderLabelView()
+    private let issueSectionHeader = TitleHeaderView()
     private let issuePreviewView = IssuePreviewView(
         maxDisplayCount: 2,
         edgeInsets: IssuePreviewView.EdgeInsets(top: 0, left: 20, bottom: 0, right: 20)

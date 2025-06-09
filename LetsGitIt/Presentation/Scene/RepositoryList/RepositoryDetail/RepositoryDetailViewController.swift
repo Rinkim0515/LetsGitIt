@@ -43,12 +43,6 @@ final class RepositoryDetailViewController: UIViewController {
         loadMockData()
         updateContainerView()
     }
-    override func viewWillAppear(_ animated: Bool) {
-        self.navigationController?.navigationBar.isHidden = true
-    }
-    override func viewWillDisappear(_ animated: Bool) {
-        self.navigationController?.navigationBar.isHidden = false
-    }
     
     // MARK: - Setup
     private func setupUI() {
@@ -77,7 +71,7 @@ final class RepositoryDetailViewController: UIViewController {
     }
     
     private func setupNavigationBar() {
-        navigationController?.navigationBar.prefersLargeTitles = false
+        
         
         // 뒤로가기 버튼
         navigationItem.leftBarButtonItem = UIBarButtonItem(

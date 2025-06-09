@@ -24,7 +24,7 @@ final class IssueDetailViewController: UIViewController {
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
     
-    private let issueSectionHeader = HeaderLabelView()
+    private let issueSectionHeader = TitleHeaderView()
     // 1번째 섹션: 이슈 본문용 CollectionView (셀 1개)
     private let issueContentCollectionView: UICollectionView
     private let issueContentFlowLayout = UICollectionViewFlowLayout()
@@ -36,7 +36,7 @@ final class IssueDetailViewController: UIViewController {
     private let separatorView = UIView()
     
     // 3번째 섹션: 코멘트들
-    private let commentSectionHeader = HeaderLabelView()
+    private let commentSectionHeader = TitleHeaderView()
     private let commentCollectionView: UICollectionView
     private let commentFlowLayout = UICollectionViewFlowLayout()
     
