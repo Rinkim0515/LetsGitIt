@@ -79,8 +79,6 @@ final class WeeklyCalendarView: UIView {
         ])
     }
     
-    // Mock 함수: 실제로는 현재 주의 날짜들 계산
-
 }
 
 // MARK: - WeeklyDayView

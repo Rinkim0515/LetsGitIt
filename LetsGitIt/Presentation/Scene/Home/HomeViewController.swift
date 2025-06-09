@@ -162,7 +162,7 @@ final class HomeViewController: UIViewController {
     }
     
     private func loadMilestones() {
-        let mockMilestones = MockData.milestoneItem
+        let mockMilestones = MockData.milestoneItem1
         milestonePreviewView.updateMilestones(mockMilestones)
     }
     

@@ -168,7 +168,7 @@ final class IssueListViewController: UIViewController {
     
     // MARK: - Data Loading
     private func loadData() {
-        milestones = MilestoneData.mockData
+        milestones = MockData.milestoneData1
         selectedMilestoneIndex = 0
         
         milestoneNamesCollectionView.reloadData()

@@ -234,11 +234,7 @@ final class IssueDetailViewController: UIViewController {
     // MARK: - Data Loading
     private func loadData() {
         // 1번째 섹션: 이슈 본문 데이터 준비
-        issueContent = CommentData(
-            author: issue.author,
-            createdAt: Date(), // Mock 데이터
-            content: "**버그 발생!** 앱이 _정말_ 이상하게 동작합니다.\n\n재현 방법:\n1. 로그인\n2. **설정** 페이지 이동\n3. `다크모드` 버튼 클릭\n\n급하게 수정 부탁드립니다! 🙏"
-        )
+        issueContent = MockData.issueContent
         
         // 2번째 섹션: 이슈 세부정보 설정
         issueDetailSection.configure(
@@ -251,7 +247,7 @@ final class IssueDetailViewController: UIViewController {
         )
         
         // 3번째 섹션: 코멘트들 로드
-        comments = CommentItem.mockComments
+        comments = MockData.commentItem
         
         // CollectionView 리로드
         issueContentCollectionView.reloadData()

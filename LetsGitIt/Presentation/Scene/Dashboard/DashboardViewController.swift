@@ -146,7 +146,6 @@ final class DashboardViewController: UIViewController {
 
 
 
-// MARK: - 기존 Mock 데이터 업데이트
 struct RecordStatsData {
     let records: [String]
 }

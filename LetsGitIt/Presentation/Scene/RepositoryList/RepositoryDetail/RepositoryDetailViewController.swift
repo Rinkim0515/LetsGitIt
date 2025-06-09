@@ -133,61 +133,10 @@ final class RepositoryDetailViewController: UIViewController {
     // MARK: - Data Loading
     private func loadMockData() {
         // 이슈 데이터 (기존 MilestoneData)
-        milestones = MilestoneData.mockData
+        milestones = MockData.milestoneData1
         
         // 마일스톤 카드 데이터
-        milestoneItems = [
-            MilestoneItem(
-                id: "1",
-                title: "Sprint 1 개발",
-                description: "로그인, 회원가입, 프로필 기능 개발을 포함한 첫 번째 스프린트입니다.",
-                tag: "Development",
-                tagColor: .systemBlue,
-                dday: "D-7",
-                ddayType: .upcoming,
-                progress: 0.75
-            ),
-            MilestoneItem(
-                id: "2",
-                title: "UI/UX 개선",
-                description: "사용자 경험 향상을 위한 인터페이스 디자인 및 사용성 개선 작업입니다.",
-                tag: "Design",
-                tagColor: .systemPink,
-                dday: "D-14",
-                ddayType: .upcoming,
-                progress: 0.45
-            ),
-            MilestoneItem(
-                id: "3",
-                title: "Beta 테스트",
-                description: "실제 사용자를 대상으로 한 베타 테스트 및 피드백 수집 단계입니다.",
-                tag: "Testing",
-                tagColor: .systemOrange,
-                dday: "D+3",
-                ddayType: .overdue,
-                progress: 0.90
-            ),
-            MilestoneItem(
-                id: "4",
-                title: "출시 준비",
-                description: "앱 스토어 등록, 마케팅 자료 준비, 최종 배포 준비 작업입니다.",
-                tag: "Release",
-                tagColor: .systemGreen,
-                dday: "D-21",
-                ddayType: .upcoming,
-                progress: 0.20
-            ),
-            MilestoneItem(
-                id: "5",
-                title: "성능 최적화",
-                description: "앱 성능 개선 및 메모리 사용량 최적화 작업을 진행합니다.",
-                tag: "Performance",
-                tagColor: .systemPurple,
-                dday: "D-30",
-                ddayType: .upcoming,
-                progress: 0.10
-            )
-        ]
+        milestoneItems = MockData.milestonesItem2
         
         // Views에 데이터 전달
         issueFilteringView.updateMilestones(milestones)
