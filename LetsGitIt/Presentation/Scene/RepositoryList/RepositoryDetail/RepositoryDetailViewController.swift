@@ -126,7 +126,7 @@ final class RepositoryDetailViewController: UIViewController {
         // 마일스톤 선택 콜백
         milestoneListView.onMilestoneSelected = { [weak self] milestone in
             print("📍 마일스톤 선택됨: \(milestone.title)")
-            // TODO: 마일스톤 상세 화면으로 이동
+            self?.navigationController?.pushViewController(MilestoneDetailViewController(mockData: MockMilestoneDetail.sample), animated: true)
         }
     }
     
