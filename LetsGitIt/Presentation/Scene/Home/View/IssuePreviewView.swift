@@ -157,26 +157,4 @@ extension IssuePreviewView: UICollectionViewDelegateFlowLayout {
 }
 
 
-extension IssueItem {
-    static let mockData = [
-        IssueItem(
-            id: "1",
-            title: "앱 크래시 이슈 수정",
-            number: 42,
-            author: "developer1"
 
-        ),
-        IssueItem(
-            id: "2",
-            title: "UI 개선 작업",
-            number: 41,
-            author: "designer1"
-        ),
-        IssueItem(
-            id: "3",
-            title: "API 연동 완료",
-            number: 40,
-            author: "backend-dev"
-        )
-    ]
-}

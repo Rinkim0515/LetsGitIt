@@ -80,9 +80,7 @@ final class WeeklyCalendarView: UIView {
     }
     
     // Mock 함수: 실제로는 현재 주의 날짜들 계산
-    private func getCurrentWeekDays() -> [Int] {
-        return [30, 1, 2, 3, 4, 5, 6] // 일~토 날짜들
-    }
+
 }
 
 // MARK: - WeeklyDayView
@@ -242,21 +240,5 @@ struct WeeklyData {
     let weeklyTotalHours: String
     let coreTimeSettings: String
     
-    static let mockData = WeeklyData(
-        weekRange: "2025.06.01 ~ 2025.06.08",
-        currentDate: Date(),
-        dailyStatuses: [
-            .past(isClosed: true),      // Sun: ✓
-            .past(isClosed: true),      // Mon: ✓
-            .past(isClosed: true),      // Tue: ✓
-            .past(isClosed: true),      // Wed: ✓
-            .past(isClosed: false),     // Thu: ✗
-            .today,                     // Fri: 오늘
-            .future(milestoneCount: 3)  // Sat: +3
-        ],
-        summary: "8/12 완료",
-        currentStreak: 1,
-        weeklyTotalHours: "03d 08h 15m",
-        coreTimeSettings: "10:00 ~ 18:59"
-    )
+    
 }

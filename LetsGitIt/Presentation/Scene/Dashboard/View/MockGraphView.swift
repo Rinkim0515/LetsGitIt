@@ -22,9 +22,6 @@ final class MockGraphView: UIView {
     private var dotViews: [UIView] = []
     private var lineLayer: CAShapeLayer?
     
-    // MARK: - Properties
-    // Mock 데이터 (0.0 ~ 1.0 범위)
-    private let mockData: [CGFloat] = [0.3, 0.7, 0.2, 0.9, 0.5, 0.8, 0.4]
     
     private var hasDrawn = false
     
@@ -145,7 +142,7 @@ final class MockGraphView: UIView {
         var statuses: [DayStatus] = []
         
         // WeeklyData가 있으면 실제 데이터 사용, 없으면 Mock 데이터
-        let dataToUse = weeklyData?.dailyStatuses ?? mockData.enumerated().map { index, value in
+        let dataToUse = weeklyData?.dailyStatuses ?? MockData.graph.enumerated().map { index, value in
             return value > 0.5 ? DayStatus.past(isClosed: true) : DayStatus.past(isClosed: false)
         }
         

@@ -12,26 +12,19 @@ import UIKit
 
 
 final class HomeViewController: UIViewController {
-    
     // MARK: - Dependencies (Clean Architecture)
     private let getCurrentUserUseCase: GetCurrentUserUseCase
     
-    // MARK: - UI Components
-    // 🔸 프로필 헤더 (고정)
     private let profileHeaderView = UserProfileHeaderView()
-    
-    // 🔸 스크롤 가능한 컨텐츠
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
     
-    // 마일스톤 섹션
     private let milestoneSectionHeader = TitleHeaderView()
     private let milestonePreviewView = MilestonePreviewView(
         maxDisplayCount: 2,
         edgeInsets: MilestonePreviewView.EdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
     )
     
-    // 이슈 섹션
     private let issueSectionHeader = TitleHeaderView()
     private let issuePreviewView = IssuePreviewView(
         maxDisplayCount: 2,
@@ -50,7 +43,6 @@ final class HomeViewController: UIViewController {
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
-        
         super.viewDidLoad()
         setupUI()
         setupConstraints()
@@ -170,12 +162,12 @@ final class HomeViewController: UIViewController {
     }
     
     private func loadMilestones() {
-        let mockMilestones = MilestoneItem.mockData
+        let mockMilestones = MockData.milestoneItem
         milestonePreviewView.updateMilestones(mockMilestones)
     }
     
     private func loadIssues() {
-        let mockIssues = IssueItem.mockData
+        let mockIssues = MockData.issueItem
         issuePreviewView.updateIssues(mockIssues)
     }
     

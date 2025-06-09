@@ -175,57 +175,5 @@ struct MilestoneItem {
     let progress: Double
 }
 
-// MARK: - Mock Data
-extension MilestoneItem {
-    static let mockData = [
-        MilestoneItem(
-            id: "1",
-            title: "마일스톤 제목",
-            description: "마일스톤 내용마일스톤 내용마일스톤 내용마일스톤 내용마일스톤 내용",
-            tag: "Mobile App",
-            tagColor: .systemPink,
-            dday: "D+3",
-            ddayType: .overdue,
-            progress: 0.7
-        ),
-        MilestoneItem(
-            id: "2",
-            title: "마일스톤 제목",
-            description: "마일스톤 내용마일스톤 내용마일스톤 내용마일스톤 내용마일스톤 내용",
-            tag: "PC Web",
-            tagColor: .systemBlue,
-            dday: "D-3",
-            ddayType: .upcoming,
-            progress: 0.4
-        ),
-        MilestoneItem(
-            id: "3",
-            title: "추가 마일스톤",
-            description: "세 번째 마일스톤 설명입니다",
-            tag: "Backend",
-            tagColor: .systemGreen,
-            dday: "D-7",
-            ddayType: .upcoming,
-            progress: 0.2
-        )
-    ]
-}
 
-// MARK: - 사용 예시
-/*
- 사용법:
- 
- let milestonePreview = MilestonePreviewView(maxDisplayCount: 2)
- 
- // 데이터 업데이트
- milestonePreview.updateMilestones(MilestoneItem.mockData)
- 
- // 마일스톤 선택 이벤트
- milestonePreview.onMilestoneSelected = { milestone in
-     print("선택된 마일스톤: \(milestone.title)")
-     // 상세 화면으로 이동
- }
- 
- // StackView에 추가
- stackView.addArrangedSubview(milestonePreview)
- */
+

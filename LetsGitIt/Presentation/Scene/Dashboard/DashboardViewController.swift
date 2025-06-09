@@ -126,13 +126,13 @@ final class DashboardViewController: UIViewController {
     
     // MARK: - Data Loading
     private func loadData() {
-        let weeklyData = WeeklyData.mockData
+        let weeklyData = MockData.weeklyData
         
         // 각 뷰에 데이터 전달
         weeklyCalendarView.configure(with: weeklyData)
         currentStatsView.configure(with: weeklyData)
         weeklyGraphView.configure(with: weeklyData) // ✅ 추가
-        recordStatsView.configure(with: RecordStatsData.mockData)
+        recordStatsView.configure(with: MockData.recordStatsData)
     }
     
     // MARK: - Helper Methods
@@ -149,14 +149,4 @@ final class DashboardViewController: UIViewController {
 // MARK: - 기존 Mock 데이터 업데이트
 struct RecordStatsData {
     let records: [String]
-    
-    static let mockData = RecordStatsData(
-        records: [
-            "달성: 91/180",
-            "마일스톤 누적 상위: 186 (Rank 60)",
-            "최대 연속: 12 (Rank 46)",
-            "누적 배지: 12 (Rank 32)",
-            "총 코어 타임: ???"
-        ]
-    )
 }
