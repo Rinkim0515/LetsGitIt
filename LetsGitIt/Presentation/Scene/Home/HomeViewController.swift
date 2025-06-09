@@ -68,7 +68,7 @@ final class HomeViewController: UIViewController {
         super.viewWillDisappear(animated)
         navigationController?.navigationBar.isHidden = false
     }
-
+    
     // MARK: - Setup
     private func setupUI() {
         view.backgroundColor = .backgroundSecondary
@@ -138,21 +138,10 @@ final class HomeViewController: UIViewController {
     }
     
     private func setupActions() {
-        // 마일스톤 섹션 헤더 더보기 버튼
-        milestoneSectionHeader.onMoreTapped = { [weak self] in
-            self?.navigateToMilestoneList()
-        }
-        
-        // 이슈 섹션 헤더 더보기 버튼
-        issueSectionHeader.onMoreTapped = { [weak self] in
-            self?.navigateToIssueList()
-        }
-        
         // 마일스톤 카드 선택
         milestonePreviewView.onMilestoneSelected = { [weak self] milestone in
             self?.navigateToMilestoneDetail(milestone)
         }
-        
         // 이슈 카드 선택
         issuePreviewView.onIssueSelected = { [weak self] issue in
             self?.navigateToIssueDetail(issue)
@@ -213,17 +202,14 @@ final class HomeViewController: UIViewController {
     private func navigateToIssueList() {
         print("📍 이슈 전체 목록으로 이동")
     }
-    
     private func navigateToMilestoneDetail(_ milestone: MilestoneItem) {
         print("📍 마일스톤 상세로 이동: \(milestone.title)")
     }
-    
     private func navigateToIssueDetail(_ issue: IssueItem) {
         print("📍 이슈 상세로 이동: #\(issue.number) \(issue.title)")
-            
-            let issueDetailVC = IssueDetailViewController(issue: issue)
+        let issueDetailVC = IssueDetailViewController(issue: issue)
         issueDetailVC.hidesBottomBarWhenPushed = true
-            navigationController?.pushViewController(issueDetailVC, animated: true)
+        navigationController?.pushViewController(issueDetailVC, animated: true)
     }
     
     // MARK: - Helper Methods
@@ -258,26 +244,3 @@ extension HomeViewController {
     }
 }
 
-// MARK: - 레이아웃 구조
-/*
- 🏗️ 새로운 레이아웃 구조:
- 
- 📱 HomeViewController
- ├── 👤 UserProfileHeaderView (상단 고정) ✨
- └── ScrollView (프로필 아래부터 스크롤)
-     └── StackView
-         ├── ➖ Spacer (24pt)
-         ├── 📋 SectionHeaderView ("중요한 마일스톤")
-         ├── ➖ Spacer (8pt)
-         ├── 🎯 MilestonePreviewView
-         ├── ➖ Spacer (32pt)
-         ├── 📋 SectionHeaderView ("미완료 이슈")
-         ├── ➖ Spacer (8pt)
-         ├── 🐛 IssuePreviewView
-         └── ➖ Spacer (32pt)
- 
- ✨ 변경사항:
- - 프로필 헤더가 상단에 고정됨
- - 스크롤할 때 프로필은 보이고 컨텐츠만 스크롤됨
- - 더 명확한 레이아웃 분리
- */

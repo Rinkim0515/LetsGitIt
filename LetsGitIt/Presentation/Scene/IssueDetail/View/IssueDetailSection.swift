@@ -15,12 +15,12 @@ final class IssueDetailSection: UIView {
     private let stackView = UIStackView()
     
     // 각 정보 행들
-    private let labelRow = DetailInfoRow()
-    private let assigneeRow = DetailInfoRow()
-    private let projectRow = DetailInfoRow()
-    private let milestoneRow = DetailInfoRow()
-    private let createdDateRow = DetailInfoRow()
-    private let modifiedDateRow = DetailInfoRow()
+    private let labelRow = InfoRowView()
+    private let assigneeRow = InfoRowView()
+    private let projectRow = InfoRowView()
+    private let milestoneRow = InfoRowView()
+    private let createdDateRow = InfoRowView()
+    private let modifiedDateRow = InfoRowView()
     
     // MARK: - Initializers
     override init(frame: CGRect) {
@@ -148,64 +148,4 @@ final class IssueDetailSection: UIView {
     }
 }
 
-// MARK: - DetailInfoRow
-final class DetailInfoRow: UIView {
-    
-    private let titleLabel = UILabel()
-    private let valueLabel = UILabel()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupUI()
-        setupConstraints()
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setupUI()
-        setupConstraints()
-    }
-    
-    func configure(title: String, value: String, valueColor: UIColor = .label) {
-        titleLabel.text = title
-        valueLabel.text = value
-        valueLabel.textColor = valueColor
-    }
-    
-    private func setupUI() {
-        backgroundColor = .clear
-        
-        // 제목 라벨
-        titleLabel.font = .pretendard(.regular, size: 16)
-        titleLabel.textColor = UIColor(named: "PrimaryText") ?? .label
-        titleLabel.setContentHuggingPriority(.required, for: .horizontal)
-        
-        // 값 라벨
-        valueLabel.font = .pretendard(.semiBold, size: 16)
-        valueLabel.textAlignment = .right
-        valueLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        
-        addSubview(titleLabel)
-        addSubview(valueLabel)
-    }
-    
-    private func setupConstraints() {
-        [titleLabel, valueLabel].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
-        
-        NSLayoutConstraint.activate([
-            // 행 높이
-            heightAnchor.constraint(equalToConstant: 56),
-            
-            // 제목 라벨 (좌측)
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            
-            // 값 라벨 (우측)
-            valueLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-            valueLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            valueLabel.leadingAnchor.constraint(greaterThanOrEqualTo: titleLabel.trailingAnchor, constant: 12)
-        ])
-    }
-}
+
