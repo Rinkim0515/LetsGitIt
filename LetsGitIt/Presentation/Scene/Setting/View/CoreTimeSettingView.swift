@@ -28,6 +28,12 @@ final class CoreTimeSettingsView: UIView {
         }
     }
     
+    // 현재 설정값들
+    private var startTime: Date = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date()) ?? Date()
+    private var endTime: Date = Calendar.current.date(bySettingHour: 19, minute: 0, second: 0, of: Date()) ?? Date()
+    private var selectedWeekdays: Set<Int> = []
+    private var selectedNotification: NotificationOption = .none
+    
     // MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -89,23 +95,23 @@ final class CoreTimeSettingsView: UIView {
         // 시작시간
         startTimeRow.configure(
             title: "시작시간",
-            rightText: "설정하기"
+            rightText: formatTime(startTime)
         ) { [weak self] in
-            self?.presentTimePickerForStartTime()
+            self?.presentStartTimePicker()
         }
         
         // 종료시간
         endTimeRow.configure(
             title: "종료시간",
-            rightText: "설정하기"
+            rightText: formatTime(endTime)
         ) { [weak self] in
-            self?.presentTimePickerForEndTime()
+            self?.presentEndTimePicker()
         }
         
         // 요일설정
         weekdaysRow.configure(
             title: "요일설정",
-            rightText: "설정하기"
+            rightText: formatWeekdays(selectedWeekdays)
         ) { [weak self] in
             self?.presentWeekdaySelector()
         }
@@ -113,7 +119,7 @@ final class CoreTimeSettingsView: UIView {
         // 시작 전 알림
         notificationRow.configure(
             title: "시작 전 알림",
-            rightText: "설정하기"
+            rightText: selectedNotification.displayText
         ) { [weak self] in
             self?.presentNotificationSettings()
         }
@@ -136,33 +142,148 @@ final class CoreTimeSettingsView: UIView {
         notificationRow.isUserInteractionEnabled = isEnabled
     }
     
-    // MARK: - Settings Actions
-    private func presentTimePickerForStartTime() {
-        // TODO: 시작시간 선택 화면
-        print("시작시간 설정")
+    // MARK: - Modal Presentation
+    private func presentStartTimePicker() {
+        let timePickerVC = TimePickerViewController(title: "시작시간", initialTime: startTime)
+        
+        timePickerVC.onTimeSelected = { [weak self] selectedTime in
+            self?.startTime = selectedTime
+            self?.updateStartTimeDisplay()
+        }
+        
+        presentModal(timePickerVC, height: .medium)
     }
     
-    private func presentTimePickerForEndTime() {
-        // TODO: 종료시간 선택 화면
-        print("종료시간 설정")
+    private func presentEndTimePicker() {
+        let timePickerVC = TimePickerViewController(title: "종료시간", initialTime: endTime)
+        
+        timePickerVC.onTimeSelected = { [weak self] selectedTime in
+            self?.endTime = selectedTime
+            self?.updateEndTimeDisplay()
+        }
+        
+        presentModal(timePickerVC, height: .medium)
     }
     
     private func presentWeekdaySelector() {
-        // TODO: 요일 선택 화면
-        print("요일 설정")
+        let weekdayVC = WeekdaySelectionViewController(selectedDays: selectedWeekdays)
+        
+        weekdayVC.onSelectionChanged = { [weak self] selectedDays in
+            self?.selectedWeekdays = Set(selectedDays)
+            self?.updateWeekdaysDisplay()
+        }
+        
+        presentModal(weekdayVC, height: .large) // 70% 크기
     }
     
     private func presentNotificationSettings() {
-        // TODO: 알림 설정 화면
-        print("알림 설정")
+        let notificationVC = NotificationSettingViewController(selectedOption: selectedNotification)
+        
+        notificationVC.onSelectionChanged = { [weak self] selectedOption in
+            self?.selectedNotification = selectedOption
+            self?.updateNotificationDisplay()
+        }
+        
+        presentModal(notificationVC, height: .medium)
     }
     
-    // MARK: - Settings Persistence
+    // MARK: - Helper Methods
+    private func presentModal(_ viewController: UIViewController, height: ModalHeight) {
+        guard let parentVC = findViewController() else { return }
+        
+        if #available(iOS 15.0, *) {
+            viewController.modalPresentationStyle = .pageSheet
+            
+            if let sheet = viewController.sheetPresentationController {
+                switch height {
+                case .medium:
+                    sheet.detents = [.medium()]
+                case .large:
+                    sheet.detents = [
+                        .custom(identifier: .init("weekdays")) { context in
+                            return context.maximumDetentValue * 0.7  // 70%
+                        }
+                    ]
+                }
+                sheet.prefersGrabberVisible = true
+                sheet.preferredCornerRadius = 20
+            }
+        } else {
+            viewController.modalPresentationStyle = .formSheet
+        }
+        
+        parentVC.present(viewController, animated: true)
+    }
+    
+    private func updateStartTimeDisplay() {
+        startTimeRow.updateRightText(formatTime(startTime))
+    }
+    
+    private func updateEndTimeDisplay() {
+        endTimeRow.updateRightText(formatTime(endTime))
+    }
+    
+    private func updateWeekdaysDisplay() {
+        weekdaysRow.updateRightText(formatWeekdays(selectedWeekdays))
+    }
+    
+    private func updateNotificationDisplay() {
+        notificationRow.updateRightText(selectedNotification.displayText)
+    }
+    
+    // MARK: - Formatting Methods
+    private func formatTime(_ time: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: time)
+    }
+    
+    private func formatWeekdays(_ weekdays: Set<Int>) -> String {
+        if weekdays.isEmpty {
+            return "설정하기"
+        }
+        
+        let weekdayNames = ["월", "화", "수", "목", "금", "토", "일"]
+        let selectedNames = weekdays.sorted().compactMap { index in
+            index < weekdayNames.count ? weekdayNames[index] : nil
+        }
+        
+        if selectedNames.count == 7 {
+            return "매일"
+        } else if selectedNames.count <= 3 {
+            return selectedNames.joined(separator: ", ")
+        } else {
+            return "\(selectedNames.count)일 선택"
+        }
+    }
+    
+    // MARK: - Settings Persistence (임시)
     private func loadSettings() {
         coreTimeEnabled = UserDefaults.standard.bool(forKey: "coreTimeEnabled")
+        // TODO: 다른 설정값들도 로드
     }
     
     private func saveSettings() {
         UserDefaults.standard.set(coreTimeEnabled, forKey: "coreTimeEnabled")
+        // TODO: 다른 설정값들도 저장
+    }
+}
+
+// MARK: - Modal Height Enum
+private enum ModalHeight {
+    case medium  // 50%
+    case large   // 70%
+}
+
+// MARK: - UIView Extension
+extension UIView {
+    func findViewController() -> UIViewController? {
+        if let nextResponder = self.next as? UIViewController {
+            return nextResponder
+        } else if let nextResponder = self.next as? UIView {
+            return nextResponder.findViewController()
+        } else {
+            return nil
+        }
     }
 }

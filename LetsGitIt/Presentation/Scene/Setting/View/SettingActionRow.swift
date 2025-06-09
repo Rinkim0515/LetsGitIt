@@ -20,7 +20,6 @@ final class SettingsActionRow: UIView {
         setupUI()
         setupConstraints()
         setupGesture()
-        
     }
     
     required init?(coder: NSCoder) {
@@ -34,6 +33,11 @@ final class SettingsActionRow: UIView {
         titleLabel.text = title
         rightLabel.text = rightText
         self.onTap = onTap
+    }
+    
+    // MARK: - 새로 추가된 메서드
+    func updateRightText(_ text: String) {
+        rightLabel.text = text
     }
     
     private func setupUI() {

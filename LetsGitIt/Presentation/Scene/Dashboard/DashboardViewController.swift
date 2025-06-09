@@ -14,7 +14,7 @@ final class DashboardViewController: UIViewController {
     private let stackView = UIStackView()
     
     // 1번째 섹션: 주간 요약
-    private let weeklySummaryHeader = TitleHeaderView()
+    private let titleView = TitleHeaderView()
     private let weeklyCalendarView = WeeklyCalendarView()
     private let currentStatsView = CurrentStatsView()
     private let weeklyGraphView = MockGraphView() // 기존 MockGraphView 재사용
@@ -67,13 +67,12 @@ final class DashboardViewController: UIViewController {
         
         // 뷰 계층 구성
         view.addSubview(scrollView)
+        view.addSubview(titleView)
         scrollView.addSubview(stackView)
         
-        // 스택뷰에 컴포넌트 추가
-        stackView.addArrangedSubview(createSpacerView(height: 20))
         
         // 주간 요약 섹션
-        stackView.addArrangedSubview(weeklySummaryHeader)    // 헤더
+        
         stackView.addArrangedSubview(weeklyCalendarView)     // 달력 (배경 없음)
         stackView.addArrangedSubview(currentStatsView)       // 현재 설정/기록 (배경 있음)
         stackView.addArrangedSubview(weeklyGraphView)        // 그래프 (배경 있음)
@@ -93,7 +92,7 @@ final class DashboardViewController: UIViewController {
         let currentDateString = formatter.string(from: Date())
         
         // 주간 요약 헤더
-        weeklySummaryHeader.configure(title: "주간 요약")
+        titleView.configure(title: "주간 요약")
         // 우측에 현재 날짜 표시를 위해 커스텀 설정이 필요하다면 별도 구현
         
         // 누적 기록 헤더
@@ -101,13 +100,17 @@ final class DashboardViewController: UIViewController {
     }
     
     private func setupConstraints() {
-        [scrollView, stackView].forEach {
+        [titleView, scrollView, stackView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
         NSLayoutConstraint.activate([
             // 스크롤뷰
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            
+            titleView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
+            titleView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            
+            scrollView.topAnchor.constraint(equalTo: titleView.bottomAnchor,constant: 20),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),

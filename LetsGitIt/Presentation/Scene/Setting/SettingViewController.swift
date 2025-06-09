@@ -111,7 +111,7 @@ final class SettingViewController: UIViewController {
         }
         
         NSLayoutConstraint.activate([
-            titleView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,constant: 20),
+            titleView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,constant: 15),
             titleView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             // 스크롤뷰
             scrollView.topAnchor.constraint(equalTo: titleView.bottomAnchor,constant: 10),

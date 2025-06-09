@@ -78,7 +78,7 @@ final class AllRepositoryViewController: UIViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
-            titleView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,constant: 20),
+            titleView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,constant: 15),
             titleView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             titleView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
