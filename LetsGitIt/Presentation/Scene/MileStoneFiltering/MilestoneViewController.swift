@@ -154,8 +154,8 @@ final class MilestoneViewController: UIViewController {
         issueListCollectionView.tag = 2
         
         // 셀 등록
-        milestoneNamesCollectionView.register(MilestoneNameCell.self, forCellWithReuseIdentifier: MilestoneNameCell.identifier)
-        issueListCollectionView.register(IssueCardCell.self, forCellWithReuseIdentifier: IssueCardCell.identifier)
+        milestoneNamesCollectionView.register(MilestoneNameCell.self, forCellWithReuseIdentifier: MilestoneNameCell.id)
+        issueListCollectionView.register(IssueCardCell.self, forCellWithReuseIdentifier: IssueCardCell.id)
     }
     
     private func setupFloatingButton() {
@@ -205,7 +205,7 @@ extension MilestoneViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView.tag == 1 { // 마일스톤 이름들
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MilestoneNameCell.identifier, for: indexPath) as! MilestoneNameCell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MilestoneNameCell.id, for: indexPath) as! MilestoneNameCell
             let milestone = milestones[indexPath.item]
             let isSelected = indexPath.item == selectedMilestoneIndex
             
@@ -213,7 +213,7 @@ extension MilestoneViewController: UICollectionViewDataSource {
             return cell
             
         } else { // 이슈 리스트
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: IssueCardCell.identifier, for: indexPath) as! IssueCardCell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: IssueCardCell.id, for: indexPath) as! IssueCardCell
             let issue = filteredIssues[indexPath.item]
             
             cell.configure(

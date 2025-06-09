@@ -7,9 +7,8 @@
 
 import UIKit
 
-final class SettingsTableViewCell: UITableViewCell {
+final class SettingsTableViewCell: UITableViewCell, CellIdGenerator {
     
-    static let identifier = "SettingsTableViewCell"
     
     // MARK: - UI Components
     private let titleLabel = UILabel()

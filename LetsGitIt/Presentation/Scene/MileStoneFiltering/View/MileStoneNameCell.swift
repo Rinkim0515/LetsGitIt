@@ -7,9 +7,7 @@
 
 import UIKit
 
-final class MilestoneNameCell: UICollectionViewCell {
-    
-    static let identifier = "MilestoneNameCell"
+final class MilestoneNameCell: UICollectionViewCell, CellIdGenerator {
     
     // MARK: - UI Components
     private let containerView = UIView()

@@ -227,8 +227,8 @@ final class IssueDetailViewController: UIViewController {
         commentCollectionView.tag = 2 // 구분용 태그
         
         // 셀 등록 (두 CollectionView 모두 CommentCell 사용)
-        issueContentCollectionView.register(ContentCell.self, forCellWithReuseIdentifier: ContentCell.identifier)
-        commentCollectionView.register(ContentCell.self, forCellWithReuseIdentifier: ContentCell.identifier)
+        issueContentCollectionView.register(ContentCell.self, forCellWithReuseIdentifier: ContentCell.id)
+        commentCollectionView.register(ContentCell.self, forCellWithReuseIdentifier: ContentCell.id)
     }
     
     // MARK: - Data Loading
@@ -314,7 +314,7 @@ extension IssueDetailViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ContentCell.identifier, for: indexPath) as! ContentCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ContentCell.id, for: indexPath) as! ContentCell
         
         if collectionView.tag == 1 { // 이슈 본문 CollectionView
             if let issueContent = issueContent {

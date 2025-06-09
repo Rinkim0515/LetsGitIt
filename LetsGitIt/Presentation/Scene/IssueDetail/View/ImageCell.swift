@@ -7,9 +7,8 @@
 
 import UIKit
 
-final class ImageCell: UICollectionViewCell {
+final class ImageCell: UICollectionViewCell, CellIdGenerator {
     
-    static let identifier = "ImageCell"
     
     // MARK: - UI Components
     private let containerView = UIView()

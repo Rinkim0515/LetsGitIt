@@ -155,7 +155,7 @@ final class RepositorySelectionViewController: UIViewController {
     private func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(RepositoryCell.self, forCellReuseIdentifier: RepositoryCell.identifier)
+        tableView.register(RepositoryCell.self, forCellReuseIdentifier: RepositoryCell.id)
     }
     
     private func setupSearchBar() {
@@ -239,7 +239,7 @@ extension RepositorySelectionViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: RepositoryCell.identifier, for: indexPath) as! RepositoryCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: RepositoryCell.id, for: indexPath) as! RepositoryCell
         let repository = filteredRepositories[indexPath.row]
         let isSelected = selectedRepository?.id == repository.id
         

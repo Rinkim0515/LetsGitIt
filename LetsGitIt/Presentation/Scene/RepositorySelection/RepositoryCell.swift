@@ -7,10 +7,7 @@
 
 import UIKit
 
-final class RepositoryCell: UITableViewCell {
-    
-    static let identifier = "RepositoryCell"
-    
+final class RepositoryCell: UITableViewCell, CellIdGenerator {
     // MARK: - UI Components
     private let containerView = UIView()
     private let checkboxView = UIView()

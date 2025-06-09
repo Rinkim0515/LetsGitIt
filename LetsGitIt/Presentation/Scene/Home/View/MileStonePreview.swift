@@ -74,7 +74,7 @@ final class MilestonePreviewView: UIView {
         collectionView.dataSource = self
         
         // Cell 등록
-        collectionView.register(MilestoneCardCell.self, forCellWithReuseIdentifier: MilestoneCardCell.identifier)
+        collectionView.register(MilestoneCardCell.self, forCellWithReuseIdentifier: MilestoneCardCell.id)
         
         // 뷰 계층 구성
         addSubview(collectionView)
@@ -128,7 +128,7 @@ extension MilestonePreviewView: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MilestoneCardCell.identifier, for: indexPath) as! MilestoneCardCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MilestoneCardCell.id, for: indexPath) as! MilestoneCardCell
         
         let milestone = milestones[indexPath.item]
         

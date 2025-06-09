@@ -8,9 +8,8 @@
 
 import UIKit
 
-final class ContentCell: UICollectionViewCell {
+final class ContentCell: UICollectionViewCell, CellIdGenerator {
     
-    static let identifier = "ContentCell"
     
     // MARK: - UI Components
     private let containerView = UIView()
@@ -232,7 +231,7 @@ final class ContentCell: UICollectionViewCell {
         imageCollectionView.dataSource = self
         
         // 이미지 셀 등록
-        imageCollectionView.register(ImageCell.self, forCellWithReuseIdentifier: ImageCell.identifier)
+        imageCollectionView.register(ImageCell.self, forCellWithReuseIdentifier: ImageCell.id)
     }
 }
 
@@ -243,7 +242,7 @@ extension ContentCell: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCell.identifier, for: indexPath) as! ImageCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCell.id, for: indexPath) as! ImageCell
         let image = images[indexPath.item]
         cell.configure(with: image)
         return cell

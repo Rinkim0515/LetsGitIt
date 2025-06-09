@@ -84,7 +84,7 @@ final class IssuePreviewView: UIView {
         collectionView.dataSource = self
         
         // Cell 등록
-        collectionView.register(IssueCardCell.self, forCellWithReuseIdentifier: IssueCardCell.identifier)
+        collectionView.register(IssueCardCell.self, forCellWithReuseIdentifier: IssueCardCell.id)
         
         addSubview(collectionView)
     }
@@ -125,7 +125,7 @@ extension IssuePreviewView: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: IssueCardCell.identifier, for: indexPath) as! IssueCardCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: IssueCardCell.id, for: indexPath) as! IssueCardCell
         let issue = issues[indexPath.item]
         
         cell.configure(

@@ -8,10 +8,7 @@
 // Common/Components/MilestoneCardCell.swift
 import UIKit
 
-final class MilestoneCardCell: UICollectionViewCell {
-    
-    static let identifier = "MilestoneCardCell"
-    
+final class MilestoneCardCell: UICollectionViewCell, CellIdGenerator {
     // MARK: - UI Components
     private let containerView = UIView()
     private let titleLabel = UILabel()

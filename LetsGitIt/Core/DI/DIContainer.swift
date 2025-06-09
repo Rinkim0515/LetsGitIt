@@ -38,6 +38,7 @@ final class DIContainer {
         return GetUserRepositoriesUseCase(repositoryRepository: gitHubRepositoryRepository)
     }()
     
+    
     // MARK: - Presentation Layer Factory Methods
     func makeHomeVC() -> HomeViewController {
         return HomeViewController(getCurrentUserUseCase: getCurrentUserUseCase)
@@ -48,6 +49,13 @@ final class DIContainer {
     }
     func makeRepositorySelectionViewController() -> RepositorySelectionViewController {
         return RepositorySelectionViewController(
+            getCurrentUserUseCase: getCurrentUserUseCase,
+            getUserRepositoriesUseCase: getUserRepositoriesUseCase
+        )
+    }
+    
+    func makeAllRepositoryVC() -> AllRepositoryViewController {
+        return AllRepositoryViewController(
             getCurrentUserUseCase: getCurrentUserUseCase,
             getUserRepositoriesUseCase: getUserRepositoriesUseCase
         )
@@ -72,6 +80,14 @@ final class DIContainer {
             image: UIImage(systemName: "folder"),
             selectedImage: UIImage(systemName: "folder.fill")
         )
+        
+        let allRepositoryVC = makeAllRepositoryVC()
+        allRepositoryVC.tabBarItem = UITabBarItem(
+            title: "레포지토리",
+            image: UIImage(systemName: "doc.text"),
+            selectedImage: UIImage(systemName: "doc.text.fill")
+        )
+        
         let settingVC = SettingViewController()
         settingVC.tabBarItem = UITabBarItem(
             title: "세팅",
@@ -83,9 +99,10 @@ final class DIContainer {
         // 네비게이션 컨트롤러로 감싸기
         let homeNav = UINavigationController(rootViewController: homeVC)
         let dashBoardNav = UINavigationController(rootViewController: dashBoardVC)
+        let allRepositoryNav = UINavigationController(rootViewController: allRepositoryVC)
         let settingNav = UINavigationController(rootViewController: settingVC)
         
-        tabBarController.viewControllers = [homeNav, dashBoardNav, settingNav]
+        tabBarController.viewControllers = [homeNav, dashBoardNav, allRepositoryNav, settingNav]
         
         return tabBarController
     }

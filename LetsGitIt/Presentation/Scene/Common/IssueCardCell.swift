@@ -7,10 +7,7 @@
 
 import UIKit
 
-final class IssueCardCell: UICollectionViewCell {
-    
-    static let identifier = "IssueCardCell"
-    
+final class IssueCardCell: UICollectionViewCell, CellIdGenerator {
     // MARK: - UI Components
     private let containerView = UIView()
     private let titleLabel = UILabel()
