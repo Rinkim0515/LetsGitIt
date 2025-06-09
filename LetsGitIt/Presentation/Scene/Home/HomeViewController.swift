@@ -25,14 +25,14 @@ final class HomeViewController: UIViewController {
     private let stackView = UIStackView()
     
     // 마일스톤 섹션
-    private let milestoneSectionHeader = SectionHeaderView()
+    private let milestoneSectionHeader = HeaderLabelView()
     private let milestonePreviewView = MilestonePreviewView(
         maxDisplayCount: 2,
         edgeInsets: MilestonePreviewView.EdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
     )
     
     // 이슈 섹션
-    private let issueSectionHeader = SectionHeaderView()
+    private let issueSectionHeader = HeaderLabelView()
     private let issuePreviewView = IssuePreviewView(
         maxDisplayCount: 2,
         edgeInsets: IssuePreviewView.EdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
@@ -73,7 +73,6 @@ final class HomeViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .backgroundSecondary
         
-        // 🔸 스크롤뷰 설정
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = true
         scrollView.backgroundColor = .backgroundSecondary
@@ -85,8 +84,8 @@ final class HomeViewController: UIViewController {
         stackView.distribution = .fill
         
         // 섹션 헤더들 설정
-        milestoneSectionHeader.configure(title: "종료임박 마일스톤", showMoreButton: true)
-        issueSectionHeader.configure(title: "미완료 이슈", showMoreButton: false)
+        milestoneSectionHeader.configure(title: "종료임박 마일스톤")
+        issueSectionHeader.configure(title: "미완료 이슈")
         
         // 🔸 뷰 계층 구성 - 프로필과 스크롤뷰 분리
         view.addSubview(profileHeaderView)  // 상단 고정
@@ -194,7 +193,7 @@ final class HomeViewController: UIViewController {
     // MARK: - Navigation
     private func navigateToMilestoneList() {
         print("📍 마일스톤 전체 목록으로 이동")
-        let milestoneVC = MilestoneViewController(repositoryName: "LetsGitIt")
+        let milestoneVC = IssueListViewController(repositoryName: "LetsGitIt")
         milestoneVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(milestoneVC, animated: true)
     }

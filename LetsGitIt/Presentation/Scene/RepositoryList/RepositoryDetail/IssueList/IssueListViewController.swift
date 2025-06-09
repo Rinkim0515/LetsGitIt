@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class MilestoneViewController: UIViewController {
+final class IssueListViewController: UIViewController {
     
     // MARK: - Properties
     private let repositoryName: String
@@ -23,7 +23,7 @@ final class MilestoneViewController: UIViewController {
     private let issueListFlowLayout = UICollectionViewFlowLayout()
     
     // 섹션 헤더
-    private let sectionHeaderView = SectionHeaderView()
+    private let sectionHeaderView = HeaderLabelView()
     
     // 하단: 플로팅 버튼
     private let floatingFilterView = FloatingFilterView()
@@ -182,8 +182,8 @@ final class MilestoneViewController: UIViewController {
         let filteredCount = filteredIssues.count
         
         sectionHeaderView.configure(
-            title: "\(selectedMilestone.name)의 이슈들 (\(filteredCount)개)",
-            showMoreButton: false
+            title: "\(selectedMilestone.name)의 이슈들 (\(filteredCount)개)"
+            
         )
     }
     
@@ -194,7 +194,7 @@ final class MilestoneViewController: UIViewController {
 }
 
 // MARK: - UICollectionViewDataSource
-extension MilestoneViewController: UICollectionViewDataSource {
+extension IssueListViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView.tag == 1 { // 마일스톤 이름들
             return milestones.count
@@ -228,7 +228,7 @@ extension MilestoneViewController: UICollectionViewDataSource {
 }
 
 // MARK: - UICollectionViewDelegate
-extension MilestoneViewController: UICollectionViewDelegate {
+extension IssueListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView.tag == 1 { // 마일스톤 이름 선택
             selectedMilestoneIndex = indexPath.item
@@ -247,7 +247,7 @@ extension MilestoneViewController: UICollectionViewDelegate {
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
-extension MilestoneViewController: UICollectionViewDelegateFlowLayout {
+extension IssueListViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if collectionView.tag == 1 { // 마일스톤 이름들 (동적 크기)
             let milestone = milestones[indexPath.item]

@@ -10,6 +10,7 @@ import UIKit
 final class AllRepositoryViewController: UIViewController {
     
     // MARK: - UI Components
+    private let titleView = HeaderLabelView()
     private let tableView = UITableView()
     private let loadingIndicator = UIActivityIndicatorView(style: .large)
     private let refreshControl = UIRefreshControl()
@@ -47,8 +48,16 @@ final class AllRepositoryViewController: UIViewController {
         loadData()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.navigationBar.isHidden = true
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        self.navigationController?.navigationBar.isHidden = false
+    }
+    
     // MARK: - Setup
     private func setupUI() {
+        titleView.configure(title: "레포지토리")
         view.backgroundColor = .backgroundSecondary
         // 로딩 인디케이터
         loadingIndicator.color = .white
@@ -61,21 +70,23 @@ final class AllRepositoryViewController: UIViewController {
         
         view.addSubview(tableView)
         view.addSubview(loadingIndicator)
+        view.addSubview(titleView)
     }
     
     private func setupConstraints() {
-        [tableView, loadingIndicator].forEach {
+        [titleView, tableView, loadingIndicator].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
-        
         NSLayoutConstraint.activate([
-            // 테이블뷰
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            titleView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,constant: 20),
+            titleView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            titleView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            tableView.topAnchor.constraint(equalTo: titleView.bottomAnchor,constant: 10),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            // 로딩 인디케이터
             loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             loadingIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
@@ -172,6 +183,9 @@ extension AllRepositoryViewController: UITableViewDelegate {
         let repository = repositories[indexPath.row]
         print("📍 레포지토리 선택됨: \(repository.fullName)")
         
-        // TODO: 레포지토리 상세 화면으로 이동하거나 추가 기능 구현
+        // 레포지토리 상세 화면으로 이동
+        let repositoryDetailVC = RepositoryDetailViewController(repository: repository)
+        repositoryDetailVC.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(repositoryDetailVC, animated: true)
     }
 }

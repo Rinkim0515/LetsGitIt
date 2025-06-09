@@ -24,7 +24,7 @@ final class IssueDetailViewController: UIViewController {
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
     
-    private let issueSectionHeader = SectionHeaderView()
+    private let issueSectionHeader = HeaderLabelView()
     // 1번째 섹션: 이슈 본문용 CollectionView (셀 1개)
     private let issueContentCollectionView: UICollectionView
     private let issueContentFlowLayout = UICollectionViewFlowLayout()
@@ -36,7 +36,7 @@ final class IssueDetailViewController: UIViewController {
     private let separatorView = UIView()
     
     // 3번째 섹션: 코멘트들
-    private let commentSectionHeader = SectionHeaderView()
+    private let commentSectionHeader = HeaderLabelView()
     private let commentCollectionView: UICollectionView
     private let commentFlowLayout = UICollectionViewFlowLayout()
     
@@ -82,9 +82,9 @@ final class IssueDetailViewController: UIViewController {
         
         // 구분선 설정
         separatorView.backgroundColor = UIColor(named: "Separator") ?? .separator
-        issueSectionHeader.configure(title: "이슈상세", showMoreButton: false)
+        issueSectionHeader.configure(title: "이슈상세")
         // 코멘트 섹션 헤더 설정
-        commentSectionHeader.configure(title: "코멘트", showMoreButton: false)
+        commentSectionHeader.configure(title: "코멘트")
         
         // 뷰 계층 구성
         view.addSubview(scrollView)

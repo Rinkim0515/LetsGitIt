@@ -3,17 +3,16 @@
 //  LetsGitIt
 //
 //  Created by KimRin on 6/2/25.
-//
+// header특성에 따라 ToolTip 이 들어갈수도 있음
 
 import UIKit
 
-final class SectionHeaderView: UIView {
+final class HeaderLabelView: UIView {
     
     // MARK: - UI Components
-    private let stackView = UIStackView()
     private let titleLabel = UILabel()
-    
-    
+    private lazy var toolTipImageView = UIImageView()
+    private let stackView = UIStackView()
     // MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -28,9 +27,10 @@ final class SectionHeaderView: UIView {
     }
     
     // MARK: - Public Methods
-    func configure(title: String, showMoreButton: Bool = true) {
+    func configure(title: String) {
         titleLabel.text = title
     }
+
     
     // MARK: - Private Methods
     private func setupUI() {

@@ -12,7 +12,7 @@ final class SettingViewController: UIViewController {
     // MARK: - UI Components
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
-    private let titleLabel = UILabel()
+    private let titleView = HeaderLabelView()
     // 상단 코어타임 설정 섹션
     private let coreTimeSettingsView = CoreTimeSettingsView()
     
@@ -53,11 +53,7 @@ final class SettingViewController: UIViewController {
     // MARK: - Setup
     private func setupUI() {
         view.backgroundColor = .backgroundSecondary
-        titleLabel.textColor = .white
-        titleLabel.font = .pretendard(.semiBold, size: 20)
-        titleLabel.text = "설정"
-        
-        
+        titleView.configure(title: "설정")
         
         // 스크롤뷰 설정
         scrollView.showsVerticalScrollIndicator = false
@@ -80,13 +76,14 @@ final class SettingViewController: UIViewController {
         
         // 뷰 계층 구성
         view.addSubview(scrollView)
-        view.addSubview(titleLabel)
+        view.addSubview(titleView)
         scrollView.addSubview(stackView)
         
         stackView.addArrangedSubview(coreTimeSettingsView)
         stackView.addArrangedSubview(tableView)
         stackView.addArrangedSubview(footerView)
     }
+    
     
     private func setupFooterButtons() {
         // 회원탈퇴 버튼
@@ -109,15 +106,15 @@ final class SettingViewController: UIViewController {
     
     private func setupConstraints() {
         // Auto Layout 비활성화
-        [scrollView, stackView, withdrawButton, logoutButton, titleLabel].forEach {
+        [scrollView, stackView, withdrawButton, logoutButton, titleView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,constant: 20),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            titleView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,constant: 20),
+            titleView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             // 스크롤뷰
-            scrollView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor,constant: 10),
+            scrollView.topAnchor.constraint(equalTo: titleView.bottomAnchor,constant: 10),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),

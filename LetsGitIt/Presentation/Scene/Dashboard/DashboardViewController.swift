@@ -14,13 +14,13 @@ final class DashboardViewController: UIViewController {
     private let stackView = UIStackView()
     
     // 1번째 섹션: 주간 요약
-    private let weeklySummaryHeader = SectionHeaderView()
+    private let weeklySummaryHeader = HeaderLabelView()
     private let weeklyCalendarView = WeeklyCalendarView()
     private let currentStatsView = CurrentStatsView()
     private let weeklyGraphView = MockGraphView() // 기존 MockGraphView 재사용
     
     // 2번째 섹션: 누적 기록
-    private let recordSectionHeader = SectionHeaderView()
+    private let recordSectionHeader = HeaderLabelView()
     private let recordStatsView = RecordStatsView()
     
     // MARK: - Lifecycle
@@ -93,11 +93,11 @@ final class DashboardViewController: UIViewController {
         let currentDateString = formatter.string(from: Date())
         
         // 주간 요약 헤더
-        weeklySummaryHeader.configure(title: "주간 요약", showMoreButton: false)
+        weeklySummaryHeader.configure(title: "주간 요약")
         // 우측에 현재 날짜 표시를 위해 커스텀 설정이 필요하다면 별도 구현
         
         // 누적 기록 헤더
-        recordSectionHeader.configure(title: "누적 기록", showMoreButton: false)
+        recordSectionHeader.configure(title: "누적 기록")
     }
     
     private func setupConstraints() {
