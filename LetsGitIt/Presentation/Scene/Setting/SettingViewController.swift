@@ -158,8 +158,15 @@ final class SettingViewController: UIViewController {
     }
     
     private func setupActions() {
-        withdrawButton.addTarget(self, action: #selector(withdrawButtonTapped), for: .touchUpInside)
-        logoutButton.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
+        withdrawButton.addAction(UIAction { [weak self] _ in
+            self?.withdrawButtonTapped()
+        }, for: .touchUpInside)
+        
+        logoutButton.addAction(UIAction { [weak self] _ in
+            self?.logoutButtonTapped()
+        }, for: .touchUpInside)
+        
+        
     }
     
     // MARK: - Helper Methods
@@ -180,25 +187,14 @@ final class SettingViewController: UIViewController {
         view.layoutIfNeeded()
     }
     
-    // MARK: - Actions
-    @objc private func withdrawButtonTapped() {
-        // TODO: 회원탈퇴 로직
-        print("회원탈퇴 버튼 클릭")
-    }
-    
-    @objc private func logoutButtonTapped() {
-        // TODO: 로그아웃 로직
-        print("로그아웃 버튼 클릭")
-        
-        didTapLogout()
-        
-        
-    }
+
 }
+
+
+
 
 // MARK: - UITableViewDataSource & UITableViewDelegate
 extension SettingViewController: UITableViewDataSource, UITableViewDelegate {
-    
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1 // 단일 섹션
     }
@@ -256,34 +252,57 @@ extension SettingViewController {
 }
 
 
-extension SettingViewController: CustomAlertActionDelegate {
+//MARK: - Alert Logic
+extension SettingViewController {
     
-    private func didTapLogout() {
-        
+    private func logoutButtonTapped() {
         let alert = CustomAlert.builder()
             .title("로그아웃")
             .message("로그아웃 하시겠어요?")
-            .dualAction(secondary: "취소", primary: "확인")
-            .delegate(self)
+            .dualAction(secondary: "취소", primary: "로그아웃")
+            .primaryAction {
+                GitHubAuthManager.shared.logout()
+                DispatchQueue.main.async {
+                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                       let window = windowScene.windows.first {
+                        window.rootViewController = LoginViewController()
+                    }
+                }
+            }
+            .secondaryAction { [weak self] in
+                print("로그아웃 취소")
+                self?.dismiss(animated: true)
+            }
             .build()
         alert.show(on: self)
     }
     
-    func customAlertDidTapPrimary() {
-        print("확인/Primary 버튼 클릭")
-        GitHubAuthManager.shared.logout()
-        // 로그인 화면으로 이동
-        DispatchQueue.main.async {
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let window = windowScene.windows.first {
-                window.rootViewController = LoginViewController()
+    private func withdrawButtonTapped() {
+        let alert = CustomAlert.builder()
+            .title("회원탈퇴")
+            .message("로그아웃 하시겠어요?")
+            .dualAction(secondary: "취소", primary: "로그아웃")
+            .primaryAction {
             }
-        }
+            .secondaryAction {
+            }
+            .build()
+        alert.show(on: self)
     }
     
-    func customAlertDidTapSecondary() {
-        print("취소/Secondary 버튼 클릭")
-        self.dismiss(animated: true)
+    private func turnOffCoreTimeToggleTapped() {
+        let alert = CustomAlert.builder()
+            .title("로그아웃")
+            .message("로그아웃 하시겠어요?")
+            .dualAction(secondary: "취소", primary: "로그아웃")
+            .primaryAction {
+
+            }
+            .secondaryAction {
+
+            }
+            .build()
+        alert.show(on: self)
     }
     
 }

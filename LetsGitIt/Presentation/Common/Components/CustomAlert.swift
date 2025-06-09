@@ -7,19 +7,13 @@
 
 import UIKit
 
-// MARK: - Alert Action Protocol
-protocol CustomAlertActionDelegate: AnyObject {
-    func customAlertDidTapPrimary()
-    func customAlertDidTapSecondary()
-}
-
 // MARK: - Alert Action Type
 enum CustomAlertActionType {
-    case single(title: String)                    // 확인만
-    case dual(secondary: String, primary: String) // 취소 + 확인
+    case single(title: String)
+    case dual(secondary: String, primary: String)
 }
 
-// MARK: - Custom Alert
+// MARK: - Custom Alert (Closure 기반)
 final class CustomAlert: UIView {
     
     // MARK: - UI Components
@@ -30,7 +24,8 @@ final class CustomAlert: UIView {
     private let buttonStackView = UIStackView()
     
     // MARK: - Properties
-    weak var delegate: CustomAlertActionDelegate?
+    private var primaryAction: (() -> Void)?
+    private var secondaryAction: (() -> Void)?
     private var actionType: CustomAlertActionType = .single(title: "확인")
     
     // MARK: - Initializers
@@ -124,10 +119,18 @@ final class CustomAlert: UIView {
     }
     
     // MARK: - Public Methods
-    func configure(title: String, message: String, actionType: CustomAlertActionType) {
+    func configure(
+        title: String,
+        message: String,
+        actionType: CustomAlertActionType,
+        primaryAction: (() -> Void)? = nil,
+        secondaryAction: (() -> Void)? = nil
+    ) {
         titleLabel.text = title
         messageLabel.text = message
         self.actionType = actionType
+        self.primaryAction = primaryAction
+        self.secondaryAction = secondaryAction
         setupButtons()
     }
     
@@ -199,12 +202,12 @@ final class CustomAlert: UIView {
     
     // MARK: - Actions
     @objc private func primaryButtonTapped() {
-        delegate?.customAlertDidTapPrimary()
+        primaryAction?()  // 👈 Closure 실행
         dismiss()
     }
     
     @objc private func secondaryButtonTapped() {
-        delegate?.customAlertDidTapSecondary()
+        secondaryAction?()  // 👈 Closure 실행
         dismiss()
     }
     
@@ -221,19 +224,19 @@ final class CustomAlert: UIView {
 
 // MARK: - Builder
 extension CustomAlert {
-    
     static func builder() -> CustomAlertBuilder {
         return CustomAlertBuilder()
     }
 }
 
-// MARK: - Builder Class
+// MARK: - Builder Class (Closure 기반)
 final class CustomAlertBuilder {
     
     private var title: String = ""
     private var message: String = ""
     private var actionType: CustomAlertActionType = .single(title: "확인")
-    private weak var delegate: CustomAlertActionDelegate?
+    private var primaryAction: (() -> Void)?
+    private var secondaryAction: (() -> Void)?
     
     func title(_ title: String) -> CustomAlertBuilder {
         self.title = title
@@ -255,15 +258,25 @@ final class CustomAlertBuilder {
         return self
     }
     
-    func delegate(_ delegate: CustomAlertActionDelegate) -> CustomAlertBuilder {
-        self.delegate = delegate
+    func primaryAction(_ action: @escaping () -> Void) -> CustomAlertBuilder {
+        self.primaryAction = action
+        return self
+    }
+    
+    func secondaryAction(_ action: @escaping () -> Void) -> CustomAlertBuilder {
+        self.secondaryAction = action
         return self
     }
     
     func build() -> CustomAlert {
         let alert = CustomAlert()
-        alert.configure(title: title, message: message, actionType: actionType)
-        alert.delegate = delegate
+        alert.configure(
+            title: title,
+            message: message,
+            actionType: actionType,
+            primaryAction: primaryAction,
+            secondaryAction: secondaryAction
+        )
         return alert
     }
 }
