@@ -114,7 +114,7 @@ final class SettingViewController: UIViewController {
             titleView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,constant: 15),
             titleView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             // 스크롤뷰
-            scrollView.topAnchor.constraint(equalTo: titleView.bottomAnchor,constant: 10),
+            scrollView.topAnchor.constraint(equalTo: titleView.bottomAnchor,constant: 15),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -126,7 +126,6 @@ final class SettingViewController: UIViewController {
             stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             
-            // 구분선
             
             
             // Footer View 높이

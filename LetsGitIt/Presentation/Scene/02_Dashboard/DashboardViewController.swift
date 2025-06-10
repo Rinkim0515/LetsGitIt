@@ -89,7 +89,7 @@ final class DashboardViewController: UIViewController {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy.MM.dd E"
         formatter.locale = Locale(identifier: "ko_KR")
-        let currentDateString = formatter.string(from: Date())
+        
         
         // 주간 요약 헤더
         titleView.configure(title: "주간 요약")
@@ -110,7 +110,7 @@ final class DashboardViewController: UIViewController {
             titleView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
             titleView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             
-            scrollView.topAnchor.constraint(equalTo: titleView.bottomAnchor,constant: 20),
+            scrollView.topAnchor.constraint(equalTo: titleView.bottomAnchor,constant: 10),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),

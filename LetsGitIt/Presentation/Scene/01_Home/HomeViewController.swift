@@ -98,8 +98,6 @@ final class HomeViewController: UIViewController {
         stackView.addArrangedSubview(UIView.createSpacerView(height: 8))
         stackView.addArrangedSubview(issuePreviewView)
         
-        
-        stackView.addArrangedSubview(UIView.createSpacerView(height: 8))
     }
     
     private func setupConstraints() {
@@ -175,7 +173,7 @@ final class HomeViewController: UIViewController {
     private func updateProfileHeader(with user: GitHubUser) {
         profileHeaderView.configure(
             name: user.name ?? "이름 없음",
-            subtitle: "@\(user.login)",
+            subtitle: " 1",
             completedCount: 5,
             savedCount: 11076,
             statusText: "현재 코어 타임 09:30:15 남았습니다."

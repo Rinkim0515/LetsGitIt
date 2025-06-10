@@ -101,12 +101,12 @@ final class IssueFilteringView: UIView {
             
             // 섹션 헤더
             sectionHeaderView.topAnchor.constraint(equalTo: milestoneNamesCollectionView.bottomAnchor, constant: 20),
-            sectionHeaderView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            sectionHeaderView.leadingAnchor.constraint(equalTo: leadingAnchor),
             sectionHeaderView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             sectionHeaderView.heightAnchor.constraint(equalToConstant: 40),
             
             // 이슈 리스트
-            issueListCollectionView.topAnchor.constraint(equalTo: sectionHeaderView.bottomAnchor, constant: 12),
+            issueListCollectionView.topAnchor.constraint(equalTo: sectionHeaderView.bottomAnchor, constant: 10),
             issueListCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
             issueListCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
             issueListCollectionView.bottomAnchor.constraint(equalTo: bottomAnchor),
