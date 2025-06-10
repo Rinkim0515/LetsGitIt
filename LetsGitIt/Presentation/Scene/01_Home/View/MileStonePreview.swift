@@ -132,15 +132,7 @@ extension MilestonePreviewView: UICollectionViewDataSource {
         
         let milestone = milestones[indexPath.item]
         
-        cell.configure(
-            title: milestone.title,
-            description: milestone.displayDescription,
-            tag: milestone.tagText,
-            tagColor: milestone.tagColor,
-            dday: milestone.ddayText,
-            ddayType: milestone.ddayType,
-            progress: milestone.progress
-        )
+        cell.configure(with: milestone)
         
         return cell
     }

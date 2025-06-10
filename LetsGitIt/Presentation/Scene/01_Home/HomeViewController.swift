@@ -197,7 +197,7 @@ final class HomeViewController: UIViewController, ErrorHandlingCapable, LoadingC
         // 프로필 헤더 업데이트
         updateProfileHeader(with: user)
         milestonePreviewView.updateMilestones(milestones)
-//        issuePreviewView.updateIssues(issues)
+        issuePreviewView.updateIssues(issues)
         
         print("✅ 데이터 로딩 완료: 마일스톤 \(milestones.count)개, 이슈 \(issues.count)개")
     }
@@ -230,8 +230,7 @@ final class HomeViewController: UIViewController, ErrorHandlingCapable, LoadingC
     private func navigateToMilestoneDetail(_ milestone: MilestoneItem) {
         print("📍 마일스톤 상세로 이동: \(milestone.title)")
     }
-    private func navigateToIssueDetail(_ issue: IssueItem) {
-        print("📍 이슈 상세로 이동: #\(issue.number) \(issue.title)")
+    private func navigateToIssueDetail(_ issue: GitHubIssue) {
         let issueDetailVC = IssueDetailViewController(issue: issue)
         issueDetailVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(issueDetailVC, animated: true)

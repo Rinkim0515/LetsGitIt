@@ -39,7 +39,7 @@ final class IssueStatusTableViewCell: UITableViewCell, CellIdGenerator {
     }
     
     // MARK: - Public Methods
-    func configure(with issue: IssueItem) {
+    func configure(with issue: GitHubIssue) {
         titleLabel.text = issue.title
         numberLabel.text = "#\(issue.number)"
         authorLabel.text = "by \(issue.author)"

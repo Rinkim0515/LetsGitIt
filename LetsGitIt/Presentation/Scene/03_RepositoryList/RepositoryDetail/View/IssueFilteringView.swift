@@ -22,7 +22,7 @@ final class IssueFilteringView: UIView {
     private var selectedMilestoneIndex: Int = 0
     private var currentFilter: IssueFilter = .all
     
-    private var filteredIssues: [IssueItem] {
+    private var filteredIssues: [GitHubIssue] {
         guard selectedMilestoneIndex < milestones.count else { return [] }
         let selectedMilestone = milestones[selectedMilestoneIndex]
         
@@ -37,7 +37,7 @@ final class IssueFilteringView: UIView {
     }
     
     // MARK: - Callbacks
-    var onIssueSelected: ((IssueItem) -> Void)?
+    var onIssueSelected: ((GitHubIssue) -> Void)?
     
     // MARK: - Initialization
     override init(frame: CGRect) {
@@ -228,12 +228,7 @@ extension IssueFilteringView: UICollectionViewDataSource {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: IssueCardCell.id, for: indexPath) as! IssueCardCell
             let issue = filteredIssues[indexPath.item]
             
-            cell.configure(
-                title: issue.title,
-                number: issue.number,
-                author: issue.author,
-                mileStone: nil
-            )
+            cell.configure(with: issue)
             return cell
         }
     }

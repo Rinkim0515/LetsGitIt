@@ -25,7 +25,7 @@ final class MilestoneDetailViewController: UIViewController {
     private let refreshControl = UIRefreshControl()
     
     // MARK: - Data
-    private var issues: [IssueItem] = []
+    private var issues: [GitHubIssue] = []
     
     // MARK: - Initialization
     init(mockData: MockMilestoneDetail) {
@@ -244,7 +244,7 @@ extension MilestoneDetailViewController: UITableViewDelegate {
 // MARK: - Mock Data Model
 struct MockMilestoneDetail {
     let milestone: MilestoneItem
-    let issues: [IssueItem]
+    let issues: [GitHubIssue]
 }
 
 // MARK: - Mock Data

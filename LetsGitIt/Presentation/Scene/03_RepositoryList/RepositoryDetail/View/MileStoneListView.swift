@@ -14,10 +14,10 @@ final class MilestoneListView: UIView {
     private let flowLayout = UICollectionViewFlowLayout()
     
     // MARK: - Data
-    private var milestones: [MilestoneItem] = []
+    private var milestones: [GitHubMilestone] = []
     
     // MARK: - Callbacks
-    var onMilestoneSelected: ((MilestoneItem) -> Void)?
+    var onMilestoneSelected: ((GitHubMilestone) -> Void)?
     
     // MARK: - Initialization
     override init(frame: CGRect) {
@@ -69,7 +69,7 @@ final class MilestoneListView: UIView {
     }
     
     // MARK: - Public Methods
-    func updateMilestones(_ milestones: [MilestoneItem]) {
+    func updateMilestones(_ milestones: [GitHubMilestone]) {
         self.milestones = milestones
         collectionView.reloadData()
     }
@@ -85,15 +85,7 @@ extension MilestoneListView: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MilestoneCardCell.id, for: indexPath) as! MilestoneCardCell
         let milestone = milestones[indexPath.item]
         
-        cell.configure(
-            title: milestone.title,
-            description: milestone.description,
-            tag: milestone.tag,
-            tagColor: milestone.tagColor,
-            dday: milestone.dday,
-            ddayType: milestone.ddayType,
-            progress: milestone.progress
-        )
+        cell.configure(with: milestone)
         
         return cell
     }

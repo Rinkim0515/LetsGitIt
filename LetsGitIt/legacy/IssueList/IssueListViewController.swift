@@ -33,7 +33,7 @@ final class IssueListViewController: UIViewController {
     private var selectedMilestoneIndex: Int = 0
     private var currentFilter: IssueFilter = .all
     
-    private var filteredIssues: [IssueItem] {
+    private var filteredIssues: [GitHubIssue] {
         guard selectedMilestoneIndex < milestones.count else { return [] }
         let selectedMilestone = milestones[selectedMilestoneIndex]
         
@@ -216,12 +216,7 @@ extension IssueListViewController: UICollectionViewDataSource {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: IssueCardCell.id, for: indexPath) as! IssueCardCell
             let issue = filteredIssues[indexPath.item]
             
-            cell.configure(
-                title: issue.title,
-                number: issue.number,
-                author: issue.author,
-                mileStone: nil
-            )
+            cell.configure(with: issue)
             return cell
         }
     }
@@ -268,7 +263,7 @@ extension IssueListViewController: UICollectionViewDelegateFlowLayout {
 struct MilestoneData {
     let id: String
     let name: String
-    let issues: [IssueItem]
+    let issues: [GitHubIssue]
 }
 
 enum IssueFilter: CaseIterable {

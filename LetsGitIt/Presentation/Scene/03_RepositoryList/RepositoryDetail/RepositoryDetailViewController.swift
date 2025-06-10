@@ -132,18 +132,7 @@ final class RepositoryDetailViewController: UIViewController {
     
     // MARK: - Data Loading
     private func loadMockData() {
-        // 이슈 데이터 (기존 MilestoneData)
-        milestones = MockData.milestoneData1
-        
-        // 마일스톤 카드 데이터
-        milestoneItems = MockData.milestonesItem2
-        
-        // Views에 데이터 전달
-        issueFilteringView.updateMilestones(milestones)
-        milestoneListView.updateMilestones(milestoneItems)
-        
-        // FloatingSegmentedControl 위치 조정 (SafeArea 고려)
-        issueFilteringView.updateFloatingSegmentPosition(bottomConstant: -20)
+
     }
     
     // MARK: - Actions

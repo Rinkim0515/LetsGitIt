@@ -38,20 +38,19 @@ final class MilestoneCardCell: UICollectionViewCell, CellIdGenerator {
         ddayLabel.text = nil
     }
     
-    // MARK: - Public Methods
-    func configure(title: String, description: String, tag: String, tagColor: UIColor, dday: String, ddayType: DDayType, progress: Double) {
-        titleLabel.text = title
-        descriptionLabel.text = description
-        ddayLabel.text = dday
-        
-        
+    func configure(with milestone: GitHubMilestone) {
+        titleLabel.text = milestone.title
+        descriptionLabel.text = milestone.displayDescription
+        ddayLabel.text = milestone.ddayText
         
         // D-Day 스타일 설정
-        setupDDayStyle(for: ddayType)
+        setupDDayStyle(for: milestone.ddayType)
         
         // 프로그레스 바 설정
-        updateProgress(progress)
+        updateProgress(milestone.progress)
     }
+    
+
     
     // MARK: - Private Methods
     private func setupUI() {
@@ -124,11 +123,7 @@ final class MilestoneCardCell: UICollectionViewCell, CellIdGenerator {
             
             ddayLabel.centerXAnchor.constraint(equalTo: ddayContainerView.centerXAnchor),
             ddayLabel.centerYAnchor.constraint(equalTo: ddayContainerView.centerYAnchor),
-            
 
-            
-
-            
             // 설명 (프로그레스바 아래)
             descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
             descriptionLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
@@ -186,10 +181,7 @@ final class MilestoneCardCell: UICollectionViewCell, CellIdGenerator {
 }
 
 // MARK: - Enums
-enum DDayType {
-    case overdue    // D+숫자 (빨간색)
-    case upcoming   // D-숫자 (회색)
-}
+
 
 // MARK: - 사용 예시
 /*

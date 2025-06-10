@@ -18,7 +18,7 @@ import UIKit
 final class IssueDetailViewController: UIViewController {
     
     // MARK: - Properties
-    private let issue: IssueItem
+    private let issue: GitHubIssue
     
     // MARK: - UI Components
     private let scrollView = UIScrollView()
@@ -45,7 +45,7 @@ final class IssueDetailViewController: UIViewController {
     private var comments: [CommentItem] = []
     
     // MARK: - Initialization
-    init(issue: IssueItem) {
+    init(issue: GitHubIssue) {
         self.issue = issue
         self.issueContentCollectionView = UICollectionView(frame: .zero, collectionViewLayout: issueContentFlowLayout)
         self.commentCollectionView = UICollectionView(frame: .zero, collectionViewLayout: commentFlowLayout)
@@ -133,7 +133,7 @@ final class IssueDetailViewController: UIViewController {
     }
     
     private func setupNavigationBar() {
-        title = "#\(issue.number)" // 이슈 번호 표시
+        title = issue.numberText
         navigationController?.navigationBar.prefersLargeTitles = false
         
         // 뒤로가기 버튼
@@ -150,16 +150,16 @@ final class IssueDetailViewController: UIViewController {
     
     private func setupStatusButton() {
         
-        let isOpen = true // 실제로는 issue.isOpen 등으로 가져올 예정
         
-        let statusButton = isOpen ? UIButton.createOpenStatusButton() :
+        
+        let statusButton = issue.isOpen ? UIButton.createOpenStatusButton() :
         UIButton.createClosedStatusButton()
-            
-            
-            statusButton.translatesAutoresizingMaskIntoConstraints = false
-            statusButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 100).isActive = true
-            statusButton.heightAnchor.constraint(equalToConstant: 36).isActive = true
-            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: statusButton)
+        
+        
+        statusButton.translatesAutoresizingMaskIntoConstraints = false
+        statusButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 100).isActive = true
+        statusButton.heightAnchor.constraint(equalToConstant: 36).isActive = true
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: statusButton)
     }
     
     private func setupCollectionViews() {
@@ -193,20 +193,17 @@ final class IssueDetailViewController: UIViewController {
     
     // MARK: - Data Loading
     private func loadData() {
-        // 1번째 섹션: 이슈 본문 데이터 준비
-        issueContent = MockData.issueContent
-        
-        // 2번째 섹션: 이슈 세부정보 설정
-        issueDetailSection.configure(
-            labels: ["FEAT"], // Mock 데이터
-            assignee: "담당자없음",
-            project: "PC Web Dev",
-            milestone: "Sprint 1",
-            createdDate: "2025. 05. 14",
-            modifiedDate: "2025. 05. 14"
+        // ✅ 1번째 섹션: GitHubIssue 데이터로 이슈 본문 생성
+        issueContent = CommentData(
+            author: issue.author.login,
+            createdAt: issue.createdAt,
+            content: issue.body ?? "이슈 내용이 없습니다."
         )
         
-        // 3번째 섹션: 코멘트들 로드
+        
+        issueDetailSection.configure(with: issue)
+        
+        // 3번째 섹션: 코멘트들 로드 (Mock 데이터)
         comments = MockData.commentItem
         
         // CollectionView 리로드
@@ -216,7 +213,7 @@ final class IssueDetailViewController: UIViewController {
         updateCommentsHeight()
     }
     
-
+    
     
     private func calculateCommentsHeight() -> CGFloat {
         let commentCount = comments.count

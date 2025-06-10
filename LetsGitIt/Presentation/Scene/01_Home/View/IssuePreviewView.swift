@@ -15,11 +15,11 @@ final class IssuePreviewView: UIView {
     private let flowLayout = UICollectionViewFlowLayout()
     
     // MARK: - Properties
-    private var issues: [IssueItem] = []
+    private var issues: [GitHubIssue] = []
     private let maxDisplayCount: Int
     
     // MARK: - Callbacks
-    var onIssueSelected: ((IssueItem) -> Void)?
+    var onIssueSelected: ((GitHubIssue) -> Void)?
     
     // MARK: - Edge Insets
     struct EdgeInsets {
@@ -54,7 +54,7 @@ final class IssuePreviewView: UIView {
     }
     
     // MARK: - Public Methods
-    func updateIssues(_ issues: [IssueItem]) {
+    func updateIssues(_ issues: [GitHubIssue]) {
         self.issues = Array(issues.prefix(maxDisplayCount))
         collectionView.reloadData()
         updateHeight()
@@ -128,12 +128,7 @@ extension IssuePreviewView: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: IssueCardCell.id, for: indexPath) as! IssueCardCell
         let issue = issues[indexPath.item]
         
-        cell.configure(
-            title: issue.title,
-            number: issue.number,
-            author: issue.author,
-            mileStone: issue.milestone ?? "없음"
-        )
+        cell.configure(with: issue)
         
         return cell
     }

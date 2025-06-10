@@ -33,15 +33,14 @@ final class IssueCardCell: UICollectionViewCell, CellIdGenerator {
     }
     
     // MARK: - Public Methods
-    func configure(title: String, number: Int, author: String, mileStone: String?) {
-        titleLabel.text = title
-        numberLabel.text = "#\(number)"
-        
-        guard let title = mileStone else {
-            mileStoneLabel.text = "마일스톤이 없습니다."
-            return }
-        mileStoneLabel.text =  "마일스톤명: \((title))"
 
+    
+    func configure(with issue: GitHubIssue) {
+        titleLabel.text = issue.title
+        numberLabel.text = issue.numberText // computed property 사용
+        mileStoneLabel.text = issue.hasMilestone ?
+            "마일스톤명: \(issue.milestoneText)" :
+            "마일스톤이 없습니다."
     }
     
     // MARK: - Private Methods
@@ -109,25 +108,3 @@ final class IssueCardCell: UICollectionViewCell, CellIdGenerator {
 
 }
 
-// MARK: - Issue Data Models
-struct IssueItem {
-    let id: String
-    let title: String
-    let number: Int
-    let author: String
-    let isOpen: Bool = true
-    let milestone: String?
-}
-
-
-enum IssueStatus {
-    case open
-    case closed
-    
-    var displayText: String {
-        switch self {
-        case .open: return "Open"
-        case .closed: return "Closed"
-        }
-    }
-}

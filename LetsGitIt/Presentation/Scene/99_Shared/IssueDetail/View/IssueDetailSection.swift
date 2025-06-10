@@ -36,8 +36,21 @@ final class IssueDetailSection: UIView {
     }
     
     // MARK: - Public Methods
+    func configure(with issue: GitHubIssue) {
+        
+        configure(
+            labels: issue.labels.displayText, // ✅ extension 사용
+            assignee: issue.assignee?.login,
+            project: "PC Web Dev", // TODO: 실제 프로젝트 정보
+            milestone: issue.milestone?.title,
+            createdDate: issue.createdDateText,
+            modifiedDate: issue.updatedDateText
+        )
+    }
+    
+    // ✅ 기존 방식 (호환성 유지) - 이제 labels가 String
     func configure(
-        labels: [String],
+        labels: String, // ✅ [String] → String 변경
         assignee: String?,
         project: String?,
         milestone: String?,
@@ -45,10 +58,10 @@ final class IssueDetailSection: UIView {
         modifiedDate: String
     ) {
         // 라벨 설정
-        if labels.isEmpty {
+        if labels.isEmpty || labels == "없음" {
             labelRow.configure(title: "라벨", value: "없음", valueColor: .systemGray)
         } else {
-            labelRow.configure(title: "라벨", value: labels.joined(separator: ", "), valueColor: .systemBlue)
+            labelRow.configure(title: "라벨", value: labels, valueColor: .systemBlue)
         }
         
         // 담당자 설정

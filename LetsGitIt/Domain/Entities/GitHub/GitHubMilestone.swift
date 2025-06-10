@@ -86,4 +86,12 @@ extension GitHubMilestone {
         guard let dueDate = dueDate else { return false }
         return Date() > dueDate && state == .open
     }
+    var id_string: String {
+        return String(id)
+    }
+}
+
+enum DDayType {
+    case overdue    // D+숫자 (빨간색)
+    case upcoming   // D-숫자 (회색)
 }
