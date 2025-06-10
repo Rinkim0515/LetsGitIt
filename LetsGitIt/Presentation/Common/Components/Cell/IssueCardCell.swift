@@ -12,7 +12,6 @@ final class IssueCardCell: UICollectionViewCell, CellIdGenerator {
     private let containerView = UIView()
     private let titleLabel = UILabel()
     private let numberLabel = UILabel()
-    private let authorLabel = UILabel()
     private let mileStoneLabel = UILabel()
     // MARK: - Initializers
     override init(frame: CGRect) {
@@ -31,14 +30,12 @@ final class IssueCardCell: UICollectionViewCell, CellIdGenerator {
         super.prepareForReuse()
         titleLabel.text = nil
         numberLabel.text = nil
-        authorLabel.text = nil
     }
     
     // MARK: - Public Methods
     func configure(title: String, number: Int, author: String, mileStone: String?) {
         titleLabel.text = title
         numberLabel.text = "#\(number)"
-        authorLabel.text = "by \(author)"
         mileStoneLabel.text = "임시용 마일스톤"
         
     }
@@ -65,15 +62,10 @@ final class IssueCardCell: UICollectionViewCell, CellIdGenerator {
         mileStoneLabel.font = .pretendard(.semiBold, size: 14)
         mileStoneLabel.textColor = UIColor(named: "PrimaryText") ?? .secondaryLabel
         
-        // 작성자 라벨
-        authorLabel.font = .pretendard(.regular, size: 12)
-        authorLabel.textColor = UIColor(named: "SecondaryText") ?? .secondaryLabel
-        
         // 뷰 계층 구성
         contentView.addSubview(containerView)
         containerView.addSubview(titleLabel)
         containerView.addSubview(numberLabel)
-        containerView.addSubview(authorLabel)
         containerView.addSubview(mileStoneLabel)
         
 
@@ -82,7 +74,7 @@ final class IssueCardCell: UICollectionViewCell, CellIdGenerator {
     
     private func setupConstraints() {
         [containerView, titleLabel, numberLabel,
-         authorLabel, mileStoneLabel].forEach {
+          mileStoneLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
@@ -106,12 +98,6 @@ final class IssueCardCell: UICollectionViewCell, CellIdGenerator {
             // 작성자 (하단 좌측)
             mileStoneLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
             mileStoneLabel.leadingAnchor.constraint(equalTo: numberLabel.leadingAnchor),
-            
-            authorLabel.topAnchor.constraint(equalTo: mileStoneLabel.bottomAnchor, constant: 8),
-            authorLabel.leadingAnchor.constraint(equalTo: numberLabel.leadingAnchor),
-            
-            
-            // 생성일 (하단 우측)
         ])
     }
     

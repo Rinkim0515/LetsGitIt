@@ -81,7 +81,7 @@ final class DashboardViewController: UIViewController {
         stackView.addArrangedSubview(recordSectionHeader)    // 헤더
         stackView.addArrangedSubview(recordStatsView)        // 누적 기록 (배경 있음)
         
-        stackView.addArrangedSubview(createSpacerView(height: 32))
+        stackView.addArrangedSubview(UIView.createSpacerView(height: 32))
     }
     
     private func setupSectionHeaders() {
@@ -135,13 +135,7 @@ final class DashboardViewController: UIViewController {
         recordStatsView.configure(with: MockData.recordStatsData)
     }
     
-    // MARK: - Helper Methods
-    private func createSpacerView(height: CGFloat) -> UIView {
-        let spacer = UIView()
-        spacer.translatesAutoresizingMaskIntoConstraints = false
-        spacer.heightAnchor.constraint(equalToConstant: height).isActive = true
-        return spacer
-    }
+
 }
 
 

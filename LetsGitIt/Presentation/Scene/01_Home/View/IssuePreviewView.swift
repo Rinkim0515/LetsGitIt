@@ -151,7 +151,7 @@ extension IssuePreviewView: UICollectionViewDelegate {
 extension IssuePreviewView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.frame.width
-        let height: CGFloat = 110
+        let height: CGFloat = 70
         return CGSize(width: width, height: height)
     }
 }

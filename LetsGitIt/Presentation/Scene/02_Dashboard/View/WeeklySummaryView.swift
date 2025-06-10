@@ -31,7 +31,7 @@ final class WeeklyCalendarView: UIView {
     
     // MARK: - Public Methods
     func configure(with data: WeeklyData) {
-        let weekDays = getCurrentWeekDays() // [30, 1, 2, 3, 4, 5, 6]
+        let weekDays = MockData.DayInMonth
         
         for (index, dayView) in dayViews.enumerated() {
             let dayNumber = weekDays[index]

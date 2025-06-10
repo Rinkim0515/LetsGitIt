@@ -73,13 +73,10 @@ final class MilestoneDetailViewController: UIViewController {
         // 뷰 계층 구성
         view.addSubview(scrollView)
         scrollView.addSubview(stackView)
-        
-        stackView.addArrangedSubview(createSpacerView(height: 16))
         stackView.addArrangedSubview(milestoneInfoView)
-        stackView.addArrangedSubview(createSpacerView(height: 8))
         stackView.addArrangedSubview(issueHeaderView)
         stackView.addArrangedSubview(tableView)
-        stackView.addArrangedSubview(createSpacerView(height: 32))
+        stackView.addArrangedSubview(UIView.createSpacerView(height: 10))
     }
     
     private func setupConstraints() {
@@ -187,13 +184,6 @@ final class MilestoneDetailViewController: UIViewController {
         }
     }
     
-    // MARK: - Helper Methods
-    private func createSpacerView(height: CGFloat) -> UIView {
-        let spacer = UIView()
-        spacer.translatesAutoresizingMaskIntoConstraints = false
-        spacer.heightAnchor.constraint(equalToConstant: height).isActive = true
-        return spacer
-    }
     
     private func calculateTableViewHeight() -> CGFloat {
         let itemCount = issues.count

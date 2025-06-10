@@ -69,9 +69,10 @@ final class UserProfileHeaderView: UIView {
     private func setupUI() {
         backgroundColor = .clear
         
+        
         // 컨테이너 뷰 설정
         containerView.backgroundColor = .cardBackground
-        
+        self.backgroundColor = .backgroundColor2
         
         // 아바타 이미지뷰 설정
         avatarImageView.contentMode = .scaleAspectFill
@@ -167,7 +168,7 @@ final class UserProfileHeaderView: UIView {
             statsStackView.leadingAnchor.constraint(greaterThanOrEqualTo: nameLabel.trailingAnchor, constant: 12),
             
             // 상태 배지
-            statusBadgeView.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 12),
+            statusBadgeView.topAnchor.constraint(equalTo: containerView.bottomAnchor),
             statusBadgeView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             statusBadgeView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             statusBadgeView.bottomAnchor.constraint(equalTo: bottomAnchor),

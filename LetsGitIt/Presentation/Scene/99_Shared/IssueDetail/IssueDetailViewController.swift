@@ -91,7 +91,7 @@ final class IssueDetailViewController: UIViewController {
         scrollView.addSubview(stackView)
         
         // 스택뷰에 컴포넌트 추가
-        stackView.addArrangedSubview(createSpacerView(height: 8))
+        stackView.addArrangedSubview(UIView.createSpacerView(height: 8))
         stackView.addArrangedSubview(issueSectionHeader)
         stackView.addArrangedSubview(issueContentCollectionView) // 1번째 섹션: 이슈 본문 (1개 셀)
         stackView.addArrangedSubview(issueDetailSection)         // 2번째 섹션: 세부정보
@@ -99,7 +99,7 @@ final class IssueDetailViewController: UIViewController {
         stackView.addArrangedSubview(commentSectionHeader)       // 3번째 섹션 헤더
         
         stackView.addArrangedSubview(commentCollectionView)      // 3번째 섹션: 코멘트들
-        stackView.addArrangedSubview(createSpacerView(height: 32))
+        stackView.addArrangedSubview(UIView.createSpacerView(height: 32))
     }
     
     private func setupConstraints() {
@@ -256,13 +256,7 @@ final class IssueDetailViewController: UIViewController {
         updateCommentsHeight()
     }
     
-    // MARK: - Helper Methods
-    private func createSpacerView(height: CGFloat) -> UIView {
-        let spacer = UIView()
-        spacer.translatesAutoresizingMaskIntoConstraints = false
-        spacer.heightAnchor.constraint(equalToConstant: height).isActive = true
-        return spacer
-    }
+
     
     private func calculateCommentsHeight() -> CGFloat {
         let commentCount = comments.count

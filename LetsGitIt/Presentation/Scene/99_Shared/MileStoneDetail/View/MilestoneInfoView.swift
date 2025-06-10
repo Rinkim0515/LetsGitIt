@@ -16,9 +16,11 @@ final class MilestoneInfoView: UIView {
     // 상단: Description
     private let descriptionLabel = UILabel()
     
+    private let issueCountLabel = UILabel()
+    
     // 중간: 이슈 개수 + 진행률 + Due Date
     private let statsStackView = UIStackView()
-    private let issueCountLabel = UILabel()
+    
     private let progressLabel = UILabel()
     private let dueDateLabel = UILabel()
     
@@ -54,8 +56,7 @@ final class MilestoneInfoView: UIView {
         issueCountLabel.text = "이슈: \(openIssues) open / \(closedIssues) closed"
         
         // 진행률
-        progressLabel.text = "\(progressPercentage)% 완료"
-        
+        progressLabel.text = "현재 진행률은 \(progressPercentage)% 입니다. "
         // Due Date (D-day를 실제 날짜로 변환)
         if milestone.dday.contains("D-") {
             let daysLeft = milestone.dday.replacingOccurrences(of: "D-", with: "")
@@ -77,11 +78,6 @@ final class MilestoneInfoView: UIView {
     // MARK: - Private Methods
     private func setupUI() {
         backgroundColor = .clear
-        
-        // 컨테이너 설정
-        containerView.backgroundColor = UIColor(named: "BackgroundColor1") ?? .secondarySystemBackground
-        containerView.layer.cornerRadius = 12
-        
         // 메인 스택뷰 설정
         stackView.axis = .vertical
         stackView.spacing = 16
@@ -103,12 +99,12 @@ final class MilestoneInfoView: UIView {
         // 이슈 개수 라벨
         issueCountLabel.font = .pretendard(.semiBold, size: 14)
         issueCountLabel.textColor = UIColor(named: "AccentColor") ?? .systemBlue
-        issueCountLabel.textAlignment = .left
+        issueCountLabel.textAlignment = .right
         
         // 진행률 라벨
         progressLabel.font = .pretendard(.semiBold, size: 14)
         progressLabel.textColor = UIColor(named: "AccentColor") ?? .systemBlue
-        progressLabel.textAlignment = .center
+        progressLabel.textAlignment = .left
         
         // Due Date 라벨
         dueDateLabel.font = .pretendard(.regular, size: 14)
@@ -131,12 +127,13 @@ final class MilestoneInfoView: UIView {
         containerView.addSubview(stackView)
         
         stackView.addArrangedSubview(descriptionLabel)
+        stackView.addArrangedSubview(issueCountLabel)
         stackView.addArrangedSubview(statsStackView)
-        stackView.addArrangedSubview(progressBarContainer)
         
-        statsStackView.addArrangedSubview(issueCountLabel)
         statsStackView.addArrangedSubview(progressLabel)
         statsStackView.addArrangedSubview(dueDateLabel)
+        
+        stackView.addArrangedSubview(progressBarContainer)
         
         progressBarContainer.addSubview(progressBar)
         progressBar.addSubview(progressIndicator)
@@ -150,15 +147,15 @@ final class MilestoneInfoView: UIView {
         NSLayoutConstraint.activate([
             // 컨테이너
             containerView.topAnchor.constraint(equalTo: topAnchor),
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            containerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            containerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
             containerView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
             // 스택뷰
-            stackView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 20),
-            stackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 20),
-            stackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -20),
-            stackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -20),
+            stackView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10),
+            stackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 10),
+            stackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
+            stackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -10),
             
             // Progress Bar 컨테이너
             progressBarContainer.heightAnchor.constraint(equalToConstant: 8),

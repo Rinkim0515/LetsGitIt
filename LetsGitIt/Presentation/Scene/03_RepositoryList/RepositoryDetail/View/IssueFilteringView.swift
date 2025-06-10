@@ -54,6 +54,8 @@ final class IssueFilteringView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+
+    
     // MARK: - Setup
     private func setupUI() {
         backgroundColor = .clear
@@ -109,11 +111,11 @@ final class IssueFilteringView: UIView {
             issueListCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
             issueListCollectionView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            // 플로팅 세그먼트 컨트롤 (부모 뷰 기준으로 위치)
-            floatingSegmentedControl.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -100),
+            // 🔸 커스텀 플로팅 세그먼트 컨트롤
+            floatingSegmentedControl.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -50),
             floatingSegmentedControl.centerXAnchor.constraint(equalTo: centerXAnchor),
-            floatingSegmentedControl.widthAnchor.constraint(equalToConstant: 200),
-            floatingSegmentedControl.heightAnchor.constraint(equalToConstant: 32)
+            floatingSegmentedControl.widthAnchor.constraint(equalToConstant: 280),
+            floatingSegmentedControl.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
     
@@ -132,20 +134,21 @@ final class IssueFilteringView: UIView {
     private func setupFloatingSegment() {
         // 세그먼트 컨트롤 스타일 설정
         floatingSegmentedControl.selectedSegmentIndex = 0
-        floatingSegmentedControl.backgroundColor = UIColor.black.withAlphaComponent(0.8)
-        floatingSegmentedControl.selectedSegmentTintColor = .white
+        
+        floatingSegmentedControl.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+        floatingSegmentedControl.selectedSegmentTintColor = UIColor.white.withAlphaComponent(0.7)
         floatingSegmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .normal)
         floatingSegmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.black], for: .selected)
         
-        // 둥근 모서리 적용
-        floatingSegmentedControl.layer.cornerRadius = 16
+        
+        floatingSegmentedControl.layer.cornerRadius = 60
         floatingSegmentedControl.clipsToBounds = true
         
-        // 그림자 효과
+        // 그림자 효과 (투명도 때문에 더 강하게)
         floatingSegmentedControl.layer.shadowColor = UIColor.black.cgColor
-        floatingSegmentedControl.layer.shadowOpacity = 0.3
-        floatingSegmentedControl.layer.shadowOffset = CGSize(width: 0, height: 2)
-        floatingSegmentedControl.layer.shadowRadius = 8
+        floatingSegmentedControl.layer.shadowOpacity = 0.5 // 0.3 → 0.5
+        floatingSegmentedControl.layer.shadowOffset = CGSize(width: 0, height: 4) // 2 → 4
+        floatingSegmentedControl.layer.shadowRadius = 12 // 8 → 12
         floatingSegmentedControl.layer.masksToBounds = false
         
         // 이벤트 연결
@@ -195,7 +198,8 @@ final class IssueFilteringView: UIView {
     func updateFloatingSegmentPosition(bottomConstant: CGFloat) {
         floatingSegmentedControl.constraints.forEach { constraint in
             if constraint.firstAttribute == .bottom {
-                constraint.constant = bottomConstant
+                // 🔸 기본적으로 더 아래 위치하도록 조정
+                constraint.constant = bottomConstant - 40 // 추가로 40pt 더 아래로
             }
         }
     }

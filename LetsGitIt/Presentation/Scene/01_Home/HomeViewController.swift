@@ -27,7 +27,7 @@ final class HomeViewController: UIViewController {
     
     private let issueSectionHeader = TitleHeaderView()
     private let issuePreviewView = IssuePreviewView(
-        maxDisplayCount: 2,
+        maxDisplayCount: 4,
         edgeInsets: IssuePreviewView.EdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
     )
     
@@ -85,21 +85,21 @@ final class HomeViewController: UIViewController {
         scrollView.addSubview(stackView)
         
         // 🔸 스택뷰에 컴포넌트 추가 (프로필 제외)
-        stackView.addArrangedSubview(createSpacerView(height: 10))
+        stackView.addArrangedSubview(UIView.createSpacerView(height: 10))
         
         // 마일스톤 섹션
         stackView.addArrangedSubview(milestoneSectionHeader)
-        stackView.addArrangedSubview(createSpacerView(height: 8))
+        stackView.addArrangedSubview(UIView.createSpacerView(height: 8))
         stackView.addArrangedSubview(milestonePreviewView)
         
         // 이슈 섹션
-        stackView.addArrangedSubview(createSpacerView(height: 10))
+        stackView.addArrangedSubview(UIView.createSpacerView(height: 10))
         stackView.addArrangedSubview(issueSectionHeader)
-        stackView.addArrangedSubview(createSpacerView(height: 8))
+        stackView.addArrangedSubview(UIView.createSpacerView(height: 8))
         stackView.addArrangedSubview(issuePreviewView)
         
-        // 하단 여백
-        stackView.addArrangedSubview(createSpacerView(height: 32))
+        
+        stackView.addArrangedSubview(UIView.createSpacerView(height: 8))
     }
     
     private func setupConstraints() {
@@ -203,13 +203,7 @@ final class HomeViewController: UIViewController {
         navigationController?.pushViewController(issueDetailVC, animated: true)
     }
     
-    // MARK: - Helper Methods
-    private func createSpacerView(height: CGFloat) -> UIView {
-        let spacer = UIView()
-        spacer.translatesAutoresizingMaskIntoConstraints = false
-        spacer.heightAnchor.constraint(equalToConstant: height).isActive = true
-        return spacer
-    }
+
     
     private func showError(_ message: String) {
         let alert = UIAlertController(title: "오류", message: message, preferredStyle: .alert)
