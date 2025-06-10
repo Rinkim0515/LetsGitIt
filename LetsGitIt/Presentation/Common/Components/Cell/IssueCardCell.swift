@@ -36,8 +36,12 @@ final class IssueCardCell: UICollectionViewCell, CellIdGenerator {
     func configure(title: String, number: Int, author: String, mileStone: String?) {
         titleLabel.text = title
         numberLabel.text = "#\(number)"
-        mileStoneLabel.text = "임시용 마일스톤"
         
+        guard let title = mileStone else {
+            mileStoneLabel.text = "마일스톤이 없습니다."
+            return }
+        mileStoneLabel.text =  "마일스톤명: \((title))"
+
     }
     
     // MARK: - Private Methods
@@ -68,12 +72,12 @@ final class IssueCardCell: UICollectionViewCell, CellIdGenerator {
         containerView.addSubview(numberLabel)
         containerView.addSubview(mileStoneLabel)
         
-
-        
     }
     
     private func setupConstraints() {
-        [containerView, titleLabel, numberLabel,
+        [containerView,
+         titleLabel,
+         numberLabel,
           mileStoneLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -112,6 +116,7 @@ struct IssueItem {
     let number: Int
     let author: String
     let isOpen: Bool = true
+    let milestone: String?
 }
 
 

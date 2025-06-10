@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 struct GitHubMilestone {
     let id: Int
@@ -30,3 +31,59 @@ enum GitHubMilestoneState {
     case closed
 }
 
+extension GitHubMilestone {
+    
+    
+    var ddayText: String {
+        guard let dueDate = dueDate else { return "기한없음" }
+        
+        let calendar = Calendar.current
+        let now = Date()
+        let days = calendar.dateComponents([.day], from: now, to: dueDate).day ?? 0
+        
+        if days > 0 {
+            return "D-\(days)"
+        } else if days < 0 {
+            return "D+\(abs(days))"
+        } else {
+            return "D-Day"
+        }
+    }
+    
+    var ddayType: DDayType {
+        guard let dueDate = dueDate else { return .upcoming }
+        return Date() > dueDate ? .overdue : .upcoming
+    }
+    
+    // MARK: - UI 표시용 텍스트
+    var displayDescription: String {
+        return description ?? "설명 없음"
+    }
+    
+    var tagText: String {
+        return "Milestone"
+    }
+    
+    var tagColor: UIColor {
+        switch state {
+        case .open: return .systemBlue
+        case .closed: return .systemGray
+        }
+    }
+    
+    // MARK: - 진행률 관련
+    var progressText: String {
+        let percentage = Int(progress * 100)
+        return "\(percentage)%"
+    }
+    
+    var issuesSummaryText: String {
+        return "\(openIssues) open / \(closedIssues) closed"
+    }
+    
+    // MARK: - 상태 확인
+    var isOverdue: Bool {
+        guard let dueDate = dueDate else { return false }
+        return Date() > dueDate && state == .open
+    }
+}

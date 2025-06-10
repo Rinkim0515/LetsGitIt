@@ -38,10 +38,34 @@ final class DIContainer {
         return GetUserRepositoriesUseCase(repositoryRepository: gitHubRepositoryRepository)
     }()
     
+    private lazy var gitHubMilestoneRepository: GitHubMilestoneRepositoryProtocol = {
+        return GitHubMilestoneRepository(apiService: gitHubAPIService)
+    }()
+    
+    
+    private lazy var getRepositoryMilestonesUseCase: GetRepositoryMilestonesUseCase = {
+        return GetRepositoryMilestonesUseCase(milestoneRepository: gitHubMilestoneRepository)
+    }()
+    
+
+    
+    private lazy var gitHubIssueRepository: GitHubIssueRepositoryProtocol = {
+        return GitHubIssueRepository(apiService: gitHubAPIService)
+    }()
+    
+
+    private lazy var getRepositoryIssuesUseCase: GetRepositoryIssuesUseCase = {
+        return GetRepositoryIssuesUseCase(issueRepository: gitHubIssueRepository)
+    }()
+    
     
     // MARK: - Presentation Layer Factory Methods
     func makeHomeVC() -> HomeViewController {
-        return HomeViewController(getCurrentUserUseCase: getCurrentUserUseCase)
+        return HomeViewController(
+            getCurrentUserUseCase: getCurrentUserUseCase,
+            getMilestonesUseCase: getRepositoryMilestonesUseCase,  // ✅ 추가
+            getIssuesUseCase: getRepositoryIssuesUseCase          // ✅ 추가
+        )
     }
     
     func makeDashboardVC() -> DashboardViewController {

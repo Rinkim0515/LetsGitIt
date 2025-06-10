@@ -14,11 +14,11 @@ final class MilestonePreviewView: UIView {
     private let flowLayout = UICollectionViewFlowLayout()
     
     // MARK: - Properties
-    private var milestones: [MilestoneItem] = []
+    private var milestones: [GitHubMilestone] = []
     private let maxDisplayCount: Int
     
     // MARK: - Callbacks
-    var onMilestoneSelected: ((MilestoneItem) -> Void)?
+    var onMilestoneSelected: ((GitHubMilestone) -> Void)?
     
     // MARK: - Properties
     struct EdgeInsets {
@@ -50,7 +50,7 @@ final class MilestonePreviewView: UIView {
 
     
     // MARK: - Public Methods
-    func updateMilestones(_ milestones: [MilestoneItem]) {
+    func updateMilestones(_ milestones: [GitHubMilestone]) {
         // 최대 표시 개수만큼만 저장
         self.milestones = Array(milestones.prefix(maxDisplayCount))
         collectionView.reloadData()
@@ -134,10 +134,10 @@ extension MilestonePreviewView: UICollectionViewDataSource {
         
         cell.configure(
             title: milestone.title,
-            description: milestone.description,
-            tag: milestone.tag,
+            description: milestone.displayDescription,
+            tag: milestone.tagText,
             tagColor: milestone.tagColor,
-            dday: milestone.dday,
+            dday: milestone.ddayText,
             ddayType: milestone.ddayType,
             progress: milestone.progress
         )

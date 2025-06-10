@@ -132,7 +132,7 @@ extension IssuePreviewView: UICollectionViewDataSource {
             title: issue.title,
             number: issue.number,
             author: issue.author,
-            mileStone: nil
+            mileStone: issue.milestone ?? "없음"
         )
         
         return cell

@@ -261,14 +261,7 @@ extension MockMilestoneDetail {
             progress: 0.6
         ),
         issues: [
-            IssueItem(id: "1", title: "로그인 기능 구현", number: 45, author: "developer1"),
-            IssueItem(id: "2", title: "UI 개선 작업", number: 44, author: "designer1"),
-            IssueItem(id: "3", title: "API 연동 완료", number: 43, author: "backend-dev"),
-            IssueItem(id: "4", title: "테스트 코드 작성", number: 42, author: "tester1"),
-            IssueItem(id: "5", title: "버그 수정 및 최적화", number: 41, author: "developer2"),
-            IssueItem(id: "6", title: "문서 업데이트", number: 40, author: "technical-writer"),
-            IssueItem(id: "7", title: "배포 스크립트 개선", number: 39, author: "devops-team"),
-            IssueItem(id: "8", title: "성능 테스트", number: 38, author: "qa-team")
+
         ]
     )
 }

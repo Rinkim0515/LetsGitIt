@@ -7,14 +7,13 @@
 // 이슈는 4개까지만 보여주고
 // 마일스톤은 2개까지만
 
-
 import UIKit
 
-
-final class HomeViewController: UIViewController {
+final class HomeViewController: UIViewController, ErrorHandlingCapable, LoadingCapable {
     // MARK: - Dependencies (Clean Architecture)
     private let getCurrentUserUseCase: GetCurrentUserUseCase
-    
+    private let getMilestonesUseCase: GetRepositoryMilestonesUseCase
+    private let getIssuesUseCase: GetRepositoryIssuesUseCase
     private let profileHeaderView = UserProfileHeaderView()
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
@@ -31,9 +30,23 @@ final class HomeViewController: UIViewController {
         edgeInsets: IssuePreviewView.EdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
     )
     
+    private var selectedRepositoryName: String? {
+        return UserDefaults.standard.string(forKey: "selected_repository_name")
+    }
+    
+    private var selectedRepositoryOwner: String? {
+        return UserDefaults.standard.string(forKey: "selected_repository_owner")
+    }
+
     // MARK: - Initialization
-    init(getCurrentUserUseCase: GetCurrentUserUseCase) {
+    init(
+        getCurrentUserUseCase: GetCurrentUserUseCase,
+        getMilestonesUseCase: GetRepositoryMilestonesUseCase,
+        getIssuesUseCase: GetRepositoryIssuesUseCase
+    ) {
         self.getCurrentUserUseCase = getCurrentUserUseCase
+        self.getMilestonesUseCase = getMilestonesUseCase
+        self.getIssuesUseCase = getIssuesUseCase
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -97,7 +110,6 @@ final class HomeViewController: UIViewController {
         stackView.addArrangedSubview(issueSectionHeader)
         stackView.addArrangedSubview(UIView.createSpacerView(height: 8))
         stackView.addArrangedSubview(issuePreviewView)
-        
     }
     
     private func setupConstraints() {
@@ -129,7 +141,7 @@ final class HomeViewController: UIViewController {
     private func setupActions() {
         // 마일스톤 카드 선택
         milestonePreviewView.onMilestoneSelected = { [weak self] milestone in
-            self?.navigateToMilestoneDetail(milestone)
+            
         }
         // 이슈 카드 선택
         issuePreviewView.onIssueSelected = { [weak self] issue in
@@ -139,46 +151,70 @@ final class HomeViewController: UIViewController {
     
     // MARK: - Data Loading
     private func loadData() {
-        loadUserProfile()
-        loadMilestones()
-        loadIssues()
-    }
-    
-    private func loadUserProfile() {
+        // 선택된 리포지토리가 있는지 확인
+        guard let repositoryName = selectedRepositoryName,
+              let repositoryOwner = selectedRepositoryOwner else {
+            showDataLoadingErrorAlert {
+                print("선택된 리포지토리가 없습니다.")
+            }
+            return
+        }
+        
+        showLoading()
+        
+        // 병렬로 데이터 로딩
         Task {
             do {
-                let user = try await getCurrentUserUseCase.execute()
+                async let userTask = getCurrentUserUseCase.execute()
+                async let milestonesTask = getMilestonesUseCase.executeForHome(
+                    owner: repositoryOwner,
+                    repo: repositoryName
+                )
+                async let issuesTask = getIssuesUseCase.executeForHome(
+                    owner: repositoryOwner,
+                    repo: repositoryName
+                )
+                
+                let (user, milestones, issues) = try await (userTask, milestonesTask, issuesTask)
+                
                 await MainActor.run {
-                    updateProfileHeader(with: user)
+                    updateUI(user: user, milestones: milestones, issues: issues)
+                    hideLoading()
                 }
+                
             } catch {
                 await MainActor.run {
-                    showError("프로필 정보를 불러오지 못했습니다: \(error.localizedDescription)")
+                    hideLoading()
+                    showDataLoadingErrorAlert {
+                        print("데이터 로딩 실패: \(error.localizedDescription)")
+                    }
                 }
             }
         }
     }
     
-    private func loadMilestones() {
-        let mockMilestones = MockData.milestoneItem1
-        milestonePreviewView.updateMilestones(mockMilestones)
+    private func updateUI(user: GitHubUser, milestones: [GitHubMilestone], issues: [GitHubIssue]) {
+        // 프로필 헤더 업데이트
+        updateProfileHeader(with: user)
+        milestonePreviewView.updateMilestones(milestones)
+//        issuePreviewView.updateIssues(issues)
+        
+        print("✅ 데이터 로딩 완료: 마일스톤 \(milestones.count)개, 이슈 \(issues.count)개")
     }
     
-    private func loadIssues() {
-        let mockIssues = MockData.issueItem
-        issuePreviewView.updateIssues(mockIssues)
-    }
-    
-    // MARK: - UI Update
     private func updateProfileHeader(with user: GitHubUser) {
         profileHeaderView.configure(
-            name: user.name ?? "이름 없음",
-            subtitle: " 1",
+            name: user.name ?? user.login,
+            subtitle: "1",
             completedCount: 5,
             savedCount: 11076,
             statusText: "현재 코어 타임 09:30:15 남았습니다."
         )
     }
+    
+
+    
+
     
     // MARK: - Navigation
     private func navigateToMilestoneList() {
@@ -201,29 +237,6 @@ final class HomeViewController: UIViewController {
         navigationController?.pushViewController(issueDetailVC, animated: true)
     }
     
-
-    
-    private func showError(_ message: String) {
-        let alert = UIAlertController(title: "오류", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "확인", style: .default))
-        present(alert, animated: true)
-    }
 }
 
-// MARK: - Pull to Refresh
-extension HomeViewController {
-    private func setupRefreshControl() {
-        let refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
-        scrollView.refreshControl = refreshControl
-    }
-    
-    @objc private func handleRefresh() {
-        loadData()
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.scrollView.refreshControl?.endRefreshing()
-        }
-    }
-}
 
