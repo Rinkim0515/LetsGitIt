@@ -276,5 +276,68 @@ extension MockData {
             "총 코어 타임: ???"
         ]
     )
+    static let mileStoneDetail: MilestoneDetail = {
+        let milestoneTitle: String = "Test Milestone"
+        let issueCount: Int = 8
+        let closedRatio: Double = 0.6
+        let closedCount = Int(Double(issueCount) * closedRatio)
+        let openCount = issueCount - closedCount
+        
+        let mockMilestone = GitHubMilestone(
+            id: 1,
+            number: 1,
+            title: milestoneTitle,
+            description: "테스트용 마일스톤입니다. 실제 API 연동 전까지 사용됩니다.",
+            state: .open,
+            openIssues: openCount,
+            closedIssues: closedCount,
+            dueDate: Calendar.current.date(byAdding: .day, value: 7, to: Date()),
+            createdAt: Date(),
+            updatedAt: Date()
+        )
+        
+        // Mock GitHubIssues
+        var mockIssues: [GitHubIssue] = []
+        
+        for i in 1...issueCount {
+            let isOpen = i <= openCount
+            let mockUser = GitHubUser(
+                id: i,
+                login: "developer\(i)",
+                name: "Developer \(i)",
+                avatarURL: "https://github.com/images/error/octocat_happy.gif",
+                bio: nil,
+                publicRepos: 10,
+                followers: 100,
+                following: 50
+            )
+            
+            let mockIssue = GitHubIssue(
+                id: i,
+                number: 50 - i,
+                title: "이슈 제목 \(i)",
+                body: "이슈 내용입니다. 테스트용 데이터입니다.",
+                state: isOpen ? .open : .closed,
+                labels: [],
+                assignee: i % 3 == 0 ? mockUser : nil,
+                milestone: mockMilestone,
+                author: mockUser,
+                createdAt: Date(),
+                updatedAt: Date()
+            )
+            
+            mockIssues.append(mockIssue)
+        }
+        
+        return MilestoneDetail(
+            milestone: mockMilestone,
+            issues: mockIssues
+        )
+    }()
+        
+        
+    
+    
+
 }
 
