@@ -21,7 +21,7 @@ final class RepositoryDetailViewController: UIViewController {
     private let milestoneListView = MilestoneListView()
     
     // MARK: - Data
-    private var milestones: [MilestoneData] = []
+    private var milestones: [GitHubMilestone] = []
     private var milestoneItems: [MilestoneItem] = []
     
     // MARK: - Initialization

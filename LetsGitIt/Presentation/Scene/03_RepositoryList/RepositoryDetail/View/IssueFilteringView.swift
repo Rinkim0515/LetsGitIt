@@ -18,7 +18,7 @@ final class IssueFilteringView: UIView {
     private let floatingSegmentedControl = UISegmentedControl(items: ["All", "Open", "Closed"])
     
     // MARK: - Data
-    private var milestones: [MilestoneData] = []
+    private var milestones: [GitHubMilestone] = []
     private var selectedMilestoneIndex: Int = 0
     private var currentFilter: IssueFilter = .all
     
@@ -266,6 +266,18 @@ extension IssueFilteringView: UICollectionViewDelegateFlowLayout {
         } else { // 이슈 리스트
             let width = collectionView.frame.width - 40 // 좌우 여백 제외
             return CGSize(width: width, height: 110)
+        }
+    }
+}
+
+enum IssueFilter: CaseIterable {
+    case all, open, closed
+    
+    var title: String {
+        switch self {
+        case .all: return "All"
+        case .open: return "Open"
+        case .closed: return "Closed"
         }
     }
 }

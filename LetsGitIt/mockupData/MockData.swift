@@ -9,39 +9,76 @@ import Foundation
 
 class MockData {
     
-
-    static let milestoneItem1 = [
-        MilestoneItem(
-            id: "1",
-            title: "마일스톤 제목",
-            description: "마일스톤 내용마일스톤 내용마일스톤 내용마일스톤 내용마일스톤 내용",
-            tag: "Mobile App",
-            tagColor: .systemPink,
-            dday: "D+3",
-            ddayType: .overdue,
-            progress: 0.7
+    // ✅ GitHubMilestone 사용 (MilestoneItem 대체)
+    static let sampleMilestones: [GitHubMilestone] = [
+        GitHubMilestone(
+            id: 1,
+            number: 1,
+            title: "Sprint 1 개발",
+            description: "로그인, 회원가입, 프로필 기능 개발을 포함한 첫 번째 스프린트입니다.",
+            state: .open,
+            openIssues: 3,
+            closedIssues: 9,
+            dueDate: Calendar.current.date(byAdding: .day, value: -7, to: Date()),
+            createdAt: Date(),
+            updatedAt: Date()
         ),
-        MilestoneItem(
-            id: "2",
-            title: "마일스톤 제목",
-            description: "마일스톤 내용마일스톤 내용마일스톤 내용마일스톤 내용마일스톤 내용",
-            tag: "PC Web",
-            tagColor: .systemBlue,
-            dday: "D-3",
-            ddayType: .upcoming,
-            progress: 0.4
+        GitHubMilestone(
+            id: 2,
+            number: 2,
+            title: "UI/UX 개선",
+            description: "사용자 경험 향상을 위한 인터페이스 디자인 및 사용성 개선 작업입니다.",
+            state: .open,
+            openIssues: 7,
+            closedIssues: 5,
+            dueDate: Calendar.current.date(byAdding: .day, value: 14, to: Date()),
+            createdAt: Date(),
+            updatedAt: Date()
         ),
-        MilestoneItem(
-            id: "3",
-            title: "추가 마일스톤",
-            description: "세 번째 마일스톤 설명입니다",
-            tag: "Backend",
-            tagColor: .systemGreen,
-            dday: "D-7",
-            ddayType: .upcoming,
-            progress: 0.2
+        GitHubMilestone(
+            id: 3,
+            number: 3,
+            title: "Beta 테스트",
+            description: "실제 사용자를 대상으로 한 베타 테스트 및 피드백 수집 단계입니다.",
+            state: .open,
+            openIssues: 1,
+            closedIssues: 9,
+            dueDate: Calendar.current.date(byAdding: .day, value: -3, to: Date()),
+            createdAt: Date(),
+            updatedAt: Date()
         )
     ]
+    
+    // ✅ GitHubIssue 사용 (기존 IssueItem 제거됨)
+    static let sampleIssues: [GitHubIssue] = [
+        GitHubIssue(
+            id: 1,
+            number: 42,
+            title: "앱 크래시 이슈 수정",
+            body: "앱이 특정 조건에서 크래시되는 문제를 수정해야 합니다.",
+            state: .open,
+            labels: [],
+            assignee: nil,
+            milestone: sampleMilestones[0],
+            author: GitHubUser(id: 1, login: "developer1", name: "Developer One", avatarURL: "https://github.com/images/error/octocat_happy.gif", bio: nil, publicRepos: 10, followers: 100, following: 50),
+            createdAt: Date(),
+            updatedAt: Date()
+        ),
+        GitHubIssue(
+            id: 2,
+            number: 41,
+            title: "UI 개선 작업",
+            body: "사용자 인터페이스를 더 직관적으로 개선하는 작업입니다.",
+            state: .open,
+            labels: [],
+            assignee: nil,
+            milestone: sampleMilestones[1],
+            author: GitHubUser(id: 2, login: "designer1", name: "Designer One", avatarURL: "https://github.com/images/error/octocat_happy.gif", bio: nil, publicRepos: 5, followers: 80, following: 30),
+            createdAt: Date(),
+            updatedAt: Date()
+        )
+    ]
+    
     static let commentItem: [CommentItem] = [
         // 1. 텍스트만
         CommentItem(
@@ -85,125 +122,16 @@ class MockData {
             
             **임시 해결책**: `localStorage.clear()` 호출하면 해결됩니다.
             """
-        ),
-        
-        // 4. 다중 이미지
-        CommentItem(
-            id: "4",
-            author: "tester456",
-            avatarURL: nil,
-            createdAt: Date(),
-            originalContent: """
-            테스트 결과입니다:
-            
-            ![테스트1](https://example.com/test1.png)
-            ![테스트2](https://example.com/test2.png)
-            ![테스트3](https://example.com/test3.png)
-            
-            모든 테스트 **통과**했습니다! 🎉
-            """
-        ),
-        
-        // 5. 빈 텍스트 + 이미지
-        CommentItem(
-            id: "5",
-            author: "reviewer789",
-            avatarURL: nil,
-            createdAt: Date(),
-            originalContent: "![결과](https://example.com/result.png)"
         )
     ]
-    static let milestoneData1: [MilestoneData] = [
-        MilestoneData(
-            id: "1",
-            name: "Sprint 1",
-            issues: [
-
-            ]
-        ),
-        
-        MilestoneData(
-            id: "2",
-            name: "Sprint 2",
-            issues: [
-
-            ]
-        ),
-        
-        MilestoneData(
-            id: "3",
-            name: "Bug Fix Release",
-            issues: [
-
-            ]
-        ),
-        
-        MilestoneData(
-            id: "4",
-            name: "v2.0 Major Update",
-            issues: [
-
-            ]
-        ),
-        
-        MilestoneData(
-            id: "5",
-            name: "Empty Milestone",
-            issues: [] // 빈 마일스톤 (테스트용)
-        )
+    
+    // ✅ 기존 MilestoneData에서 GitHubMilestone + GitHubIssue 조합으로 변경
+    static let milestoneWithIssues: [(milestone: GitHubMilestone, issues: [GitHubIssue])] = [
+        (milestone: sampleMilestones[0], issues: [sampleIssues[0]]),
+        (milestone: sampleMilestones[1], issues: [sampleIssues[1]]),
+        (milestone: sampleMilestones[2], issues: [])
     ]
-    static let milestonesItem2: [MilestoneItem] =  [
-        MilestoneItem(
-            id: "1",
-            title: "Sprint 1 개발",
-            description: "로그인, 회원가입, 프로필 기능 개발을 포함한 첫 번째 스프린트입니다.",
-            tag: "Development",
-            tagColor: .systemBlue,
-            dday: "D-7",
-            ddayType: .upcoming,
-            progress: 0.75
-        ),
-        MilestoneItem(
-            id: "2",
-            title: "UI/UX 개선",
-            description: "사용자 경험 향상을 위한 인터페이스 디자인 및 사용성 개선 작업입니다.",
-            tag: "Design",
-            tagColor: .systemPink,
-            dday: "D-14",
-            ddayType: .upcoming,
-            progress: 0.45
-        ),
-        MilestoneItem(
-            id: "3",
-            title: "Beta 테스트",
-            description: "실제 사용자를 대상으로 한 베타 테스트 및 피드백 수집 단계입니다.",
-            tag: "Testing",
-            tagColor: .systemOrange,
-            dday: "D+3",
-            ddayType: .overdue,
-            progress: 0.90
-        ),
-        MilestoneItem(
-            id: "4",
-            title: "출시 준비",
-            description: "앱 스토어 등록, 마케팅 자료 준비, 최종 배포 준비 작업입니다.",
-            tag: "Release",
-            tagColor: .systemGreen,
-            dday: "D-21",
-            ddayType: .upcoming,
-            progress: 0.20
-        ),
-        MilestoneItem(
-            id: "5",
-            title: "성능 최적화",
-            description: "앱 성능 개선 및 메모리 사용량 최적화 작업을 진행합니다.",
-            tag: "Performance",
-            tagColor: .systemPurple,
-            dday: "D-30",
-            ddayType: .upcoming,
-            progress: 0.10
-        )
-    ]
+    
     //issueDetailViewController에서 issue내용
     static let issueContent = CommentData(
         author: "Mock123",
@@ -246,6 +174,7 @@ extension MockData {
             "총 코어 타임: ???"
         ]
     )
+    
     static let mileStoneDetail: MilestoneDetail = {
         let milestoneTitle: String = "Test Milestone"
         let issueCount: Int = 8
@@ -304,10 +233,4 @@ extension MockData {
             issues: mockIssues
         )
     }()
-    
-    
-    
-    
-    
-    
 }

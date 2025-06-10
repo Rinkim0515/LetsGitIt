@@ -218,10 +218,7 @@ final class HomeViewController: UIViewController, ErrorHandlingCapable, LoadingC
     
     // MARK: - Navigation
     private func navigateToMilestoneList() {
-        print("📍 마일스톤 전체 목록으로 이동")
-        let milestoneVC = IssueListViewController(repositoryName: "LetsGitIt")
-        milestoneVC.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(milestoneVC, animated: true)
+
     }
     
     private func navigateToIssueList() {
