@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class SettingViewController: UIViewController {
+final class SettingViewController: UIViewController, ErrorHandlingCapable {
     
     // MARK: - UI Components
     private let scrollView = UIScrollView()
@@ -253,55 +253,29 @@ extension SettingViewController {
 
 //MARK: - Alert Logic
 extension SettingViewController {
-    
     private func logoutButtonTapped() {
-        let alert = CustomAlert.builder()
-            .title("로그아웃")
-            .message("로그아웃 하시겠어요?")
-            .dualAction(secondary: "취소", primary: "로그아웃")
-            .primaryAction {
-                GitHubAuthManager.shared.logout()
-                DispatchQueue.main.async {
-                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                       let window = windowScene.windows.first {
-                        window.rootViewController = LoginViewController()
-                    }
+        showLogoutConfirmationAlert {
+            GitHubAuthManager.shared.logout()
+            DispatchQueue.main.async {
+                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let window = windowScene.windows.first {
+                    window.rootViewController = LoginViewController()
                 }
             }
-            .secondaryAction { [weak self] in
-                print("로그아웃 취소")
-                self?.dismiss(animated: true)
-            }
-            .build()
-        alert.show(on: self)
+        }
     }
-    
     private func withdrawButtonTapped() {
-        let alert = CustomAlert.builder()
-            .title("회원탈퇴")
-            .message("로그아웃 하시겠어요?")
-            .dualAction(secondary: "취소", primary: "로그아웃")
-            .primaryAction {
-            }
-            .secondaryAction {
-            }
-            .build()
-        alert.show(on: self)
+        showWithdrawConfirmationAlert {
+            print("회원탈퇴 진행")
+            // TODO: 회원탈퇴 로직 구현
+        }
     }
     
     private func turnOffCoreTimeToggleTapped() {
-        let alert = CustomAlert.builder()
-            .title("로그아웃")
-            .message("로그아웃 하시겠어요?")
-            .dualAction(secondary: "취소", primary: "로그아웃")
-            .primaryAction {
-
-            }
-            .secondaryAction {
-
-            }
-            .build()
-        alert.show(on: self)
+        showCoreTimeDisableConfirmationAlert {
+            print("코어타임 비활성화")
+            // TODO: 코어타임 비활성화 로직
+        }
     }
     
 }

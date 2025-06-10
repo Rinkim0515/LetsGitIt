@@ -7,13 +7,13 @@
 
 import UIKit
 
-final class AllRepositoryViewController: UIViewController {
+final class AllRepositoryViewController: UIViewController, LoadingCapable, ErrorHandlingCapable {
     
     // MARK: - UI Components
     private let titleView = TitleHeaderView()
     private let tableView = UITableView()
-    private let loadingIndicator = UIActivityIndicatorView(style: .large)
     private let refreshControl = UIRefreshControl()
+    
     
     // MARK: - Properties
     private var repositories: [GitHubRepository] = []
@@ -59,9 +59,7 @@ final class AllRepositoryViewController: UIViewController {
     private func setupUI() {
         titleView.configure(title: "레포지토리")
         view.backgroundColor = .backgroundSecondary
-        // 로딩 인디케이터
-        loadingIndicator.color = .white
-        loadingIndicator.hidesWhenStopped = true
+
         
         // 테이블뷰
         tableView.backgroundColor = .clear
@@ -69,12 +67,12 @@ final class AllRepositoryViewController: UIViewController {
         tableView.showsVerticalScrollIndicator = false
         
         view.addSubview(tableView)
-        view.addSubview(loadingIndicator)
+
         view.addSubview(titleView)
     }
     
     private func setupConstraints() {
-        [titleView, tableView, loadingIndicator].forEach {
+        [titleView, tableView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
@@ -86,9 +84,7 @@ final class AllRepositoryViewController: UIViewController {
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
-            loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            loadingIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+
         ])
     }
     
@@ -105,8 +101,10 @@ final class AllRepositoryViewController: UIViewController {
     
     // MARK: - Data Loading
     private func loadData() {
+        // 기존: if !refreshControl.isRefreshing { loadingIndicator.startAnimating() }
+        // 개선: 새로고침 중이 아닐 때만 로딩 표시
         if !refreshControl.isRefreshing {
-            loadingIndicator.startAnimating()
+            showLoading() // ✅ LoadingCapable 사용
         }
         
         Task {
@@ -115,13 +113,14 @@ final class AllRepositoryViewController: UIViewController {
                 
                 await MainActor.run {
                     updateUI(with: repositories)
-                    loadingIndicator.stopAnimating()
+                    hideLoading() // ✅ LoadingCapable 사용
                     refreshControl.endRefreshing()
                 }
             } catch {
                 await MainActor.run {
-                    showError("데이터를 불러오지 못했습니다: \(error.localizedDescription)")
-                    loadingIndicator.stopAnimating()
+                    showDataLoadingErrorAlert {
+                        print("에러 알럿 확인 버튼 클릭됨")
+                    }
                     refreshControl.endRefreshing()
                 }
             }
@@ -148,11 +147,7 @@ final class AllRepositoryViewController: UIViewController {
         return repository.name == selectedName && repository.owner.login == selectedOwner
     }
     
-    private func showError(_ message: String) {
-        let alert = UIAlertController(title: "오류", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "확인", style: .default))
-        present(alert, animated: true)
-    }
+
 }
 
 // MARK: - UITableViewDataSource

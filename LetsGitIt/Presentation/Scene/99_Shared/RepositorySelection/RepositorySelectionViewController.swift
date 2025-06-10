@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class RepositorySelectionViewController: UIViewController {
+final class RepositorySelectionViewController: UIViewController, LoadingCapable {
     
     // MARK: - UI Components
     // 상단 고정 영역
@@ -21,9 +21,6 @@ final class RepositorySelectionViewController: UIViewController {
     
     // 하단 완료 버튼
     private let completeButton = UIButton(type: .system)
-    
-    // 로딩 인디케이터
-    private let loadingIndicator = UIActivityIndicatorView(style: .large)
     
     // MARK: - Properties
     private var repositories: [GitHubRepository] = []
@@ -91,16 +88,11 @@ final class RepositorySelectionViewController: UIViewController {
         completeButton.alpha = 0.5
         completeButton.addTarget(self, action: #selector(completeButtonTapped), for: .touchUpInside)
         
-        // 로딩 인디케이터
-        loadingIndicator.color = .white
-        loadingIndicator.hidesWhenStopped = true
         
         // 뷰 계층 구성
         view.addSubview(headerView)
         view.addSubview(tableView)
         view.addSubview(completeButton)
-        view.addSubview(loadingIndicator)
-        
         headerView.addSubview(searchBar)
         headerView.addSubview(greetingLabel)
         headerView.addSubview(descriptionLabel)
@@ -108,7 +100,7 @@ final class RepositorySelectionViewController: UIViewController {
     
     private func setupConstraints() {
         [headerView, searchBar, greetingLabel, descriptionLabel,
-         tableView, completeButton, loadingIndicator].forEach {
+         tableView, completeButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
@@ -146,9 +138,6 @@ final class RepositorySelectionViewController: UIViewController {
             completeButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
             completeButton.heightAnchor.constraint(equalToConstant: 56),
             
-            // 로딩 인디케이터
-            loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            loadingIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
     
@@ -164,7 +153,7 @@ final class RepositorySelectionViewController: UIViewController {
     
     // MARK: - Data Loading
     private func loadData() {
-        loadingIndicator.startAnimating()
+        showLoading() // ✅ LoadingCapable 사용 (기존: loadingIndicator.startAnimating())
         
         Task {
             do {
@@ -176,16 +165,17 @@ final class RepositorySelectionViewController: UIViewController {
                 
                 await MainActor.run {
                     updateUI(with: userData, repositories: repositoryData)
-                    loadingIndicator.stopAnimating()
+                    hideLoading() // ✅ LoadingCapable 사용 (기존: loadingIndicator.stopAnimating())
                 }
             } catch {
                 await MainActor.run {
                     showError("데이터를 불러오지 못했습니다: \(error.localizedDescription)")
-                    loadingIndicator.stopAnimating()
+                    hideLoading() // ✅ LoadingCapable 사용 (기존: loadingIndicator.stopAnimating())
                 }
             }
         }
     }
+    
     
     private func updateUI(with user: GitHubUser, repositories: [GitHubRepository]) {
         // 인사말 업데이트
