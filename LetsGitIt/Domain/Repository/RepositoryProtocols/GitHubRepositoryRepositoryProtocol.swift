@@ -12,4 +12,6 @@ protocol GitHubRepositoryRepositoryProtocol {
     func getRepository(owner: String, name: String) async throws -> GitHubRepository
     func getRepositoryLanguages(owner: String, name: String) async throws -> [String: Int]
     func getRepositoryContributors(owner: String, name: String) async throws -> [GitHubUser]
+    
+    
 }

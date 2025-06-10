@@ -116,4 +116,25 @@ final class GitHubAPIService {
         let (data, _) = try await session.data(for: request)
         return try JSONDecoder().decode([GitHubUserDTO].self, from: data)
     }
+    
+    
+    // MARK: - Milestone API
+    func getMilestones(owner: String, repo: String) async throws -> [GitHubMilestoneDTO] {
+        guard let request = createRequest(for: "/repos/\(owner)/\(repo)/milestones?state=open") else {
+            throw GitHubAPIError.invalidURL
+        }
+        
+        let (data, _) = try await session.data(for: request)
+        return try JSONDecoder().decode([GitHubMilestoneDTO].self, from: data)
+    }
+
+    // MARK: - Issue API
+    func getIssues(owner: String, repo: String) async throws -> [GitHubIssueDTO] {
+        guard let request = createRequest(for: "/repos/\(owner)/\(repo)/issues?state=open&sort=updated&direction=asc") else {
+            throw GitHubAPIError.invalidURL
+        }
+        
+        let (data, _) = try await session.data(for: request)
+        return try JSONDecoder().decode([GitHubIssueDTO].self, from: data)
+    }
 }
