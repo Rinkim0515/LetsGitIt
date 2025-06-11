@@ -8,7 +8,7 @@
 import UIKit
 
 final class TimePickerViewController: UIViewController {
-    
+    weak var coordinator: SettingsCoordinator?
     // MARK: - UI Components
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
@@ -105,6 +105,6 @@ final class TimePickerViewController: UIViewController {
     // MARK: - Actions
     @objc private func updateButtonTapped() {
         onTimeSelected?(datePicker.date)
-        dismiss(animated: true)
+        coordinator?.dismissModal()
     }
 }

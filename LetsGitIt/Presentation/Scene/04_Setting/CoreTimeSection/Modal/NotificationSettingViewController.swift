@@ -8,7 +8,7 @@
 import UIKit
 
 final class NotificationSettingViewController: UIViewController {
-    
+    weak var coordinator: SettingsCoordinator?
     // MARK: - UI Components
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
@@ -138,7 +138,7 @@ final class NotificationSettingViewController: UIViewController {
     
     @objc private func updateButtonTapped() {
         onSelectionChanged?(selectedOption)
-        dismiss(animated: true)
+        coordinator?.dismissModal()
     }
 }
 

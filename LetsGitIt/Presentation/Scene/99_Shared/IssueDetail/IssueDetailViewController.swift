@@ -16,7 +16,7 @@
 import UIKit
 
 final class IssueDetailViewController: UIViewController {
-    
+    weak var coordinator: NavigationCoordinator?
     // MARK: - Properties
     private let issue: GitHubIssue
     
@@ -242,7 +242,8 @@ final class IssueDetailViewController: UIViewController {
     
     // MARK: - Actions
     @objc private func backButtonTapped() {
-        navigationController?.popViewController(animated: true)
+        // ✅ Coordinator를 통해 뒤로가기
+        self.dismiss(animated: true)
     }
     
     @objc private func shareButtonTapped() {

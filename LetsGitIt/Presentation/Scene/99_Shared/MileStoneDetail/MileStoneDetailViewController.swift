@@ -8,7 +8,7 @@
 import UIKit
 
 final class MilestoneDetailViewController: UIViewController {
-    
+    weak var coordinator: NavigationCoordinator?
     // MARK: - Properties
     private let mockData: MockMilestoneDetail
     

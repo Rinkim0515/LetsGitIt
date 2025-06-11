@@ -8,7 +8,7 @@
 import UIKit
 
 final class SettingViewController: UIViewController, ErrorHandlingCapable {
-    
+    weak var coordinator: SettingsCoordinator?
     // MARK: - UI Components
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
@@ -228,20 +228,20 @@ extension SettingViewController {
     private func handleSettingsItemTap(_ item: SettingsItem) {
         switch item {
         case .repositoryDetail:
-            // TODO: Repository 상세 화면으로 이동
             print("Repository 상세")
+            // TODO: Repository 상세 화면으로 이동
             
         case .repositoryChange:
-            // TODO: Repository 변경 화면으로 이동
             print("Repository 변경")
+            coordinator?.showRepositoryChangeFlow()
             
         case .termsOfService:
-            // TODO: 이용약관 화면으로 이동
             print("서비스 이용약관")
+            coordinator?.showTermsOfService()
             
         case .privacyPolicy:
-            // TODO: 개인정보처리방침 화면으로 이동
             print("개인정보처리방침")
+            coordinator?.showPrivacyPolicy()
             
         case .version:
             // 버전 정보는 클릭 불가 (정보 표시용)
@@ -254,16 +254,12 @@ extension SettingViewController {
 //MARK: - Alert Logic
 extension SettingViewController {
     private func logoutButtonTapped() {
-        showLogoutConfirmationAlert {
-            GitHubAuthManager.shared.logout()
-            DispatchQueue.main.async {
-                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let window = windowScene.windows.first {
-                    window.rootViewController = LoginViewController()
-                }
-            }
+        showLogoutConfirmationAlert { [weak self] in
+            // ✅ Coordinator를 통해 로그아웃 처리
+            self?.coordinator?.requestLogout()
         }
     }
+    
     private func withdrawButtonTapped() {
         showWithdrawConfirmationAlert {
             print("회원탈퇴 진행")
@@ -277,5 +273,18 @@ extension SettingViewController {
             // TODO: 코어타임 비활성화 로직
         }
     }
+}
+
+extension SettingViewController {
+    func showCoreTimeSettings() {
+        coordinator?.showCoreTimeSettings()
+    }
     
+    func showNotificationSettings() {
+        coordinator?.showNotificationSettings()
+    }
+    
+    func showWeekdaySelection() {
+        coordinator?.showWeekdaySelection()
+    }
 }

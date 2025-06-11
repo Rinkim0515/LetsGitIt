@@ -26,68 +26,53 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         guard let url = URLContexts.first?.url else { return }
         
-        if url.scheme == "letsgitit" {
-            GitHubAuthManager.shared.handleCallback(url: url) { [weak self] result in
+        print("📱 URL 콜백 수신: \(url)")
+        
+        // GitHub OAuth 콜백인지 확인
+        if url.scheme == "letsgitit" && url.host == "callback" {
+            handleGitHubCallback(url: url)
+        }
+    }
+    private func handleGitHubCallback(url: URL) {
+        print("🔐 GitHub 콜백 처리 시작")
+        
+        // SafariViewController 닫기
+        dismissPresentedViewController()
+        
+        // GitHubAuthManager를 통해 토큰 교환
+        GitHubAuthManager.shared.handleCallback(url: url) { [weak self] result in
+            DispatchQueue.main.async {
                 switch result {
                 case .success(let token):
-                    print("✅ 로그인 성공: \(token)")
+                    print("✅ 토큰 교환 성공: \(token)")
                     self?.handleAuthenticationSuccess()
                     
                 case .failure(let error):
-                    print("❌ 로그인 실패: \(error)")
+                    print("❌ 토큰 교환 실패: \(error)")
                     self?.handleAuthenticationFailure(error)
                 }
             }
         }
     }
-    
-    private func findCurrentLoginViewController() -> LoginViewController? {
-        guard let appCoordinator = self.appCoordinator else {
-            print("❌ AppCoordinator 없음")
-            return nil
+    private func dismissPresentedViewController() {
+        // 현재 present된 ViewController(Safari) 닫기
+        if let presentedVC = window?.rootViewController?.presentedViewController {
+            presentedVC.dismiss(animated: true) {
+                print("🌐 Safari 화면 닫힘")
+            }
         }
-        
-        // AuthCoordinator 찾기
-        guard let authCoordinator = appCoordinator.childCoordinators.first(where: { $0 is AuthCoordinator }) as? AuthCoordinator else {
-            print("❌ AuthCoordinator 없음")
-            return nil
-        }
-        
-        // 현재 보여지는 LoginViewController 찾기
-        guard let loginVC = authCoordinator.navigationController.topViewController as? LoginViewController else {
-            print("❌ LoginViewController 없음")
-            return nil
-        }
-        
-        print("✅ LoginViewController 찾음")
-        return loginVC
-    }
-    
-    private func notifyAppCoordinatorDirectly() {
-        // ✅ LoginViewController를 찾을 수 없는 경우 대안
-        // AuthCoordinator를 통해 직접 알림
-        guard let appCoordinator = self.appCoordinator,
-              let authCoordinator = appCoordinator.childCoordinators.first(where: { $0 is AuthCoordinator }) as? AuthCoordinator else {
-            print("❌ Coordinator들을 찾을 수 없음")
-            return
-        }
-        
-        authCoordinator.authenticationDidComplete()
     }
     
     private func handleAuthenticationSuccess() {
-        print("🎉 인증 성공 - 리포지토리 선택 화면으로 이동")
+        print("🎉 인증 성공 - AppCoordinator에 알림")
         
-        // AppCoordinator에게 인증 완료 알림
-        if let appCoordinator = appCoordinator {
-            appCoordinator.authenticationDidComplete()
-        }
+        // ✅ AppCoordinator에게 직접 인증 완료 알림
+        appCoordinator?.authenticationDidComplete()
     }
     
     private func handleAuthenticationFailure(_ error: GitHubAuthError) {
-        DispatchQueue.main.async { [weak self] in
-            self?.showAuthenticationError(error)
-        }
+        print("💥 인증 실패: \(error.localizedDescription)")
+        showAuthenticationError(error)
     }
     
     private func showAuthenticationError(_ error: GitHubAuthError) {
@@ -102,8 +87,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         alert.addAction(UIAlertAction(title: "확인", style: .default))
         rootViewController.present(alert, animated: true)
     }
-    
-
     
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.

@@ -7,99 +7,43 @@
 
 import UIKit
 
-
-
-
-// MARK: - Main Coordinator
 protocol MainCoordinatorDelegate: AnyObject {
     func mainDidRequestLogout()
 }
 
 final class MainCoordinator: Coordinator {
-    var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
     weak var delegate: MainCoordinatorDelegate?
     
-    init(navigationController: UINavigationController) {
-        self.navigationController = navigationController
+    private let tabBarController: MainTabBarController
+    
+    init(tabBarController: MainTabBarController) {
+        self.tabBarController = tabBarController
     }
     
     func start() {
-        // ✅ MainCoordinator가 직접 TabBar 생성 및 설정
-        let mainTabBarController = createMainTabBarController()
-        setupTabBarCoordinators(mainTabBarController)
-        navigationController.setViewControllers([mainTabBarController], animated: false)
+        print("🚀 MainCoordinator 시작 - TabBar 설정")
+        setupTabBarCoordinators()
     }
     
-    // MARK: - TabBar 생성 (✅ DIContainer 역할을 MainCoordinator가 대신)
-    private func createMainTabBarController() -> MainTabBarController {
-        print("📱 MainTabBarController 생성됨")
-        let tabBarController = MainTabBarController()
-        
-        // ✅ 빈 NavigationController들 생성 (각 Coordinator가 내용 채움)
-        let homeNav = createTabNavigationController(
-            title: "홈",
-            systemImageName: "house"
-        )
-        
-        let dashboardNav = createTabNavigationController(
-            title: "대시보드",
-            systemImageName: "folder"
-        )
-        
-        let repositoryNav = createTabNavigationController(
-            title: "레포지토리",
-            systemImageName: "doc.text"
-        )
-        
-        let settingsNav = createTabNavigationController(
-            title: "세팅",
-            systemImageName: "gearshape"
-        )
-        
-        tabBarController.viewControllers = [homeNav, dashboardNav, repositoryNav, settingsNav]
-        
-        return tabBarController
-    }
-    
-    // MARK: - Helper: NavigationController 생성
-    private func createTabNavigationController(title: String, systemImageName: String) -> UINavigationController {
-        let navController = UINavigationController()
-        navController.tabBarItem = UITabBarItem(
-            title: title,
-            image: UIImage(systemName: systemImageName),
-            selectedImage: UIImage(systemName: systemImageName + ".fill")
-        )
-        return navController
-    }
-    
-    // MARK: - 각 탭에 Coordinator 설정
-    private func setupTabBarCoordinators(_ tabBarController: MainTabBarController) {
+    // MARK: - TabBar 설정 (업계 표준)
+    private func setupTabBarCoordinators() {
         guard let viewControllers = tabBarController.viewControllers else { return }
         
         for (index, viewController) in viewControllers.enumerated() {
             if let navController = viewController as? UINavigationController {
                 switch index {
-                case 0: // Home
-                    let homeCoordinator = HomeCoordinator(navigationController: navController)
-                    childCoordinators.append(homeCoordinator)
-                    homeCoordinator.start()
+                case 0: // Home Tab
+                    setupHomeTab(navController)
                     
-                case 1: // Dashboard
-                    let dashboardCoordinator = DashboardCoordinator(navigationController: navController)
-                    childCoordinators.append(dashboardCoordinator)
-                    dashboardCoordinator.start()
+                case 1: // Dashboard Tab
+                    setupDashboardTab(navController)
                     
-                case 2: // Repository
-                    let repositoryCoordinator = AllRepositoryCoordinator(navigationController: navController)
-                    childCoordinators.append(repositoryCoordinator)
-                    repositoryCoordinator.start()
+                case 2: // Repository Tab
+                    setupRepositoryTab(navController)
                     
-                case 3: // Settings
-                    let settingsCoordinator = SettingsCoordinator(navigationController: navController)
-                    settingsCoordinator.delegate = self
-                    childCoordinators.append(settingsCoordinator)
-                    settingsCoordinator.start()
+                case 3: // Settings Tab
+                    setupSettingsTab(navController)
                     
                 default:
                     break
@@ -108,22 +52,45 @@ final class MainCoordinator: Coordinator {
         }
     }
     
-    func logout() {
+    // MARK: - 각 Tab 설정 메서드들
+    private func setupHomeTab(_ navigationController: UINavigationController) {
+        let homeCoordinator = HomeCoordinator(navigationController: navigationController)
+        childCoordinators.append(homeCoordinator)
+        homeCoordinator.start()
+    }
+    
+    private func setupDashboardTab(_ navigationController: UINavigationController) {
+        let dashboardCoordinator = DashboardCoordinator(navigationController: navigationController)
+        childCoordinators.append(dashboardCoordinator)
+        dashboardCoordinator.start()
+    }
+    
+    private func setupRepositoryTab(_ navigationController: UINavigationController) {
+        let allRepositoryCoordinator = AllRepositoryCoordinator(navigationController: navigationController)
+        childCoordinators.append(allRepositoryCoordinator)
+        allRepositoryCoordinator.start()
+    }
+    
+    private func setupSettingsTab(_ navigationController: UINavigationController) {
+        let settingsCoordinator = SettingsCoordinator(navigationController: navigationController)
+        settingsCoordinator.delegate = self
+        childCoordinators.append(settingsCoordinator)
+        settingsCoordinator.start()
+    }
+    
+    // MARK: - Public Methods
+    func requestLogout() {
         delegate?.mainDidRequestLogout()
     }
 }
 
 // MARK: - Settings Coordinator Delegate
-
-
-// MARK: - Settings Coordinator Delegate
 extension MainCoordinator: SettingsCoordinatorDelegate {
     func settingsDidRequestLogout() {
-        logout()
+        requestLogout()
     }
 }
 
-// MARK: - Tab Coordinators
 
 
 
@@ -131,16 +98,3 @@ extension MainCoordinator: SettingsCoordinatorDelegate {
 
 
 
-final class DashboardCoordinator: Coordinator {
-    var navigationController: UINavigationController
-    var childCoordinators: [Coordinator] = []
-    
-    init(navigationController: UINavigationController) {
-        self.navigationController = navigationController
-    }
-    
-    func start() {
-        let dashboardVC = DIContainer.shared.makeDashboardVC()
-        navigationController.setViewControllers([dashboardVC], animated: false)
-    }
-}

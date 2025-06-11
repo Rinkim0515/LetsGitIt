@@ -8,7 +8,7 @@
 import UIKit
 
 final class RepositorySelectionViewController: UIViewController, LoadingCapable {
-    var coordinator: RepositorySelectionCoordinator?
+    weak var coordinator: RepositorySelectionCoordinator?
     // MARK: - UI Components
     // 상단 고정 영역
     private let headerView = UIView()
@@ -26,6 +26,7 @@ final class RepositorySelectionViewController: UIViewController, LoadingCapable 
     private var repositories: [GitHubRepository] = []
     private var filteredRepositories: [GitHubRepository] = []
     private var selectedRepository: GitHubRepository?
+    
     private let getCurrentUserUseCase: GetCurrentUserUseCase
     private let getUserRepositoriesUseCase: GetUserRepositoriesUseCase
     
@@ -192,9 +193,8 @@ final class RepositorySelectionViewController: UIViewController, LoadingCapable 
     @objc private func completeButtonTapped() {
         guard let selectedRepo = selectedRepository else { return }
         
-        // UserDefaults에 선택된 리포지토리 저장
-        saveSelectedRepository(selectedRepo)
-        coordinator?.repositorySelectionDidComplete()
+        // ✅ Coordinator에게 Flow 처리 위임
+        coordinator?.didSelectRepository(selectedRepo)
     }
     
     private func saveSelectedRepository(_ repository: GitHubRepository) {
@@ -232,8 +232,10 @@ extension RepositorySelectionViewController: UITableViewDataSource {
 extension RepositorySelectionViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let repository = filteredRepositories[indexPath.row]
         
-        selectedRepository = filteredRepositories[indexPath.row]
+        // ✅ 선택된 리포지토리 설정
+        selectedRepository = repository
         tableView.reloadData()
         
         // 완료 버튼 활성화

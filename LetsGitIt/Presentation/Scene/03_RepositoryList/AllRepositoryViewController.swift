@@ -8,7 +8,7 @@
 import UIKit
 
 final class AllRepositoryViewController: UIViewController, LoadingCapable, ErrorHandlingCapable {
-    
+    weak var coordinator: AllRepositoryCoordinator?
     // MARK: - UI Components
     private let titleView = TitleHeaderView()
     private let tableView = UITableView()
@@ -176,11 +176,9 @@ extension AllRepositoryViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         
         let repository = repositories[indexPath.row]
-        print("📍 레포지토리 선택됨: \(repository.fullName)")
+        print("📍 리포지토리 선택됨: \(repository.fullName)")
         
-        // 레포지토리 상세 화면으로 이동
-        let repositoryDetailVC = RepositoryDetailViewController(repository: repository)
-        repositoryDetailVC.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(repositoryDetailVC, animated: true)
+        // ✅ Coordinator를 통해 상세 화면으로 이동
+        coordinator?.showRepositoryDetail(repository)
     }
 }

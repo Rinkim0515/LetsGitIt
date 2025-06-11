@@ -8,7 +8,7 @@
 import UIKit
 
 final class RepositoryDetailViewController: UIViewController {
-    
+    weak var coordinator: AllRepositoryCoordinator?
     // MARK: - Properties
     private let repository: GitHubRepository
     

@@ -8,7 +8,7 @@
 import UIKit
 
 final class WeekdaySelectionViewController: UIViewController {
-    
+    weak var coordinator: SettingsCoordinator?
     // MARK: - UI Components
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
@@ -171,7 +171,7 @@ final class WeekdaySelectionViewController: UIViewController {
     @objc private func updateButtonTapped() {
         let selectedDaysArray = selectedDays.sorted()
         onSelectionChanged?(selectedDaysArray)
-        dismiss(animated: true)
+        coordinator?.dismissModal()
     }
 }
 
