@@ -10,6 +10,7 @@
 import UIKit
 
 final class HomeViewController: UIViewController, ErrorHandlingCapable, LoadingCapable {
+    private let coordinator: HomeCoordinator
     // MARK: - Dependencies (Clean Architecture)
     private let getCurrentUserUseCase: GetCurrentUserUseCase
     private let getMilestonesUseCase: GetRepositoryMilestonesUseCase
@@ -40,10 +41,12 @@ final class HomeViewController: UIViewController, ErrorHandlingCapable, LoadingC
 
     // MARK: - Initialization
     init(
+        coordinator: HomeCoordinator,
         getCurrentUserUseCase: GetCurrentUserUseCase,
         getMilestonesUseCase: GetRepositoryMilestonesUseCase,
         getIssuesUseCase: GetRepositoryIssuesUseCase
     ) {
+        self.coordinator = coordinator
         self.getCurrentUserUseCase = getCurrentUserUseCase
         self.getMilestonesUseCase = getMilestonesUseCase
         self.getIssuesUseCase = getIssuesUseCase

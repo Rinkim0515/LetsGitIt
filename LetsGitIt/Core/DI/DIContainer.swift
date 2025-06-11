@@ -20,7 +20,7 @@ final class DIContainer {
     
     private init() {}
     
-    // MARK: - Public Interface (기존과 100% 동일)
+    
     func makeHomeVC() -> HomeViewController {
         return viewControllerContainer.makeHomeVC()
     }
