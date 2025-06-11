@@ -17,22 +17,30 @@ final class IssueFilteringView: UIView {
     private let sectionHeaderView = TitleHeaderView()
     private let floatingSegmentedControl = UISegmentedControl(items: ["All", "Open", "Closed"])
     
-    // MARK: - Data
+    // MARK: - Data (GitHubMilestone으로 통일)
     private var milestones: [GitHubMilestone] = []
     private var selectedMilestoneIndex: Int = 0
     private var currentFilter: IssueFilter = .all
+    
+    // ✅ Mock data로 이슈 생성 (GitHubMilestone에는 issues 프로퍼티가 없으므로)
+    private var allIssues: [GitHubIssue] = []
     
     private var filteredIssues: [GitHubIssue] {
         guard selectedMilestoneIndex < milestones.count else { return [] }
         let selectedMilestone = milestones[selectedMilestoneIndex]
         
+        // ✅ 선택된 마일스톤의 이슈들만 필터링
+        let milestoneIssues = allIssues.filter { issue in
+            issue.milestone?.id == selectedMilestone.id
+        }
+        
         switch currentFilter {
         case .all:
-            return selectedMilestone.issues
+            return milestoneIssues
         case .open:
-            return selectedMilestone.issues.filter { $0.isOpen }
+            return milestoneIssues.filter { $0.isOpen }
         case .closed:
-            return selectedMilestone.issues.filter { !$0.isOpen }
+            return milestoneIssues.filter { !$0.isOpen }
         }
     }
     
@@ -48,13 +56,19 @@ final class IssueFilteringView: UIView {
         setupConstraints()
         setupCollectionViews()
         setupFloatingSegment()
+        loadMockData() // ✅ Mock 데이터 로드
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-
+    // MARK: - Mock Data Loading
+    private func loadMockData() {
+        // ✅ MockData에서 마일스톤과 이슈 가져오기
+        milestones = MockData.sampleMilestones
+        allIssues = MockData.sampleIssues
+    }
     
     // MARK: - Setup
     private func setupUI() {
@@ -111,7 +125,7 @@ final class IssueFilteringView: UIView {
             issueListCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
             issueListCollectionView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            // 🔸 커스텀 플로팅 세그먼트 컨트롤
+            // 플로팅 세그먼트 컨트롤
             floatingSegmentedControl.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -50),
             floatingSegmentedControl.centerXAnchor.constraint(equalTo: centerXAnchor),
             floatingSegmentedControl.widthAnchor.constraint(equalToConstant: 280),
@@ -140,15 +154,14 @@ final class IssueFilteringView: UIView {
         floatingSegmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .normal)
         floatingSegmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.black], for: .selected)
         
-        
         floatingSegmentedControl.layer.cornerRadius = 60
         floatingSegmentedControl.clipsToBounds = true
         
-        // 그림자 효과 (투명도 때문에 더 강하게)
+        // 그림자 효과
         floatingSegmentedControl.layer.shadowColor = UIColor.black.cgColor
-        floatingSegmentedControl.layer.shadowOpacity = 0.5 // 0.3 → 0.5
-        floatingSegmentedControl.layer.shadowOffset = CGSize(width: 0, height: 4) // 2 → 4
-        floatingSegmentedControl.layer.shadowRadius = 12 // 8 → 12
+        floatingSegmentedControl.layer.shadowOpacity = 0.5
+        floatingSegmentedControl.layer.shadowOffset = CGSize(width: 0, height: 4)
+        floatingSegmentedControl.layer.shadowRadius = 12
         floatingSegmentedControl.layer.masksToBounds = false
         
         // 이벤트 연결
@@ -179,13 +192,13 @@ final class IssueFilteringView: UIView {
         let filteredCount = filteredIssues.count
         
         sectionHeaderView.configure(
-            title: "\(selectedMilestone.name)의 이슈들 (\(filteredCount)개)",
+            title: "\(selectedMilestone.title)의 이슈들 (\(filteredCount)개)",
             showMoreButton: false
         )
     }
     
-    // MARK: - Public Methods
-    func updateMilestones(_ milestones: [MilestoneData]) {
+    // MARK: - Public Methods (✅ 타입 수정)
+    func updateMilestones(_ milestones: [GitHubMilestone]) {
         self.milestones = milestones
         selectedMilestoneIndex = 0
         currentFilter = .all
@@ -195,11 +208,17 @@ final class IssueFilteringView: UIView {
         updateSectionHeader()
     }
     
+    // ✅ 이슈 업데이트 메서드 추가
+    func updateIssues(_ issues: [GitHubIssue]) {
+        self.allIssues = issues
+        issueListCollectionView.reloadData()
+        updateSectionHeader()
+    }
+    
     func updateFloatingSegmentPosition(bottomConstant: CGFloat) {
         floatingSegmentedControl.constraints.forEach { constraint in
             if constraint.firstAttribute == .bottom {
-                // 🔸 기본적으로 더 아래 위치하도록 조정
-                constraint.constant = bottomConstant - 40 // 추가로 40pt 더 아래로
+                constraint.constant = bottomConstant - 40
             }
         }
     }
@@ -221,7 +240,7 @@ extension IssueFilteringView: UICollectionViewDataSource {
             let milestone = milestones[indexPath.item]
             let isSelected = indexPath.item == selectedMilestoneIndex
             
-            cell.configure(name: milestone.name, isSelected: isSelected)
+            cell.configure(name: milestone.title, isSelected: isSelected) // ✅ .name → .title
             return cell
             
         } else { // 이슈 리스트
@@ -257,7 +276,7 @@ extension IssueFilteringView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if collectionView.tag == 1 { // 마일스톤 이름들 (동적 크기)
             let milestone = milestones[indexPath.item]
-            let width = milestone.name.size(withAttributes: [
+            let width = milestone.title.size(withAttributes: [ // ✅ .name → .title
                 .font: UIFont.pretendard(.semiBold, size: 14)
             ]).width + 24 // 패딩 추가
             
