@@ -40,7 +40,7 @@ final class RepositoryDetailViewController: UIViewController {
         setupUI()
         setupConstraints()
         setupCallbacks()
-        loadMockData()
+        
         updateContainerView()
     }
     
@@ -131,9 +131,7 @@ final class RepositoryDetailViewController: UIViewController {
     }
     
     // MARK: - Data Loading
-    private func loadMockData() {
 
-    }
     
     // MARK: - Actions
     @objc private func backButtonTapped() {

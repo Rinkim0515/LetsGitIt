@@ -8,7 +8,7 @@
 import UIKit
 
 final class MilestoneDetailViewController: UIViewController {
-    weak var coordinator: NavigationCoordinator?
+    var onBackTapped: (() -> Void)?
     // MARK: - Properties
     private let mockData: MockMilestoneDetail
     
@@ -173,7 +173,7 @@ final class MilestoneDetailViewController: UIViewController {
     
     // MARK: - Actions
     @objc private func backButtonTapped() {
-        navigationController?.popViewController(animated: true)
+        onBackTapped?()
     }
     
     @objc private func handleRefresh() {

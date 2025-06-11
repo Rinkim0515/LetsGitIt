@@ -45,19 +45,6 @@ final class RepositorySelectionCoordinator: Coordinator {
         // 필요시 검색 결과 화면 표시 로직 (현재는 단순 필터링)
     }
     
-    func showRepositoryDetail(_ repository: GitHubRepository) {
-        print("📍 리포지토리 상세 화면 표시: \(repository.name)")
-        // 필요시 Modal로 상세 화면 표시
-        let repositoryDetailVC = DIContainer.shared.makeRepositoryDetailViewController(repository: repository)
-        
-        repositorySelectionViewController.present(repositoryDetailVC, animated: true)
-    }
-    
-    func dismissRepositoryDetail() {
-        print("📱 리포지토리 상세 화면 닫기")
-        repositorySelectionViewController.dismiss(animated: true)
-    }
-    
     // MARK: - Private Methods
     private func saveSelectedRepository(_ repository: GitHubRepository) {
         UserDefaults.standard.set(repository.name, forKey: "selected_repository_name")

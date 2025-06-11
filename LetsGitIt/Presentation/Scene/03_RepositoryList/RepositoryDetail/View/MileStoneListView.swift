@@ -14,7 +14,7 @@ final class MilestoneListView: UIView {
     private let flowLayout = UICollectionViewFlowLayout()
     
     // MARK: - Data
-    private var milestones: [GitHubMilestone] = []
+    private var milestones: [GitHubMilestone] = MockData.sampleMilestones
     
     // MARK: - Callbacks
     var onMilestoneSelected: ((GitHubMilestone) -> Void)?

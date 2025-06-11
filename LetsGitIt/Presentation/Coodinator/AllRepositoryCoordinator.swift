@@ -50,20 +50,23 @@ final class AllRepositoryCoordinator: NavigationCoordinator {
     func showIssueDetailFromRepository(_ issue: GitHubIssue) {
         print("📝 리포지토리에서 이슈 상세: #\(issue.number)")
         let issueDetailVC = DIContainer.shared.makeIssueDetailViewController(issue: issue)
-        issueDetailVC.coordinator = self
+        issueDetailVC.onBackTapped = { [weak self] in
+            self?.navigationController.popViewController(animated: true)
+        }
         navigationController.pushViewController(issueDetailVC, animated: true)
     }
     
     func showMilestoneDetailFromRepository(_ milestone: GitHubMilestone) {
         print("🎯 리포지토리에서 마일스톤 상세: \(milestone.title)")
         let milestoneDetailVC = DIContainer.shared.makeMilestoneDetailViewController(milestone: milestone)
-        milestoneDetailVC.coordinator = self
+        milestoneDetailVC.onBackTapped = { [weak self] in
+            self?.navigationController.popViewController(animated: true)
+        }
         navigationController.pushViewController(milestoneDetailVC, animated: true)
     }
     
     func navigateBackToRepositoryList() {
-        print("📁 리포지토리 목록으로 돌아가기")
-        navigationController.popToRootViewController(animated: true)
+        navigationController.popViewController(animated: true)
     }
     
     func dismissRepositoryDetail() {
