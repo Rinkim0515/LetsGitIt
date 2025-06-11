@@ -8,36 +8,26 @@
 import UIKit
 
 protocol Coordinator: AnyObject {
-    var navigationController: UINavigationController { get set }
     var childCoordinators: [Coordinator] { get set }
-    
     func start()
-    func childDidFinish(_ child: Coordinator)
 }
 
-extension Coordinator {
-    func childDidFinish(_ child: Coordinator) {
-        childCoordinators.removeAll { $0 === child }
-    }
-}
 
+protocol NavigationCoordinator: Coordinator {
+    var navigationController: UINavigationController { get }
+}
 
 final class AppCoordinator: Coordinator {
-    var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
-    
     private let window: UIWindow
     
     init(window: UIWindow) {
         self.window = window
-        self.navigationController = UINavigationController()
     }
     
     func start() {
-        window.rootViewController = navigationController
         window.makeKeyAndVisible()
         
-        // 로그인 상태 확인 후 적절한 flow 시작
         if GitHubAuthManager.shared.isLoggedIn {
             if hasSelectedRepository() {
                 startMainFlow()
@@ -49,34 +39,60 @@ final class AppCoordinator: Coordinator {
         }
     }
     
-    // MARK: - Private Methods
-    private func hasSelectedRepository() -> Bool {
-        let repoName = UserDefaults.standard.string(forKey: "selected_repository_name")
-        let repoOwner = UserDefaults.standard.string(forKey: "selected_repository_owner")
-        return repoName != nil && repoOwner != nil
+    func authenticationDidComplete() {
+        print("🎯 AppCoordinator: 인증 완료 처리")
+        childCoordinators.removeAll()
+        startRepositorySelectionFlow()
     }
     
+    // MARK: - Private Methods
+    
     private func startAuthFlow() {
-        let authCoordinator = AuthCoordinator(navigationController: navigationController)
+        print("🔐 인증 Flow 시작")
+        
+        // Auth는 단일 화면이므로 NavigationController 불필요
+        let loginVC = DIContainer.shared.makeLoginViewController()
+        window.rootViewController = loginVC
+        
+        let authCoordinator = AuthCoordinator(loginViewController: loginVC)
         authCoordinator.delegate = self
         childCoordinators.append(authCoordinator)
         authCoordinator.start()
     }
     
     private func startRepositorySelectionFlow() {
-        let repoCoordinator = RepositorySelectionCoordinator(navigationController: navigationController)
+        print("📁 리포지토리 선택 Flow 시작")
+        
+        // Repository Selection도 단일 화면
+        let repositorySelectionVC = DIContainer.shared.makeRepositorySelectionViewController()
+        window.rootViewController = repositorySelectionVC
+        
+        let repoCoordinator = RepositorySelectionCoordinator(repositorySelectionViewController: repositorySelectionVC)
         repoCoordinator.delegate = self
         childCoordinators.append(repoCoordinator)
         repoCoordinator.start()
     }
     
     private func startMainFlow() {
-        let mainCoordinator = MainCoordinator(navigationController: navigationController)
+        print("🏠 메인 Flow 시작 - TabBar + Navigation")
+        
+        let tabBarController = DIContainer.shared.makeMainTabBarController()
+        window.rootViewController = tabBarController
+        
+        let mainCoordinator = MainCoordinator(tabBarController: tabBarController)
         mainCoordinator.delegate = self
         childCoordinators.append(mainCoordinator)
         mainCoordinator.start()
     }
+    
+    // MARK: - Private Methods
+    private func hasSelectedRepository() -> Bool {
+        let repoName = UserDefaults.standard.string(forKey: "selected_repository_name")
+        let repoOwner = UserDefaults.standard.string(forKey: "selected_repository_owner")
+        return repoName != nil && repoOwner != nil
+    }
 }
+
 
 // MARK: - AppCoordinator Delegate Methods
 extension AppCoordinator: AuthCoordinatorDelegate {

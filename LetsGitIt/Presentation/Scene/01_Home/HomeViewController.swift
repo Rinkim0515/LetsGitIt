@@ -10,7 +10,9 @@
 import UIKit
 
 final class HomeViewController: UIViewController, ErrorHandlingCapable, LoadingCapable {
-    private let coordinator: HomeCoordinator
+    
+    var coordinator: HomeCoordinator?
+    
     // MARK: - Dependencies (Clean Architecture)
     private let getCurrentUserUseCase: GetCurrentUserUseCase
     private let getMilestonesUseCase: GetRepositoryMilestonesUseCase
@@ -41,12 +43,12 @@ final class HomeViewController: UIViewController, ErrorHandlingCapable, LoadingC
 
     // MARK: - Initialization
     init(
-        coordinator: HomeCoordinator,
+        
         getCurrentUserUseCase: GetCurrentUserUseCase,
         getMilestonesUseCase: GetRepositoryMilestonesUseCase,
         getIssuesUseCase: GetRepositoryIssuesUseCase
     ) {
-        self.coordinator = coordinator
+        
         self.getCurrentUserUseCase = getCurrentUserUseCase
         self.getMilestonesUseCase = getMilestonesUseCase
         self.getIssuesUseCase = getIssuesUseCase
@@ -56,6 +58,7 @@ final class HomeViewController: UIViewController, ErrorHandlingCapable, LoadingC
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -75,6 +78,15 @@ final class HomeViewController: UIViewController, ErrorHandlingCapable, LoadingC
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.navigationBar.isHidden = false
+    }
+    
+    func setCoordinator(_ coordinator: HomeCoordinator) {
+        self.coordinator = coordinator
+    }
+    
+    // MARK: - Navigation (✅ 수정)
+    private func navigateToIssueDetail(_ issue: GitHubIssue) {
+        coordinator?.showIssueDetail(issue)  // ✅ coordinator 통해 이동
     }
     
     // MARK: - Setup
@@ -144,11 +156,12 @@ final class HomeViewController: UIViewController, ErrorHandlingCapable, LoadingC
     private func setupActions() {
         // 마일스톤 카드 선택
         milestonePreviewView.onMilestoneSelected = { [weak self] milestone in
-            
+            self?.coordinator?.showMilestoneDetail(milestone)
         }
+        
         // 이슈 카드 선택
         issuePreviewView.onIssueSelected = { [weak self] issue in
-            self?.navigateToIssueDetail(issue)
+            self?.coordinator?.showIssueDetail(issue)
         }
     }
     
@@ -230,11 +243,7 @@ final class HomeViewController: UIViewController, ErrorHandlingCapable, LoadingC
     private func navigateToMilestoneDetail(_ milestone: MilestoneItem) {
         print("📍 마일스톤 상세로 이동: \(milestone.title)")
     }
-    private func navigateToIssueDetail(_ issue: GitHubIssue) {
-        let issueDetailVC = IssueDetailViewController(issue: issue)
-        issueDetailVC.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(issueDetailVC, animated: true)
-    }
+
     
 }
 

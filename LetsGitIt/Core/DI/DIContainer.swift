@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 
-
 final class DIContainer {
     static let shared = DIContainer()
     
@@ -20,24 +19,69 @@ final class DIContainer {
     
     private init() {}
     
-    
-    func makeHomeVC() -> HomeViewController {
-        return viewControllerContainer.makeHomeVC()
+    // MARK: - Auth Flow ViewControllers
+    func makeLoginViewController() -> LoginViewController {
+        return LoginViewController()
     }
     
-    func makeDashboardVC() -> DashboardViewController {
-        return viewControllerContainer.makeDashboardVC()
-    }
-    
+    // MARK: - Repository Selection Flow ViewControllers
     func makeRepositorySelectionViewController() -> RepositorySelectionViewController {
         return viewControllerContainer.makeRepositorySelectionViewController()
     }
     
-    func makeAllRepositoryVC() -> AllRepositoryViewController {
+    // MARK: - Main Flow ViewControllers (TabBar + Navigation)
+    func makeMainTabBarController() -> MainTabBarController {
+        return viewControllerContainer.makeMainTabBarController()
+    }
+    
+    // MARK: - Home Tab ViewControllers
+    func makeHomeViewController() -> HomeViewController {
+        // ✅ coordinator는 나중에 설정되므로 UseCase만 주입
+        return HomeViewController(
+            getCurrentUserUseCase: useCaseContainer.getCurrentUserUseCase,
+            getMilestonesUseCase: useCaseContainer.getRepositoryMilestonesUseCase,
+            getIssuesUseCase: useCaseContainer.getRepositoryIssuesUseCase
+        )
+    }
+    
+    func makeIssueDetailViewController(issue: GitHubIssue) -> IssueDetailViewController {
+        return IssueDetailViewController(issue: issue)
+    }
+    
+    func makeMilestoneDetailViewController(milestone: GitHubMilestone) -> MilestoneDetailViewController {
+        // Mock 데이터 사용 (실제로는 milestone detail UseCase 필요)
+        return MilestoneDetailViewController(mockData: MockMilestoneDetail.sample)
+    }
+    
+    // MARK: - Dashboard Tab ViewControllers
+    func makeDashboardViewController() -> DashboardViewController {
+        return viewControllerContainer.makeDashboardVC()
+    }
+    
+    // MARK: - Repository Tab ViewControllers
+    func makeAllRepositoryViewController() -> AllRepositoryViewController {
         return viewControllerContainer.makeAllRepositoryVC()
     }
     
-    func makeMainTabBarController() -> MainTabBarController {
-        return viewControllerContainer.makeMainTabBarController()
+    func makeRepositoryDetailViewController(repository: GitHubRepository) -> RepositoryDetailViewController {
+        return RepositoryDetailViewController(repository: repository)
+    }
+    
+    // MARK: - Settings Tab ViewControllers
+    func makeSettingsViewController() -> SettingViewController {
+        return SettingViewController()
+    }
+    
+    func makeCoreTimeSettingsViewController() -> TimePickerViewController {
+        let currentTime = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date()) ?? Date()
+        return TimePickerViewController(title: "코어타임 설정", initialTime: currentTime)
+    }
+    
+    func makeNotificationSettingsViewController() -> NotificationSettingViewController {
+        return NotificationSettingViewController(selectedOption: .none)
+    }
+    
+    func makeWeekdaySelectionViewController() -> WeekdaySelectionViewController {
+        return WeekdaySelectionViewController(selectedDays: [])
     }
 }

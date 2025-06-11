@@ -10,31 +10,17 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
+    var appCoordinator: AppCoordinator?
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: windowScene)
         
-        // 로그인 상태에 따라 초기 화면 결정
-        let initialViewController: UIViewController
-        
-        if GitHubAuthManager.shared.isLoggedIn {
-            // ✅ 로그인되어 있으면 리포지토리 선택 확인
-            if hasSelectedRepository() {
-                // 이미 리포지토리를 선택했으면 메인 화면으로
-                initialViewController = DIContainer.shared.makeMainTabBarController()
-            } else {
-                // 리포지토리를 선택하지 않았으면 선택 화면으로
-                initialViewController = DIContainer.shared.makeRepositorySelectionViewController()
-            }
-        } else {
-            // 로그인하지 않았으면 로그인 화면으로
-            initialViewController = LoginViewController()
-        }
-        
-        window?.rootViewController = initialViewController
-        window?.makeKeyAndVisible()
+        // ✅ Coordinator 패턴 적용
+        guard let window = window else { return }
+        appCoordinator = AppCoordinator(window: window)
+        appCoordinator?.start()
     }
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
@@ -45,38 +31,76 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 switch result {
                 case .success(let token):
                     print("✅ 로그인 성공: \(token)")
-                    self?.navigateToRepositorySelection()
+                    self?.handleAuthenticationSuccess()
                     
                 case .failure(let error):
                     print("❌ 로그인 실패: \(error)")
-                    // 에러 처리 (알림 등)
+                    self?.handleAuthenticationFailure(error)
                 }
             }
         }
     }
     
-    private func navigateToRepositorySelection() {
-        DispatchQueue.main.async {
-            self.window?.rootViewController = DIContainer.shared.makeRepositorySelectionViewController()
+    private func findCurrentLoginViewController() -> LoginViewController? {
+        guard let appCoordinator = self.appCoordinator else {
+            print("❌ AppCoordinator 없음")
+            return nil
+        }
+        
+        // AuthCoordinator 찾기
+        guard let authCoordinator = appCoordinator.childCoordinators.first(where: { $0 is AuthCoordinator }) as? AuthCoordinator else {
+            print("❌ AuthCoordinator 없음")
+            return nil
+        }
+        
+        // 현재 보여지는 LoginViewController 찾기
+        guard let loginVC = authCoordinator.navigationController.topViewController as? LoginViewController else {
+            print("❌ LoginViewController 없음")
+            return nil
+        }
+        
+        print("✅ LoginViewController 찾음")
+        return loginVC
+    }
+    
+    private func notifyAppCoordinatorDirectly() {
+        // ✅ LoginViewController를 찾을 수 없는 경우 대안
+        // AuthCoordinator를 통해 직접 알림
+        guard let appCoordinator = self.appCoordinator,
+              let authCoordinator = appCoordinator.childCoordinators.first(where: { $0 is AuthCoordinator }) as? AuthCoordinator else {
+            print("❌ Coordinator들을 찾을 수 없음")
+            return
+        }
+        
+        authCoordinator.authenticationDidComplete()
+    }
+    
+    private func handleAuthenticationSuccess() {
+        print("🎉 인증 성공 - 리포지토리 선택 화면으로 이동")
+        
+        // AppCoordinator에게 인증 완료 알림
+        if let appCoordinator = appCoordinator {
+            appCoordinator.authenticationDidComplete()
         }
     }
     
-    /// 메인 화면으로 이동
-    private func navigateToMainScreen() {
-        DispatchQueue.main.async {
-            // ✅ Clean Architecture: DI Container 사용
-            self.window?.rootViewController = DIContainer.shared.makeMainTabBarController()
+    private func handleAuthenticationFailure(_ error: GitHubAuthError) {
+        DispatchQueue.main.async { [weak self] in
+            self?.showAuthenticationError(error)
         }
     }
     
-    /// 메인 뷰컨트롤러 생성 (임시)
-    private func createMainViewController() -> UIViewController {
-        MainTabBarController()
-    }
-    private func hasSelectedRepository() -> Bool {
-        let repoName = UserDefaults.standard.string(forKey: "selected_repository_name")
-        let repoOwner = UserDefaults.standard.string(forKey: "selected_repository_owner")
-        return repoName != nil && repoOwner != nil
+    private func showAuthenticationError(_ error: GitHubAuthError) {
+        guard let rootViewController = window?.rootViewController else { return }
+        
+        let alert = UIAlertController(
+            title: "로그인 실패",
+            message: error.localizedDescription,
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        rootViewController.present(alert, animated: true)
     }
     
 

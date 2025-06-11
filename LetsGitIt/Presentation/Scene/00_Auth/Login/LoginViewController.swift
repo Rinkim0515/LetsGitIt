@@ -9,6 +9,10 @@ import UIKit
 
 class LoginViewController: UIViewController {
     
+    // MARK: - Properties (업계 표준)
+    weak var coordinator: AuthCoordinator? // ✅ weak 참조로 순환참조 방지
+    
+    // MARK: - UI Components
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
     private let loginButton = UIButton(type: .system)
@@ -66,8 +70,10 @@ class LoginViewController: UIViewController {
         ])
     }
     
+    // MARK: - Actions (업계 표준)
     @objc private func loginButtonTapped() {
-        print("로그인 버튼 클릭!")
-        GitHubAuthManager.shared.startOAuthFlow(from: self)
+        print("🔐 로그인 버튼 클릭!")
+        // ✅ Coordinator에게 Flow 처리 위임
+        coordinator?.didTapLogin()
     }
 }

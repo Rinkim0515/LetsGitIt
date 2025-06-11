@@ -8,7 +8,7 @@
 import UIKit
 
 final class RepositorySelectionViewController: UIViewController, LoadingCapable {
-    
+    var coordinator: RepositorySelectionCoordinator?
     // MARK: - UI Components
     // 상단 고정 영역
     private let headerView = UIView()
@@ -194,9 +194,7 @@ final class RepositorySelectionViewController: UIViewController, LoadingCapable 
         
         // UserDefaults에 선택된 리포지토리 저장
         saveSelectedRepository(selectedRepo)
-        
-        // MainTabBarController로 이동
-        navigateToMainScreen()
+        coordinator?.repositorySelectionDidComplete()
     }
     
     private func saveSelectedRepository(_ repository: GitHubRepository) {
@@ -205,15 +203,7 @@ final class RepositorySelectionViewController: UIViewController, LoadingCapable 
         print("✅ 선택된 리포지토리 저장: \(repository.fullName)")
     }
     
-    private func navigateToMainScreen() {
-        DispatchQueue.main.async {
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let window = windowScene.windows.first {
-                let mainVC = DIContainer.shared.makeMainTabBarController()
-                window.rootViewController = mainVC
-            }
-        }
-    }
+
     
     private func showError(_ message: String) {
         let alert = UIAlertController(title: "오류", message: message, preferredStyle: .alert)

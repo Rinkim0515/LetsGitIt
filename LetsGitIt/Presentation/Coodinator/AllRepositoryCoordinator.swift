@@ -17,7 +17,7 @@ final class AllRepositoryCoordinator: Coordinator {
     
     func start() {
         let allRepositoryVC = DIContainer.shared.makeAllRepositoryVC()
-        allRepositoryVC.coordinator = self
+//        allRepositoryVC.coordinator = self
         navigationController.setViewControllers([allRepositoryVC], animated: false)
     }
     

@@ -22,7 +22,7 @@ final class SettingsCoordinator: Coordinator {
     
     func start() {
         let settingsVC = SettingViewController()
-        settingsVC.coordinator = self
+//        settingsVC.coordinator = self
         navigationController.setViewControllers([settingsVC], animated: false)
     }
     

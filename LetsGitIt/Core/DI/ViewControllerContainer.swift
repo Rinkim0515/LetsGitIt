@@ -1,5 +1,5 @@
 //
-//  as.swift
+//  ViewControllerContainer.swift
 //  LetsGitIt
 //
 //  Created by KimRin on 6/11/25.
@@ -14,10 +14,10 @@ final class ViewControllerContainer {
         self.useCaseContainer = useCaseContainer
     }
     
-    func makeHomeVC(coordinator: HomeCoordinator) -> HomeViewController {
+    // MARK: - ViewController 생성 (coordinator는 나중에 주입)
+    func makeHomeVC() -> HomeViewController {
         print("📱 HomeViewController 생성됨")
         return HomeViewController(
-            coordinator: coordinator,
             getCurrentUserUseCase: useCaseContainer.getCurrentUserUseCase,
             getMilestonesUseCase: useCaseContainer.getRepositoryMilestonesUseCase,
             getIssuesUseCase: useCaseContainer.getRepositoryIssuesUseCase
