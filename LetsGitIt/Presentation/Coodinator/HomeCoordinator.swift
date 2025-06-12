@@ -26,13 +26,9 @@ final class HomeCoordinator: NavigationCoordinator {
     }
     
     func showIssueDetail(_ issue: GitHubIssue) {
-        print("📍 이슈 상세 화면으로 이동: #\(issue.number)")
-        let issueDetailVC = DIContainer.shared.makeIssueDetailViewController(issue: issue)
-        issueDetailVC.onBackTapped = { [weak self] in
-            self?.navigateBackToHome()
-        }
-        issueDetailVC.hidesBottomBarWhenPushed =  true
-        navigationController.pushViewController(issueDetailVC, animated: true)
+        let issueDetailCoordinator = IssueDetailCoordinator(navigationController: navigationController, issue)
+        
+        issueDetailCoordinator.start()
     }
     
     func showMilestoneDetail(_ milestone: GitHubMilestone) {

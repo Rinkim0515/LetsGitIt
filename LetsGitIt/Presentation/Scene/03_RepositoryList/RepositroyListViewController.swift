@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class AllRepositoryViewController: UIViewController, LoadingCapable, ErrorHandlingCapable {
+final class RepositroyListViewController: UIViewController, LoadingCapable, ErrorHandlingCapable {
     weak var coordinator: AllRepositoryCoordinator?
     // MARK: - UI Components
     private let titleView = TitleHeaderView()
@@ -91,7 +91,7 @@ final class AllRepositoryViewController: UIViewController, LoadingCapable, Error
     private func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(AllRepositoryCell.self, forCellReuseIdentifier: AllRepositoryCell.id)
+        tableView.register(RepositoryListCell.self, forCellReuseIdentifier: RepositoryListCell.id)
     }
     
     private func setupRefreshControl() {
@@ -151,13 +151,13 @@ final class AllRepositoryViewController: UIViewController, LoadingCapable, Error
 }
 
 // MARK: - UITableViewDataSource
-extension AllRepositoryViewController: UITableViewDataSource {
+extension RepositroyListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return repositories.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: AllRepositoryCell.id, for: indexPath) as! AllRepositoryCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: RepositoryListCell.id, for: indexPath) as! RepositoryListCell
         let repository = repositories[indexPath.row]
         let isSelected = isSelectedRepository(repository)
         
@@ -167,7 +167,7 @@ extension AllRepositoryViewController: UITableViewDataSource {
 }
 
 // MARK: - UITableViewDelegate
-extension AllRepositoryViewController: UITableViewDelegate {
+extension RepositroyListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 72
     }

@@ -59,7 +59,7 @@ final class DIContainer {
     }
     
     // MARK: - Repository Tab ViewControllers
-    func makeAllRepositoryViewController() -> AllRepositoryViewController {
+    func makeAllRepositoryViewController() -> RepositroyListViewController {
         return viewControllerContainer.makeAllRepositoryVC()
     }
     

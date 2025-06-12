@@ -17,6 +17,7 @@ import UIKit
 
 final class IssueDetailViewController: UIViewController {
     var onBackTapped: (() -> Void)?
+    weak var coordinator: IssueDetailCoordinator?
     // MARK: - Properties
     private let issue: GitHubIssue
     

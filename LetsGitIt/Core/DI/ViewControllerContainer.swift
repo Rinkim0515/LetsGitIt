@@ -37,9 +37,9 @@ final class ViewControllerContainer {
         )
     }
     
-    func makeAllRepositoryVC() -> AllRepositoryViewController {
+    func makeAllRepositoryVC() -> RepositroyListViewController {
         print("📱 AllRepositoryViewController 생성됨")
-        return AllRepositoryViewController(
+        return RepositroyListViewController(
             getCurrentUserUseCase: useCaseContainer.getCurrentUserUseCase,
             getUserRepositoriesUseCase: useCaseContainer.getUserRepositoriesUseCase
         )
