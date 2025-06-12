@@ -9,7 +9,6 @@ import Foundation
 
 final class NetworkContainer {
     lazy var gitHubAPIService: GitHubAPIService = {
-        print("🌐 GitHubAPIService 생성됨")
         return GitHubAPIService()
     }()
 }

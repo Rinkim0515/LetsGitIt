@@ -8,7 +8,7 @@
 import UIKit
 
 final class MilestoneDetailViewController: UIViewController {
-    var onBackTapped: (() -> Void)?
+    var coordinator: MilestoneDetailCoordinator?
     // MARK: - Properties
     private let mockData: MockMilestoneDetail
     
@@ -173,14 +173,14 @@ final class MilestoneDetailViewController: UIViewController {
     
     // MARK: - Actions
     @objc private func backButtonTapped() {
-        onBackTapped?()
+        coordinator?.navigateBack()
     }
     
     @objc private func handleRefresh() {
-        // Mock 새로고침 시뮬레이션
+        
+        coordinator?.refreshMilestone()
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.refreshControl.endRefreshing()
-            print("🔄 새로고침 완료")
         }
     }
     
@@ -233,11 +233,7 @@ extension MilestoneDetailViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         
         let issue = issues[indexPath.row]
-        print("📍 이슈 선택됨: #\(issue.number) \(issue.title)")
-        
-        // TODO: 나중에 IssueDetailViewController로 이동
-        // let issueDetailVC = IssueDetailViewController(issue: issue)
-        // navigationController?.pushViewController(issueDetailVC, animated: true)
+        coordinator?.showIssueDetail(issue)
     }
 }
 

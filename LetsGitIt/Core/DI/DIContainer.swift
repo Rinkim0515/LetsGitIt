@@ -84,4 +84,35 @@ final class DIContainer {
     func makeWeekdaySelectionViewController() -> WeekdaySelectionViewController {
         return WeekdaySelectionViewController(selectedDays: [])
     }
+    
+    
+}
+
+
+
+// MARK: - Coordinator Factory Methods (새로 추가)
+extension DIContainer {
+    
+    // ✅ IssueDetailCoordinator 생성
+    func makeIssueDetailCoordinator(
+        navigationController: UINavigationController,
+        issue: GitHubIssue
+    ) -> IssueDetailCoordinator {
+        return IssueDetailCoordinator(navigationController: navigationController, issue: issue)
+    }
+    
+    // ✅ MilestoneDetailCoordinator 생성
+    func makeMilestoneDetailCoordinator(
+        navigationController: UINavigationController,
+        milestone: GitHubMilestone
+    ) -> MilestoneDetailCoordinator {
+        return MilestoneDetailCoordinator(navigationController: navigationController, milestone: milestone)
+    }
+    // ✅ RepositoryDetailCoordinator 생성
+    func makeRepositoryDetailCoordinator(
+        navigationController: UINavigationController,
+        repository: GitHubRepository
+    ) -> RepositoryDetailCoordinator {
+        return RepositoryDetailCoordinator(navigationController: navigationController, repository: repository)
+    }
 }

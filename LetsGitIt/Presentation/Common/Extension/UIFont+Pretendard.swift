@@ -30,7 +30,6 @@ extension UIFont {
     
     static func pretendard(_ weight: PretendardWeight, size: CGFloat) -> UIFont {
         guard let font = UIFont(name: weight.fontName, size: size) else {
-            print("⚠️ Pretendard 폰트를 찾을 수 없습니다: \(weight.fontName)")
             return UIFont.systemFont(ofSize: size)
         }
         return font

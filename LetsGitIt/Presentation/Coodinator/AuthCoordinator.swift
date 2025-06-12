@@ -12,6 +12,8 @@ protocol AuthCoordinatorDelegate: AnyObject {
 }
 
 final class AuthCoordinator: Coordinator {
+    var onFinished: (() -> Void)?
+    
     var childCoordinators: [Coordinator] = []
     weak var delegate: AuthCoordinatorDelegate?
     
@@ -28,7 +30,6 @@ final class AuthCoordinator: Coordinator {
     
     // MARK: - Setup
     private func setupLoginViewController() {
-        // ✅ 업계 표준: Coordinator를 ViewController에 주입
         loginViewController.coordinator = self
         print("📱 LoginViewController에 coordinator 주입 완료")
     }
@@ -42,6 +43,7 @@ final class AuthCoordinator: Coordinator {
     func authDidComplete() {
         print("✅ AuthCoordinator: 인증 완료")
         delegate?.authDidComplete()
+        onFinished?()  // ✅ 완료 알림
     }
     
     func showLoginError(_ error: GitHubAuthError) {

@@ -9,6 +9,7 @@ import UIKit
 
 protocol Coordinator: AnyObject {
     var childCoordinators: [Coordinator] { get set }
+    var onFinished: (() -> Void)? { get set }
     func start()
 }
 
@@ -18,6 +19,8 @@ protocol NavigationCoordinator: Coordinator {
 }
 
 final class AppCoordinator: Coordinator {
+    var onFinished: (() -> Void)?
+    
     var childCoordinators: [Coordinator] = []
     private let window: UIWindow
     

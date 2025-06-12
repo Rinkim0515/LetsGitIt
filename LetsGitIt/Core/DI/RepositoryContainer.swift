@@ -15,22 +15,18 @@ final class RepositoryContainer {
     }
     
     lazy var gitHubUserRepository: GitHubUserRepositoryProtocol = {
-        print("📦 GitHubUserRepository 생성됨")
         return GitHubUserRepository(apiService: networkContainer.gitHubAPIService)
     }()
     
     lazy var gitHubRepositoryRepository: GitHubRepositoryRepositoryProtocol = {
-        print("📦 GitHubRepositoryRepository 생성됨")
         return GitHubRepositoryRepository(apiService: networkContainer.gitHubAPIService)
     }()
     
     lazy var gitHubMilestoneRepository: GitHubMilestoneRepositoryProtocol = {
-        print("📦 GitHubMilestoneRepository 생성됨")
         return GitHubMilestoneRepository(apiService: networkContainer.gitHubAPIService)
     }()
     
     lazy var gitHubIssueRepository: GitHubIssueRepositoryProtocol = {
-        print("📦 GitHubIssueRepository 생성됨")
         return GitHubIssueRepository(apiService: networkContainer.gitHubAPIService)
     }()
 }

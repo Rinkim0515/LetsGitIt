@@ -12,6 +12,8 @@ protocol MainCoordinatorDelegate: AnyObject {
 }
 
 final class MainCoordinator: Coordinator {
+    var onFinished: (() -> Void)?
+    
     var childCoordinators: [Coordinator] = []
     weak var delegate: MainCoordinatorDelegate?
     
@@ -55,18 +57,38 @@ final class MainCoordinator: Coordinator {
     // MARK: - 각 Tab 설정 메서드들
     private func setupHomeTab(_ navigationController: UINavigationController) {
         let homeCoordinator = HomeCoordinator(navigationController: navigationController)
+        
+        homeCoordinator.onFinished = { [weak self] in
+            self?.childCoordinators.removeAll { $0 === homeCoordinator }
+            
+        }
+        
         childCoordinators.append(homeCoordinator)
         homeCoordinator.start()
     }
     
     private func setupDashboardTab(_ navigationController: UINavigationController) {
         let dashboardCoordinator = DashboardCoordinator(navigationController: navigationController)
+        
+        // ✅ child coordinator 관리
+        dashboardCoordinator.onFinished = { [weak self] in
+            self?.childCoordinators.removeAll { $0 === dashboardCoordinator }
+            
+        }
+        
         childCoordinators.append(dashboardCoordinator)
         dashboardCoordinator.start()
     }
     
     private func setupRepositoryTab(_ navigationController: UINavigationController) {
-        let allRepositoryCoordinator = AllRepositoryCoordinator(navigationController: navigationController)
+        let allRepositoryCoordinator = RepositoryListCoordinator(navigationController: navigationController)
+        
+        // ✅ child coordinator 관리
+        allRepositoryCoordinator.onFinished = { [weak self] in
+            self?.childCoordinators.removeAll { $0 === allRepositoryCoordinator }
+            
+        }
+        
         childCoordinators.append(allRepositoryCoordinator)
         allRepositoryCoordinator.start()
     }
@@ -74,13 +96,25 @@ final class MainCoordinator: Coordinator {
     private func setupSettingsTab(_ navigationController: UINavigationController) {
         let settingsCoordinator = SettingsCoordinator(navigationController: navigationController)
         settingsCoordinator.delegate = self
+        
+        // ✅ child coordinator 관리
+        settingsCoordinator.onFinished = { [weak self] in
+            self?.childCoordinators.removeAll { $0 === settingsCoordinator }
+            
+        }
+        
         childCoordinators.append(settingsCoordinator)
         settingsCoordinator.start()
     }
     
     // MARK: - Public Methods
     func requestLogout() {
+        // ✅ 모든 child coordinator 정리
+        childCoordinators.removeAll()
+        
+        
         delegate?.mainDidRequestLogout()
+        onFinished?()  // ✅ 완료 알림
     }
 }
 

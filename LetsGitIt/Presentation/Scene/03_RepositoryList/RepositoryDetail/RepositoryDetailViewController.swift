@@ -8,7 +8,7 @@
 import UIKit
 
 final class RepositoryDetailViewController: UIViewController {
-    weak var coordinator: AllRepositoryCoordinator?
+    weak var coordinator: RepositoryDetailCoordinator?
     // MARK: - Properties
     private let repository: GitHubRepository
     
@@ -118,15 +118,15 @@ final class RepositoryDetailViewController: UIViewController {
     private func setupCallbacks() {
         // 이슈 선택 콜백
         issueFilteringView.onIssueSelected = { [weak self] issue in
-            let issueDetailVC = IssueDetailViewController(issue: issue)
-            issueDetailVC.hidesBottomBarWhenPushed = true
-            self?.navigationController?.pushViewController(issueDetailVC, animated: true)
+            // ✅ coordinator를 통한 이슈 상세 이동
+            self?.coordinator?.showIssueDetail(issue)
         }
         
         // 마일스톤 선택 콜백
         milestoneListView.onMilestoneSelected = { [weak self] milestone in
             print("📍 마일스톤 선택됨: \(milestone.title)")
-            self?.navigationController?.pushViewController(MilestoneDetailViewController(mockData: MockMilestoneDetail.sample), animated: true)
+            // ✅ coordinator를 통한 마일스톤 상세 이동
+            self?.coordinator?.showMilestoneDetail(milestone)
         }
     }
     
@@ -135,7 +135,7 @@ final class RepositoryDetailViewController: UIViewController {
     
     // MARK: - Actions
     @objc private func backButtonTapped() {
-        navigationController?.popViewController(animated: true)
+        coordinator?.navigateBack()
     }
     
     @objc private func segmentChanged() {

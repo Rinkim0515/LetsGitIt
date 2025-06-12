@@ -9,6 +9,7 @@ import UIKit
 
 final class DashboardCoordinator: NavigationCoordinator {
     var childCoordinators: [Coordinator] = []
+    var onFinished: (() -> Void)? 
     let navigationController: UINavigationController
     
     init(navigationController: UINavigationController) {

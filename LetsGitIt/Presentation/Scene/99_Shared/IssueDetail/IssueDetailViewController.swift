@@ -16,7 +16,6 @@
 import UIKit
 
 final class IssueDetailViewController: UIViewController {
-    var onBackTapped: (() -> Void)?
     weak var coordinator: IssueDetailCoordinator?
     // MARK: - Properties
     private let issue: GitHubIssue
@@ -243,12 +242,10 @@ final class IssueDetailViewController: UIViewController {
     
     // MARK: - Actions
     @objc private func backButtonTapped() {
-        onBackTapped?()
+        coordinator?.navigateBack()
     }
     
-    @objc private func shareButtonTapped() {
-        print("🔗 이슈 공유하기")
-    }
+
 }
 
 // MARK: - UICollectionViewDataSource

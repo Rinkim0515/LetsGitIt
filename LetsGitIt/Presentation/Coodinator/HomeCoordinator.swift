@@ -8,6 +8,8 @@
 import UIKit
 
 final class HomeCoordinator: NavigationCoordinator {
+    var onFinished: (() -> Void)?
+    
     var childCoordinators: [Coordinator] = []
     let navigationController: UINavigationController
     
@@ -26,19 +28,31 @@ final class HomeCoordinator: NavigationCoordinator {
     }
     
     func showIssueDetail(_ issue: GitHubIssue) {
-        let issueDetailCoordinator = IssueDetailCoordinator(navigationController: navigationController, issue)
+        let issueDetailCoordinator = IssueDetailCoordinator(
+            navigationController: navigationController,
+            issue: issue
+        )
+        issueDetailCoordinator.onFinished = { [weak self] in
+            self?.childCoordinators.removeAll { $0 === issueDetailCoordinator }
+            print("✅ IssueDetailCoordinator 메모리 해제됨")
+        }
         
+        childCoordinators.append(issueDetailCoordinator)
         issueDetailCoordinator.start()
     }
     
     func showMilestoneDetail(_ milestone: GitHubMilestone) {
-        print("📍 마일스톤 상세 화면으로 이동: \(milestone.title)")
-        let milestoneDetailVC = DIContainer.shared.makeMilestoneDetailViewController(milestone: milestone)
-        milestoneDetailVC.onBackTapped = { [weak self] in
-            self?.navigateBackToHome()
+        let milestoneDetailCoordinator = MilestoneDetailCoordinator(
+            navigationController: navigationController,
+            milestone: milestone
+        )
+        milestoneDetailCoordinator.onFinished = { [weak self] in
+            self?.childCoordinators.removeAll { $0 === milestoneDetailCoordinator }
+            print("✅ MilestoneDetailCoordinator 메모리 해제됨")
         }
-        milestoneDetailVC.hidesBottomBarWhenPushed = true
-        navigationController.pushViewController(milestoneDetailVC, animated: true)
+        
+        childCoordinators.append(milestoneDetailCoordinator)
+        milestoneDetailCoordinator.start()
     }
     
     func navigateBackToHome() {

@@ -200,7 +200,6 @@ final class RepositorySelectionViewController: UIViewController, LoadingCapable 
     private func saveSelectedRepository(_ repository: GitHubRepository) {
         UserDefaults.standard.set(repository.name, forKey: "selected_repository_name")
         UserDefaults.standard.set(repository.owner.login, forKey: "selected_repository_owner")
-        print("✅ 선택된 리포지토리 저장: \(repository.fullName)")
     }
     
 

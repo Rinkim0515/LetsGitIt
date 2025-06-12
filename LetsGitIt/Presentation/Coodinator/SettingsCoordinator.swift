@@ -12,6 +12,7 @@ protocol SettingsCoordinatorDelegate: AnyObject {
 }
 
 final class SettingsCoordinator: NavigationCoordinator {
+    var onFinished: (() -> Void)?
     var childCoordinators: [Coordinator] = []
     let navigationController: UINavigationController
     weak var delegate: SettingsCoordinatorDelegate?
@@ -79,6 +80,13 @@ final class SettingsCoordinator: NavigationCoordinator {
         
         let repoCoordinator = RepositorySelectionCoordinator(repositorySelectionViewController: repositorySelectionVC)
         repoCoordinator.delegate = self
+        
+        // ✅ child coordinator 관리
+        repoCoordinator.onFinished = { [weak self] in
+            self?.childCoordinators.removeAll { $0 === repoCoordinator }
+            print("✅ RepositorySelectionCoordinator 메모리 해제됨")
+        }
+        
         childCoordinators.append(repoCoordinator)
         repoCoordinator.start()
         

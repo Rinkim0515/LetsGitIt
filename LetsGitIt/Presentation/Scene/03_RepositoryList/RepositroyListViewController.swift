@@ -8,7 +8,7 @@
 import UIKit
 
 final class RepositroyListViewController: UIViewController, LoadingCapable, ErrorHandlingCapable {
-    weak var coordinator: AllRepositoryCoordinator?
+    weak var coordinator: RepositoryListCoordinator?
     // MARK: - UI Components
     private let titleView = TitleHeaderView()
     private let tableView = UITableView()

@@ -16,7 +16,6 @@ final class ViewControllerContainer {
     
     // MARK: - ViewController 생성 (coordinator는 나중에 주입)
     func makeHomeVC() -> HomeViewController {
-        print("📱 HomeViewController 생성됨")
         return HomeViewController(
             getCurrentUserUseCase: useCaseContainer.getCurrentUserUseCase,
             getMilestonesUseCase: useCaseContainer.getRepositoryMilestonesUseCase,
@@ -25,12 +24,10 @@ final class ViewControllerContainer {
     }
     
     func makeDashboardVC() -> DashboardViewController {
-        print("📱 DashboardViewController 생성됨")
         return DashboardViewController()
     }
     
     func makeRepositorySelectionViewController() -> RepositorySelectionViewController {
-        print("📱 RepositorySelectionViewController 생성됨")
         return RepositorySelectionViewController(
             getCurrentUserUseCase: useCaseContainer.getCurrentUserUseCase,
             getUserRepositoriesUseCase: useCaseContainer.getUserRepositoriesUseCase
@@ -38,7 +35,6 @@ final class ViewControllerContainer {
     }
     
     func makeAllRepositoryVC() -> RepositroyListViewController {
-        print("📱 AllRepositoryViewController 생성됨")
         return RepositroyListViewController(
             getCurrentUserUseCase: useCaseContainer.getCurrentUserUseCase,
             getUserRepositoriesUseCase: useCaseContainer.getUserRepositoriesUseCase
@@ -46,7 +42,6 @@ final class ViewControllerContainer {
     }
     
     func makeMainTabBarController() -> MainTabBarController {
-        print("📱 MainTabBarController 생성됨")
         let tabBarController = MainTabBarController()
         
         let homeNav = UINavigationController()

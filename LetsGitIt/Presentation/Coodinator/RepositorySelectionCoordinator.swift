@@ -12,6 +12,8 @@ protocol RepositorySelectionCoordinatorDelegate: AnyObject {
 }
 
 final class RepositorySelectionCoordinator: Coordinator {
+    var onFinished: (() -> Void)?
+    
     var childCoordinators: [Coordinator] = []
     weak var delegate: RepositorySelectionCoordinatorDelegate?
     
@@ -38,6 +40,7 @@ final class RepositorySelectionCoordinator: Coordinator {
         print("✅ 리포지토리 선택됨: \(repository.fullName)")
         saveSelectedRepository(repository)
         delegate?.repositorySelectionDidComplete()
+        onFinished?()  // ✅ 완료 알림
     }
     
     func didTapSearch(_ searchText: String) {
