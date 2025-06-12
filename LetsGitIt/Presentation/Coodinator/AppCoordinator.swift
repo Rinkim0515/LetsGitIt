@@ -18,6 +18,7 @@ protocol NavigationCoordinator: Coordinator {
     var navigationController: UINavigationController { get }
 }
 
+
 final class AppCoordinator: Coordinator {
     var onFinished: (() -> Void)?
     
@@ -43,20 +44,26 @@ final class AppCoordinator: Coordinator {
     }
     
     func authenticationDidComplete() {
-        print("🎯 AppCoordinator: 인증 완료 처리")
+        cleanupCurrentCoordinators()
+        
+        if hasSelectedRepository() {
+            startMainFlow()
+        } else {
+            startRepositorySelectionFlow()
+        }
+    }
+    private func cleanupCurrentCoordinators() {
+        childCoordinators.forEach { coordinator in
+            coordinator.onFinished?()
+        }
         childCoordinators.removeAll()
-        startRepositorySelectionFlow()
     }
     
-    // MARK: - Private Methods
+
     
     private func startAuthFlow() {
-        print("🔐 인증 Flow 시작")
-        
-        // Auth는 단일 화면이므로 NavigationController 불필요
         let loginVC = DIContainer.shared.makeLoginViewController()
         window.rootViewController = loginVC
-        
         let authCoordinator = AuthCoordinator(loginViewController: loginVC)
         authCoordinator.delegate = self
         childCoordinators.append(authCoordinator)
@@ -64,12 +71,8 @@ final class AppCoordinator: Coordinator {
     }
     
     private func startRepositorySelectionFlow() {
-        print("📁 리포지토리 선택 Flow 시작")
-        
-        // Repository Selection도 단일 화면
         let repositorySelectionVC = DIContainer.shared.makeRepositorySelectionViewController()
         window.rootViewController = repositorySelectionVC
-        
         let repoCoordinator = RepositorySelectionCoordinator(repositorySelectionViewController: repositorySelectionVC)
         repoCoordinator.delegate = self
         childCoordinators.append(repoCoordinator)
@@ -77,11 +80,8 @@ final class AppCoordinator: Coordinator {
     }
     
     private func startMainFlow() {
-        print("🏠 메인 Flow 시작 - TabBar + Navigation")
-        
         let tabBarController = DIContainer.shared.makeMainTabBarController()
         window.rootViewController = tabBarController
-        
         let mainCoordinator = MainCoordinator(tabBarController: tabBarController)
         mainCoordinator.delegate = self
         childCoordinators.append(mainCoordinator)
@@ -100,25 +100,29 @@ final class AppCoordinator: Coordinator {
 // MARK: - AppCoordinator Delegate Methods
 extension AppCoordinator: AuthCoordinatorDelegate {
     func authDidComplete() {
-        // 인증 완료 후 레포지토리 선택으로 이동
-        childCoordinators.removeAll()
+        cleanupCurrentCoordinators()
         startRepositorySelectionFlow()
     }
 }
 
 extension AppCoordinator: RepositorySelectionCoordinatorDelegate {
     func repositorySelectionDidComplete() {
-        // 레포지토리 선택 완료 후 메인 화면으로 이동
-        childCoordinators.removeAll()
+        cleanupCurrentCoordinators()
         startMainFlow()
     }
 }
 
 extension AppCoordinator: MainCoordinatorDelegate {
+    
     func mainDidRequestLogout() {
-        // 로그아웃 후 로그인 화면으로 이동
         GitHubAuthManager.shared.logout()
-        childCoordinators.removeAll()
+        cleanupCurrentCoordinators()
         startAuthFlow()
+    }
+    
+    func mainDidRequestRepositoryChange() {
+        print("🔄 AppCoordinator: 리포지토리 변경으로 인한 앱 재시작")
+        cleanupCurrentCoordinators()
+        startMainFlow() // 메인 플로우 재시작
     }
 }

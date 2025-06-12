@@ -9,6 +9,7 @@ import UIKit
 
 protocol SettingsCoordinatorDelegate: AnyObject {
     func settingsDidRequestLogout()
+    func settingsDidChangeRepository()
 }
 
 final class SettingsCoordinator: NavigationCoordinator {
@@ -125,5 +126,6 @@ extension SettingsCoordinator: RepositorySelectionCoordinatorDelegate {
         print("✅ 설정에서 리포지토리 변경 완료")
         childCoordinators.removeAll()
         dismissModal()
+        delegate?.settingsDidChangeRepository()
     }
 }

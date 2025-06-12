@@ -30,7 +30,9 @@ final class MilestoneDetailCoordinator: NavigationCoordinator {
     func navigateBack() {
         print("⬅️ 마일스톤 상세에서 뒤로가기")
         navigationController.popViewController(animated: true)
-        onFinished?()  // 부모에게 완료 알림
+        DispatchQueue.main.async { [weak self] in
+            self?.onFinished?()
+        }
     }
     
     func showIssueDetail(_ issue: GitHubIssue) {
@@ -41,10 +43,10 @@ final class MilestoneDetailCoordinator: NavigationCoordinator {
             issue: issue
         )
         
-        // 완료 시 child에서 제거
-        issueDetailCoordinator.onFinished = { [weak self] in
-            self?.childCoordinators.removeAll { $0 === issueDetailCoordinator }
-            print("✅ IssueDetailCoordinator 메모리 해제됨 (from Milestone)")
+        issueDetailCoordinator.onFinished = { [weak self, weak issueDetailCoordinator] in
+            guard let self = self, let coordinator = issueDetailCoordinator else { return }
+            self.childCoordinators.removeAll { $0 === coordinator }
+            print("✅ \(type(of: coordinator)) 메모리 해제됨")
         }
         
         childCoordinators.append(issueDetailCoordinator)

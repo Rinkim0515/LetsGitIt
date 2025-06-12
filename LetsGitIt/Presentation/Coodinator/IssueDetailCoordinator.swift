@@ -9,9 +9,6 @@ import UIKit
 
 final class IssueDetailCoordinator: NavigationCoordinator {
     var onFinished: (() -> Void)?
-    
-    
-    
     var childCoordinators: [Coordinator] = []
     let navigationController: UINavigationController
     let issue: GitHubIssue
@@ -32,6 +29,13 @@ final class IssueDetailCoordinator: NavigationCoordinator {
     func navigateBack() {
         print("⬅️ 이슈 상세에서 뒤로가기")
         navigationController.popViewController(animated: true)
+        DispatchQueue.main.async { [weak self] in
+            self?.onFinished?() // 순환참조 문제
+        }
+    }
+    
+    deinit {
+        print("🗑️ IssueDetailCoordinator deinit 호출됨")
     }
 }
 

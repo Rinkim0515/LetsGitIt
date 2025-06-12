@@ -41,10 +41,11 @@ final class RepositoryDetailCoordinator: NavigationCoordinator {
             issue: issue
         )
         
-        // 완료 시 child에서 제거
-        issueDetailCoordinator.onFinished = { [weak self] in
-            self?.childCoordinators.removeAll { $0 === issueDetailCoordinator }
-            print("✅ IssueDetailCoordinator 메모리 해제됨 (from RepositoryDetail)")
+        
+        issueDetailCoordinator.onFinished = { [weak self, weak issueDetailCoordinator] in
+            guard let self = self, let coordinator = issueDetailCoordinator else { return }
+            self.childCoordinators.removeAll { $0 === coordinator }
+            print("✅ \(type(of: coordinator)) 메모리 해제됨")
         }
         
         childCoordinators.append(issueDetailCoordinator)
@@ -60,9 +61,9 @@ final class RepositoryDetailCoordinator: NavigationCoordinator {
         )
         
         // 완료 시 child에서 제거
-        milestoneDetailCoordinator.onFinished = { [weak self] in
-            self?.childCoordinators.removeAll { $0 === milestoneDetailCoordinator }
-            print("✅ MilestoneDetailCoordinator 메모리 해제됨 (from RepositoryDetail)")
+        milestoneDetailCoordinator.onFinished = { [weak self, weak milestoneDetailCoordinator] in
+            guard let self = self, let coordinator = milestoneDetailCoordinator else { return }
+            self.childCoordinators.removeAll { $0 === coordinator }
         }
         
         childCoordinators.append(milestoneDetailCoordinator)
