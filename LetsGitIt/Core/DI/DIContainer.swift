@@ -15,74 +15,66 @@ final class DIContainer {
     private lazy var networkContainer = NetworkContainer()
     private lazy var repositoryContainer = RepositoryContainer(networkContainer: networkContainer)
     private lazy var useCaseContainer = UseCaseContainer(repositoryContainer: repositoryContainer)
-    private lazy var viewControllerContainer = ViewControllerContainer(useCaseContainer: useCaseContainer)
+    private lazy var vcContainer = VCContainer(useCaseContainer: useCaseContainer)
     
     private init() {}
     
-    // MARK: - Auth Flow ViewControllers
-    func makeLoginViewController() -> LoginViewController {
-        return LoginViewController()
+
+    func makeLoginVC() -> LoginVC {
+        return LoginVC()
     }
-    
-    // MARK: - Repository Selection Flow ViewControllers
-    func makeRepositorySelectionViewController() -> RepositorySelectionViewController {
-        return viewControllerContainer.makeRepositorySelectionViewController()
+    func makeReposSelectionVC() -> ReposSelectionVC {
+        return vcContainer.makeRepoSelectionVC()
     }
-    
-    // MARK: - Main Flow ViewControllers (TabBar + Navigation)
     func makeMainTabBarController() -> MainTabBarController {
-        return viewControllerContainer.makeMainTabBarController()
+        return vcContainer.makeMainTabBarController()
     }
-    
-    // MARK: - Home Tab ViewControllers
-    func makeHomeViewController() -> HomeViewController {
-        // ✅ coordinator는 나중에 설정되므로 UseCase만 주입
-        return HomeViewController(
+    func makeHomeVC() -> HomeVC {
+        return HomeVC(
             getCurrentUserUseCase: useCaseContainer.getCurrentUserUseCase,
             getMilestonesUseCase: useCaseContainer.getRepositoryMilestonesUseCase,
             getIssuesUseCase: useCaseContainer.getRepositoryIssuesUseCase
         )
     }
     
-    func makeIssueDetailViewController(issue: GitHubIssue) -> IssueDetailViewController {
-        return IssueDetailViewController(issue: issue)
+    func makeIssueDetailVC(issue: GitHubIssue) -> IssueDetailVC {
+        return IssueDetailVC(issue: issue)
     }
     
-    func makeMilestoneDetailViewController(milestone: GitHubMilestone) -> MilestoneDetailViewController {
+    func makeMilestoneDetailVC(milestone: GitHubMilestone) -> MilestoneDetailVC {
         // Mock 데이터 사용 (실제로는 milestone detail UseCase 필요)
-        return MilestoneDetailViewController(mockData: MockMilestoneDetail.sample)
+        return MilestoneDetailVC(mockData: MockMilestoneDetail.sample)
     }
     
-    // MARK: - Dashboard Tab ViewControllers
-    func makeDashboardViewController() -> DashboardViewController {
-        return viewControllerContainer.makeDashboardVC()
+    func makeDashboardVC() -> DashboardVC {
+        return vcContainer.makeDashboardVC()
     }
     
     // MARK: - Repository Tab ViewControllers
-    func makeAllRepositoryViewController() -> RepositroyListViewController {
-        return viewControllerContainer.makeAllRepositoryVC()
+    func makeRepoListVC() -> RepoListVC {
+        return vcContainer.makeAllRepositoryVC()
     }
     
-    func makeRepositoryDetailViewController(repository: GitHubRepository) -> RepositoryDetailViewController {
-        return RepositoryDetailViewController(repository: repository)
+    func makeRepoDetailVC(repository: GitHubRepository) -> RepoDetailVC {
+        return RepoDetailVC(repository: repository)
     }
     
     // MARK: - Settings Tab ViewControllers
-    func makeSettingsViewController() -> SettingViewController {
-        return SettingViewController()
+    func makeSettingsVC() -> SettingVC {
+        return SettingVC()
     }
     
-    func makeCoreTimeSettingsViewController() -> TimePickerViewController {
+    func makeCoreTimeSettingsVC() -> CoreTimeSettingVC {
         let currentTime = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date()) ?? Date()
-        return TimePickerViewController(title: "코어타임 설정", initialTime: currentTime)
+        return CoreTimeSettingVC(title: "코어타임 설정", initialTime: currentTime)
     }
     
-    func makeNotificationSettingsViewController() -> NotificationSettingViewController {
-        return NotificationSettingViewController(selectedOption: .none)
+    func makeNotiSettingsVC() -> NotiSettingVC {
+        return NotiSettingVC(selectedOption: .none)
     }
     
-    func makeWeekdaySelectionViewController() -> WeekdaySelectionViewController {
-        return WeekdaySelectionViewController(selectedDays: [])
+    func makeWeekdaySettingVC() -> WeekdaySettingVC {
+        return WeekdaySettingVC(selectedDays: [])
     }
     
     

@@ -20,7 +20,7 @@ final class IssueDetailCoordinator: NavigationCoordinator {
     }
     
     func start() {
-        let issueDetailVC = DIContainer.shared.makeIssueDetailViewController(issue: issue)
+        let issueDetailVC = DIContainer.shared.makeIssueDetailVC(issue: issue)
         issueDetailVC.coordinator = self
         issueDetailVC.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(issueDetailVC, animated: true)

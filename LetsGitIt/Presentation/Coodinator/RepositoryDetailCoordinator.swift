@@ -20,7 +20,7 @@ final class RepositoryDetailCoordinator: NavigationCoordinator {
     
     func start() {
         print("🚀 RepositoryDetailCoordinator 시작: \(repository.name)")
-        let repositoryDetailVC = DIContainer.shared.makeRepositoryDetailViewController(repository: repository)
+        let repositoryDetailVC = DIContainer.shared.makeRepoDetailVC(repository: repository)
         repositoryDetailVC.coordinator = self
         repositoryDetailVC.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(repositoryDetailVC, animated: true)

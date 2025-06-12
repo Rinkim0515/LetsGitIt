@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class SettingViewController: UIViewController, ErrorHandlingCapable {
+final class SettingVC: UIViewController, ErrorHandlingCapable {
     weak var coordinator: SettingsCoordinator?
     // MARK: - UI Components
     private let scrollView = UIScrollView()
@@ -193,7 +193,7 @@ final class SettingViewController: UIViewController, ErrorHandlingCapable {
 
 
 // MARK: - UITableViewDataSource & UITableViewDelegate
-extension SettingViewController: UITableViewDataSource, UITableViewDelegate {
+extension SettingVC: UITableViewDataSource, UITableViewDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1 // 단일 섹션
     }
@@ -224,7 +224,7 @@ extension SettingViewController: UITableViewDataSource, UITableViewDelegate {
 }
 
 // MARK: - Settings Item Handler
-extension SettingViewController {
+extension SettingVC {
     private func handleSettingsItemTap(_ item: SettingsItem) {
         switch item {
         case .repositoryDetail:
@@ -252,7 +252,7 @@ extension SettingViewController {
 
 
 //MARK: - Alert Logic
-extension SettingViewController {
+extension SettingVC {
     private func logoutButtonTapped() {
         showLogoutConfirmationAlert { [weak self] in
             // ✅ Coordinator를 통해 로그아웃 처리
@@ -275,7 +275,7 @@ extension SettingViewController {
     }
 }
 
-extension SettingViewController {
+extension SettingVC {
     func showCoreTimeSettings() {
         coordinator?.showCoreTimeSettings()
     }

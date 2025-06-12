@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class MilestoneDetailViewController: UIViewController {
+final class MilestoneDetailVC: UIViewController {
     var coordinator: MilestoneDetailCoordinator?
     // MARK: - Properties
     private let mockData: MockMilestoneDetail
@@ -209,7 +209,7 @@ final class MilestoneDetailViewController: UIViewController {
 }
 
 // MARK: - UITableViewDataSource
-extension MilestoneDetailViewController: UITableViewDataSource {
+extension MilestoneDetailVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return issues.count
     }
@@ -224,7 +224,7 @@ extension MilestoneDetailViewController: UITableViewDataSource {
 }
 
 // MARK: - UITableViewDelegate
-extension MilestoneDetailViewController: UITableViewDelegate {
+extension MilestoneDetailVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 64
     }

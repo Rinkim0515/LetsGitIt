@@ -62,7 +62,7 @@ final class AppCoordinator: Coordinator {
 
     
     private func startAuthFlow() {
-        let loginVC = DIContainer.shared.makeLoginViewController()
+        let loginVC = DIContainer.shared.makeLoginVC()
         window.rootViewController = loginVC
         let authCoordinator = AuthCoordinator(loginViewController: loginVC)
         authCoordinator.delegate = self
@@ -71,7 +71,7 @@ final class AppCoordinator: Coordinator {
     }
     
     private func startRepositorySelectionFlow() {
-        let repositorySelectionVC = DIContainer.shared.makeRepositorySelectionViewController()
+        let repositorySelectionVC = DIContainer.shared.makeReposSelectionVC()
         window.rootViewController = repositorySelectionVC
         let repoCoordinator = RepositorySelectionCoordinator(repositorySelectionViewController: repositorySelectionVC)
         repoCoordinator.delegate = self

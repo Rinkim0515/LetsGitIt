@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class TimePickerViewController: UIViewController {
+final class CoreTimeSettingVC: UIViewController {
     weak var coordinator: SettingsCoordinator?
     // MARK: - UI Components
     private let scrollView = UIScrollView()

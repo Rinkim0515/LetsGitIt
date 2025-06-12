@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class WeekdaySelectionViewController: UIViewController {
+final class WeekdaySettingVC: UIViewController {
     weak var coordinator: SettingsCoordinator?
     // MARK: - UI Components
     private let scrollView = UIScrollView()

@@ -20,7 +20,7 @@ final class MilestoneDetailCoordinator: NavigationCoordinator {
     
     func start() {
         print("🚀 MilestoneDetailCoordinator 시작: \(milestone.title)")
-        let milestoneDetailVC = DIContainer.shared.makeMilestoneDetailViewController(milestone: milestone)
+        let milestoneDetailVC = DIContainer.shared.makeMilestoneDetailVC(milestone: milestone)
         milestoneDetailVC.coordinator = self
         milestoneDetailVC.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(milestoneDetailVC, animated: true)

@@ -14,14 +14,14 @@ final class RepositoryListCoordinator: NavigationCoordinator {
     }
     
     func start() {
-        showAllRepositories()
+        showRepoList()
     }
     
     // MARK: - Navigation Flow Methods
-    private func showAllRepositories() {
-        let allRepositoryVC = DIContainer.shared.makeAllRepositoryViewController()
-        allRepositoryVC.coordinator = self
-        navigationController.setViewControllers([allRepositoryVC], animated: false)
+    private func showRepoList() {
+        let repoListVC = DIContainer.shared.makeRepoListVC()
+        repoListVC.coordinator = self
+        navigationController.setViewControllers([repoListVC], animated: false)
     }
     
     // MARK: - Flow Methods (AllRepositoryViewController에서 호출)

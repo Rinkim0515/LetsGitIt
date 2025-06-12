@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ViewControllerContainer {
+final class VCContainer {
     private let useCaseContainer: UseCaseContainer
     
     init(useCaseContainer: UseCaseContainer) {
@@ -15,27 +15,27 @@ final class ViewControllerContainer {
     }
     
     // MARK: - ViewController 생성 (coordinator는 나중에 주입)
-    func makeHomeVC() -> HomeViewController {
-        return HomeViewController(
+    func makeHomeVC() -> HomeVC {
+        return HomeVC(
             getCurrentUserUseCase: useCaseContainer.getCurrentUserUseCase,
             getMilestonesUseCase: useCaseContainer.getRepositoryMilestonesUseCase,
             getIssuesUseCase: useCaseContainer.getRepositoryIssuesUseCase
         )
     }
     
-    func makeDashboardVC() -> DashboardViewController {
-        return DashboardViewController()
+    func makeDashboardVC() -> DashboardVC {
+        return DashboardVC()
     }
     
-    func makeRepositorySelectionViewController() -> RepositorySelectionViewController {
-        return RepositorySelectionViewController(
+    func makeRepoSelectionVC() -> ReposSelectionVC {
+        return ReposSelectionVC(
             getCurrentUserUseCase: useCaseContainer.getCurrentUserUseCase,
             getUserRepositoriesUseCase: useCaseContainer.getUserRepositoriesUseCase
         )
     }
     
-    func makeAllRepositoryVC() -> RepositroyListViewController {
-        return RepositroyListViewController(
+    func makeAllRepositoryVC() -> RepoListVC {
+        return RepoListVC(
             getCurrentUserUseCase: useCaseContainer.getCurrentUserUseCase,
             getUserRepositoriesUseCase: useCaseContainer.getUserRepositoriesUseCase
         )

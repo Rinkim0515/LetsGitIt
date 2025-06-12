@@ -7,7 +7,7 @@
 
 import UIKit
 
-class LoginViewController: UIViewController {
+class LoginVC: UIViewController {
     
     // MARK: - Properties (업계 표준)
     weak var coordinator: AuthCoordinator? // ✅ weak 참조로 순환참조 방지

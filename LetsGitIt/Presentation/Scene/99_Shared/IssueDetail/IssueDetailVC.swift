@@ -15,7 +15,7 @@
 
 import UIKit
 
-final class IssueDetailViewController: UIViewController {
+final class IssueDetailVC: UIViewController {
     weak var coordinator: IssueDetailCoordinator?
     // MARK: - Properties
     private let issue: GitHubIssue
@@ -249,7 +249,7 @@ final class IssueDetailViewController: UIViewController {
 }
 
 // MARK: - UICollectionViewDataSource
-extension IssueDetailViewController: UICollectionViewDataSource {
+extension IssueDetailVC: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView.tag == 1 { // 이슈 본문 CollectionView
             return issueContent != nil ? 1 : 0
@@ -279,7 +279,7 @@ extension IssueDetailViewController: UICollectionViewDataSource {
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
-extension IssueDetailViewController: UICollectionViewDelegateFlowLayout {
+extension IssueDetailVC: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.frame.width
         

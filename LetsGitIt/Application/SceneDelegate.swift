@@ -35,9 +35,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     private func handleGitHubCallback(url: URL) {
         print("🔐 GitHub 콜백 처리 시작")
-        
-        // SafariViewController 닫기
-        dismissPresentedViewController()
+        dismissPresentedVC()
         
         // GitHubAuthManager를 통해 토큰 교환
         GitHubAuthManager.shared.handleCallback(url: url) { [weak self] result in
@@ -54,8 +52,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
         }
     }
-    private func dismissPresentedViewController() {
-        // 현재 present된 ViewController(Safari) 닫기
+    private func dismissPresentedVC() {
         if let presentedVC = window?.rootViewController?.presentedViewController {
             presentedVC.dismiss(animated: true) {
                 print("🌐 Safari 화면 닫힘")
@@ -76,7 +73,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     private func showAuthenticationError(_ error: GitHubAuthError) {
-        guard let rootViewController = window?.rootViewController else { return }
+        guard let rootVC = window?.rootViewController else { return }
         
         let alert = UIAlertController(
             title: "로그인 실패",
@@ -85,7 +82,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         )
         
         alert.addAction(UIAlertAction(title: "확인", style: .default))
-        rootViewController.present(alert, animated: true)
+        rootVC.present(alert, animated: true)
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {

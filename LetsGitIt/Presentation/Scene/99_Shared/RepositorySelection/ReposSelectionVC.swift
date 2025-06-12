@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class RepositorySelectionViewController: UIViewController, LoadingCapable {
+final class ReposSelectionVC: UIViewController, LoadingCapable {
     weak var coordinator: RepositorySelectionCoordinator?
     // MARK: - UI Components
     // 상단 고정 영역
@@ -212,7 +212,7 @@ final class RepositorySelectionViewController: UIViewController, LoadingCapable 
 }
 
 // MARK: - UITableViewDataSource
-extension RepositorySelectionViewController: UITableViewDataSource {
+extension ReposSelectionVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return filteredRepositories.count
     }
@@ -228,7 +228,7 @@ extension RepositorySelectionViewController: UITableViewDataSource {
 }
 
 // MARK: - UITableViewDelegate
-extension RepositorySelectionViewController: UITableViewDelegate {
+extension ReposSelectionVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let repository = filteredRepositories[indexPath.row]
@@ -250,7 +250,7 @@ extension RepositorySelectionViewController: UITableViewDelegate {
 }
 
 // MARK: - UISearchBarDelegate
-extension RepositorySelectionViewController: UISearchBarDelegate {
+extension ReposSelectionVC: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.isEmpty {
             filteredRepositories = repositories

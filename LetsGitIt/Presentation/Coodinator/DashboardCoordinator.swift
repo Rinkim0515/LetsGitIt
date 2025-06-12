@@ -23,7 +23,7 @@ final class DashboardCoordinator: NavigationCoordinator {
     
     // MARK: - Navigation Flow Methods
     private func showDashboard() {
-        let dashboardVC = DIContainer.shared.makeDashboardViewController()
+        let dashboardVC = DIContainer.shared.makeDashboardVC()
         dashboardVC.coordinator = self
         navigationController.setViewControllers([dashboardVC], animated: false)
         print("📱 DashboardViewController 설정 완료")

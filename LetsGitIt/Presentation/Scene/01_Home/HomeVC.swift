@@ -9,7 +9,7 @@
 
 import UIKit
 
-final class HomeViewController: UIViewController, ErrorHandlingCapable, LoadingCapable {
+final class HomeVC: UIViewController, ErrorHandlingCapable, LoadingCapable {
     
     var coordinator: HomeCoordinator?
     

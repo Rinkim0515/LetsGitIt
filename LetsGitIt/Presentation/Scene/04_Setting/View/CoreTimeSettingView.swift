@@ -144,7 +144,7 @@ final class CoreTimeSettingsView: UIView {
     
     // MARK: - Modal Presentation
     private func presentStartTimePicker() {
-        let timePickerVC = TimePickerViewController(title: "시작시간", initialTime: startTime)
+        let timePickerVC = CoreTimeSettingVC(title: "시작시간", initialTime: startTime)
         
         timePickerVC.onTimeSelected = { [weak self] selectedTime in
             self?.startTime = selectedTime
@@ -155,7 +155,7 @@ final class CoreTimeSettingsView: UIView {
     }
     
     private func presentEndTimePicker() {
-        let timePickerVC = TimePickerViewController(title: "종료시간", initialTime: endTime)
+        let timePickerVC = CoreTimeSettingVC(title: "종료시간", initialTime: endTime)
         
         timePickerVC.onTimeSelected = { [weak self] selectedTime in
             self?.endTime = selectedTime
@@ -166,7 +166,7 @@ final class CoreTimeSettingsView: UIView {
     }
     
     private func presentWeekdaySelector() {
-        let weekdayVC = WeekdaySelectionViewController(selectedDays: selectedWeekdays)
+        let weekdayVC = WeekdaySettingVC(selectedDays: selectedWeekdays)
         
         weekdayVC.onSelectionChanged = { [weak self] selectedDays in
             self?.selectedWeekdays = Set(selectedDays)
@@ -177,7 +177,7 @@ final class CoreTimeSettingsView: UIView {
     }
     
     private func presentNotificationSettings() {
-        let notificationVC = NotificationSettingViewController(selectedOption: selectedNotification)
+        let notificationVC = NotiSettingVC(selectedOption: selectedNotification)
         
         notificationVC.onSelectionChanged = { [weak self] selectedOption in
             self?.selectedNotification = selectedOption

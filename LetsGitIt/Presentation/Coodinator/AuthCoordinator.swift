@@ -17,9 +17,9 @@ final class AuthCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     weak var delegate: AuthCoordinatorDelegate?
     
-    private let loginViewController: LoginViewController
+    private let loginViewController: LoginVC
     
-    init(loginViewController: LoginViewController) {
+    init(loginViewController: LoginVC) {
         self.loginViewController = loginViewController
     }
     

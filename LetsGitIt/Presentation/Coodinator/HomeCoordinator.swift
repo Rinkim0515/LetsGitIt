@@ -22,7 +22,7 @@ final class HomeCoordinator: NavigationCoordinator {
     }
     
     private func showHome() {
-        let homeVC = DIContainer.shared.makeHomeViewController()
+        let homeVC = DIContainer.shared.makeHomeVC()
         homeVC.coordinator = self
         navigationController.setViewControllers([homeVC], animated: false)
     }

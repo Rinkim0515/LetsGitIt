@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class RepositoryListCell: UITableViewCell, CellIdGenerator {
+final class RepoListCell: UITableViewCell, CellIdGenerator {
     // MARK: - UI Components
     private let containerView = UIView()
     private let folderIconImageView = UIImageView()

@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class NotificationSettingViewController: UIViewController {
+final class NotiSettingVC: UIViewController {
     weak var coordinator: SettingsCoordinator?
     // MARK: - UI Components
     private let scrollView = UIScrollView()

@@ -134,8 +134,8 @@ final class CustomAlert: UIView {
         setupButtons()
     }
     
-    func show(on viewController: UIViewController) {
-        guard let window = viewController.view.window else { return }
+    func show(on vc: UIViewController) {
+        guard let window = vc.view.window else { return }
         
         frame = window.bounds
         window.addSubview(self)

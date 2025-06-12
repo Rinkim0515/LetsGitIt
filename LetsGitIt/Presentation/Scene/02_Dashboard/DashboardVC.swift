@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class DashboardViewController: UIViewController {
+final class DashboardVC: UIViewController {
     weak var coordinator: DashboardCoordinator?
     // MARK: - UI Components
     private let scrollView = UIScrollView()

@@ -29,7 +29,7 @@ final class SettingsCoordinator: NavigationCoordinator {
     
     // MARK: - Navigation Flow Methods
     private func showSettings() {
-        let settingsVC = DIContainer.shared.makeSettingsViewController()
+        let settingsVC = DIContainer.shared.makeSettingsVC()
         settingsVC.coordinator = self
         navigationController.setViewControllers([settingsVC], animated: false)
         print("📱 SettingsViewController 설정 완료")
@@ -38,14 +38,14 @@ final class SettingsCoordinator: NavigationCoordinator {
     // MARK: - Flow Methods (SettingsViewController에서 호출)
     func showCoreTimeSettings() {
         print("⏰ 코어타임 설정 화면")
-        let coreTimeVC = DIContainer.shared.makeCoreTimeSettingsViewController()
+        let coreTimeVC = DIContainer.shared.makeCoreTimeSettingsVC()
         coreTimeVC.coordinator = self
         navigationController.pushViewController(coreTimeVC, animated: true)
     }
     
     func showNotificationSettings() {
         print("🔔 알림 설정 화면")
-        let notificationVC = DIContainer.shared.makeNotificationSettingsViewController()
+        let notificationVC = DIContainer.shared.makeNotiSettingsVC()
         notificationVC.coordinator = self
         
         // Modal로 표시
@@ -58,7 +58,7 @@ final class SettingsCoordinator: NavigationCoordinator {
     
     func showWeekdaySelection() {
         print("📅 요일 선택 화면")
-        let weekdayVC = DIContainer.shared.makeWeekdaySelectionViewController()
+        let weekdayVC = DIContainer.shared.makeWeekdaySettingVC()
         weekdayVC.coordinator = self
         
         // Modal로 표시
@@ -76,7 +76,7 @@ final class SettingsCoordinator: NavigationCoordinator {
     func showRepositoryChangeFlow() {
         print("🔄 리포지토리 변경 Flow")
         // 리포지토리 선택 화면으로 이동 (Modal)
-        let repositorySelectionVC = DIContainer.shared.makeRepositorySelectionViewController()
+        let repositorySelectionVC = DIContainer.shared.makeReposSelectionVC()
         let navController = UINavigationController(rootViewController: repositorySelectionVC)
         
         let repoCoordinator = RepositorySelectionCoordinator(repositorySelectionViewController: repositorySelectionVC)

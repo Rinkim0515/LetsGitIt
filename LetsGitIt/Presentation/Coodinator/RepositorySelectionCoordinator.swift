@@ -17,9 +17,9 @@ final class RepositorySelectionCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     weak var delegate: RepositorySelectionCoordinatorDelegate?
     
-    private let repositorySelectionViewController: RepositorySelectionViewController
+    private let repositorySelectionViewController: ReposSelectionVC
     
-    init(repositorySelectionViewController: RepositorySelectionViewController) {
+    init(repositorySelectionViewController: ReposSelectionVC) {
         self.repositorySelectionViewController = repositorySelectionViewController
     }
     

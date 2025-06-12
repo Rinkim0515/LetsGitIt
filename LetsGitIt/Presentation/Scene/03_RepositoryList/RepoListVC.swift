@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class RepositroyListViewController: UIViewController, LoadingCapable, ErrorHandlingCapable {
+final class RepoListVC: UIViewController, LoadingCapable, ErrorHandlingCapable {
     weak var coordinator: RepositoryListCoordinator?
     // MARK: - UI Components
     private let titleView = TitleHeaderView()
@@ -91,7 +91,7 @@ final class RepositroyListViewController: UIViewController, LoadingCapable, Erro
     private func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(RepositoryListCell.self, forCellReuseIdentifier: RepositoryListCell.id)
+        tableView.register(RepoListCell.self, forCellReuseIdentifier: RepoListCell.id)
     }
     
     private func setupRefreshControl() {
@@ -151,13 +151,13 @@ final class RepositroyListViewController: UIViewController, LoadingCapable, Erro
 }
 
 // MARK: - UITableViewDataSource
-extension RepositroyListViewController: UITableViewDataSource {
+extension RepoListVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return repositories.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: RepositoryListCell.id, for: indexPath) as! RepositoryListCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: RepoListCell.id, for: indexPath) as! RepoListCell
         let repository = repositories[indexPath.row]
         let isSelected = isSelectedRepository(repository)
         
@@ -167,7 +167,7 @@ extension RepositroyListViewController: UITableViewDataSource {
 }
 
 // MARK: - UITableViewDelegate
-extension RepositroyListViewController: UITableViewDelegate {
+extension RepoListVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 72
     }

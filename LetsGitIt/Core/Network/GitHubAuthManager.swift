@@ -53,14 +53,14 @@ class GitHubAuthManager {
     // MARK: - Public Methods
     
     /// OAuth 로그인 플로우 시작
-    func startOAuthFlow(from viewController: UIViewController) {
+    func startOAuthFlow(from vc: UIViewController) {
         guard let authURL = buildAuthURL() else {
             print("❌ Invalid auth URL")
             return
         }
         
         let safariVC = SFSafariViewController(url: authURL)
-        viewController.present(safariVC, animated: true)
+        vc.present(safariVC, animated: true)
     }
     
     /// 콜백 URL 처리
