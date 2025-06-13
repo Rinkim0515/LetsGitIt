@@ -12,6 +12,10 @@ final class RepoDetailVC: UIViewController {
     // MARK: - Properties
     private let repository: GitHubRepository
     
+    
+    private let getMilestonesUseCase: GetRepositoryMilestonesUseCase
+    private let getIssuesUseCase: GetRepositoryIssuesUseCase
+    
     // MARK: - UI Components
     private let segmentedControl = UISegmentedControl(items: ["이슈", "마일스톤"])
     private let containerView = UIView()
@@ -25,10 +29,17 @@ final class RepoDetailVC: UIViewController {
     private var milestoneItems: [MilestoneItem] = []
     
     // MARK: - Initialization
-    init(repository: GitHubRepository) {
+    init(
+        repository: GitHubRepository,
+        getMilestonesUseCase: GetRepositoryMilestonesUseCase,
+        getIssuesUseCase: GetRepositoryIssuesUseCase
+    ) {
         self.repository = repository
+        self.getMilestonesUseCase = getMilestonesUseCase
+        self.getIssuesUseCase = getIssuesUseCase
         super.init(nibName: nil, bundle: nil)
     }
+    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -40,8 +51,45 @@ final class RepoDetailVC: UIViewController {
         setupUI()
         setupConstraints()
         setupCallbacks()
-        
+        loadData()
         updateContainerView()
+    }
+    
+    
+    private func loadData() {
+        Task {
+            do {
+                async let milestonesTask = getMilestonesUseCase.execute(
+                    owner: repository.owner.login,
+                    repo: repository.name
+                )
+                async let issuesTask = getIssuesUseCase.execute(
+                    owner: repository.owner.login,
+                    repo: repository.name
+                )
+                
+                let (milestones, issues) = try await (milestonesTask, issuesTask)
+                
+                await MainActor.run {
+                    updateViews(milestones: milestones, issues: issues)
+                }
+            } catch {
+                await MainActor.run {
+                    showError("데이터 로딩 실패: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    private func updateViews(milestones: [GitHubMilestone], issues: [GitHubIssue]) {
+        issueFilteringView.configure(milestones: milestones, issues: issues)
+        milestoneListView.updateMilestones(milestones)
+    }
+    
+    private func showError(_ message: String) {
+        let alert = UIAlertController(title: "오류", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
     }
     
     // MARK: - Setup

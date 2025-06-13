@@ -18,6 +18,8 @@ final class GetRepositoryMilestonesUseCase {
         return try await milestoneRepository.getMilestones(owner: owner, repo: repo, state: state)
     }
     
+    
+    
     // HomeVC용: 현재 시점과 가장 가까운 마일스톤 2개
     func executeForHome(owner: String, repo: String) async throws -> [GitHubMilestone] {
         let milestones = try await milestoneRepository.getMilestones(owner: owner, repo: repo, state: .open)

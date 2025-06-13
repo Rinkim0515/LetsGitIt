@@ -103,10 +103,7 @@ final class MilestonePreviewView: UIView {
     }
     
     private func updateHeight() {
-        // 아이템 개수에 따라 높이 동적 조정
-        let itemCount = milestones.count
-        guard itemCount > 0 else { return }
-        
+        let itemCount = max(milestones.count, 1)
         let itemHeight: CGFloat = 120 // 카드 높이
         let spacing: CGFloat = 12
         let totalHeight = CGFloat(itemCount) * itemHeight + CGFloat(itemCount - 1) * spacing

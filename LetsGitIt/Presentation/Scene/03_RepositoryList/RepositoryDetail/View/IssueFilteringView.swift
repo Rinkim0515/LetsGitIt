@@ -56,19 +56,14 @@ final class IssueFilteringView: UIView {
         setupConstraints()
         setupCollectionViews()
         setupFloatingSegment()
-        loadMockData() // ✅ Mock 데이터 로드
+        
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Mock Data Loading
-    private func loadMockData() {
-        // ✅ MockData에서 마일스톤과 이슈 가져오기
-        milestones = MockData.sampleMilestones
-        allIssues = MockData.sampleIssues
-    }
+
     
     // MARK: - Setup
     private func setupUI() {
@@ -195,6 +190,19 @@ final class IssueFilteringView: UIView {
             title: "\(selectedMilestone.title)의 이슈들 (\(filteredCount)개)",
             showMoreButton: false
         )
+    }
+    
+    func configure(milestones: [GitHubMilestone], issues: [GitHubIssue]) {
+        self.milestones = milestones
+        self.allIssues = issues
+        selectedMilestoneIndex = 0
+        currentFilter = .all
+        
+        milestoneNamesCollectionView.reloadData()
+        issueListCollectionView.reloadData()
+        updateSectionHeader()
+        
+        print("🔧 IssueFilteringView 설정 완료: 마일스톤 \(milestones.count)개, 이슈 \(issues.count)개")
     }
     
     // MARK: - Public Methods (✅ 타입 수정)

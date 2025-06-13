@@ -56,7 +56,11 @@ final class DIContainer {
     }
     
     func makeRepoDetailVC(repository: GitHubRepository) -> RepoDetailVC {
-        return RepoDetailVC(repository: repository)
+        return RepoDetailVC(
+            repository: repository,
+            getMilestonesUseCase: useCaseContainer.getRepositoryMilestonesUseCase,
+            getIssuesUseCase: useCaseContainer.getRepositoryIssuesUseCase
+        )
     }
     
     // MARK: - Settings Tab ViewControllers

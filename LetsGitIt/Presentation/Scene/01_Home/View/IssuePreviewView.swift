@@ -85,7 +85,7 @@ final class IssuePreviewView: UIView {
         
         // Cell 등록
         collectionView.register(IssueCardCell.self, forCellWithReuseIdentifier: IssueCardCell.id)
-        
+        collectionView.register(EmptyStateCell.self, forCellWithReuseIdentifier: EmptyStateCell.id)
         addSubview(collectionView)
     }
     
@@ -101,12 +101,10 @@ final class IssuePreviewView: UIView {
     }
     
     private func updateHeight() {
-        let itemCount = issues.count
-        guard itemCount > 0 else { return }
-        
-        let itemHeight: CGFloat = 110
+        let itemCount = max(issues.count, 1) // ✅ 최소 1개는 보장
+        let itemHeight: CGFloat = 70
         let spacing: CGFloat = 12
-        let totalHeight = CGFloat(itemCount) * itemHeight + CGFloat(itemCount - 1) * spacing
+        let totalHeight = CGFloat(itemCount) * itemHeight + CGFloat(max(itemCount - 1, 0)) * spacing
         
         constraints.forEach { constraint in
             if constraint.firstAttribute == .height {
@@ -121,22 +119,28 @@ final class IssuePreviewView: UIView {
 // MARK: - UICollectionViewDataSource
 extension IssuePreviewView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return issues.count
+        return issues.isEmpty ? 1 : issues.count // ✅ 수정: Empty일 때도 1개 반환
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if issues.isEmpty {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmptyStateCell.id, for: indexPath) as! EmptyStateCell
+            cell.configure(message: "미완료 이슈가 없습니다")
+            return cell
+        }
+        
+        // 기존 로직
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: IssueCardCell.id, for: indexPath) as! IssueCardCell
         let issue = issues[indexPath.item]
-        
         cell.configure(with: issue)
-        
         return cell
-    }
-}
+    }}
 
 // MARK: - UICollectionViewDelegate
 extension IssuePreviewView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard !issues.isEmpty else { return }
+        
         let issue = issues[indexPath.item]
         onIssueSelected?(issue)
     }
