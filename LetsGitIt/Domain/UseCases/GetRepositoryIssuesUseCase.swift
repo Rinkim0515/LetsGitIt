@@ -17,6 +17,11 @@ final class GetRepositoryIssuesUseCase {
     func execute(owner: String, repo: String, state: GitHubIssueState? = nil) async throws -> [GitHubIssue] {
         return try await issueRepository.getIssues(owner: owner, repo: repo, state: state)
     }
+    
+    func executeForAllIssues(owner: String, repo: String) async throws -> [GitHubIssue] {
+        return try await issueRepository.getIssues(owner: owner, repo: repo, state: nil)
+    }
+    
     // HomeVC용: 업데이트가 가장 오래된 미완료 이슈 4개
     func executeForHome(owner: String, repo: String) async throws -> [GitHubIssue] {
         let issues = try await issueRepository.getIssues(owner: owner, repo: repo, state: .open)

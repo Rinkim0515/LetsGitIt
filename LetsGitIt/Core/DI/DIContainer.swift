@@ -41,9 +41,12 @@ final class DIContainer {
         return IssueDetailVC(issue: issue)
     }
     
-    func makeMilestoneDetailVC(milestone: GitHubMilestone) -> MilestoneDetailVC {
-        // Mock 데이터 사용 (실제로는 milestone detail UseCase 필요)
-        return MilestoneDetailVC(mockData: MockMilestoneDetail.sample)
+    func makeMilestoneDetailVC(milestone: GitHubMilestone, repository: GitHubRepository) -> MilestoneDetailVC {
+        return MilestoneDetailVC(
+            milestone: milestone,
+            repository: repository,
+            getMilestoneDetailUseCase: useCaseContainer.getMilestoneDetailUseCase
+        )
     }
     
     func makeDashboardVC() -> DashboardVC {
@@ -98,17 +101,24 @@ extension DIContainer {
     }
     
     // ✅ MilestoneDetailCoordinator 생성
-    func makeMilestoneDetailCoordinator(
-        navigationController: UINavigationController,
-        milestone: GitHubMilestone
-    ) -> MilestoneDetailCoordinator {
-        return MilestoneDetailCoordinator(navigationController: navigationController, milestone: milestone)
-    }
+    
     // ✅ RepositoryDetailCoordinator 생성
     func makeRepositoryDetailCoordinator(
         navigationController: UINavigationController,
         repository: GitHubRepository
     ) -> RepositoryDetailCoordinator {
         return RepositoryDetailCoordinator(navigationController: navigationController, repository: repository)
+    }
+    
+    func makeMilestoneDetailCoordinator(
+        navigationController: UINavigationController,
+        milestone: GitHubMilestone,
+        repository: GitHubRepository
+    ) -> MilestoneDetailCoordinator {
+        return MilestoneDetailCoordinator(
+            navigationController: navigationController,
+            milestone: milestone,
+            repository: repository
+        )
     }
 }

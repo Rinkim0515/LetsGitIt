@@ -57,7 +57,8 @@ final class RepositoryDetailCoordinator: NavigationCoordinator {
         
         let milestoneDetailCoordinator = MilestoneDetailCoordinator(
             navigationController: navigationController,
-            milestone: milestone
+            milestone: milestone,
+            repository: repository
         )
         
         // 완료 시 child에서 제거

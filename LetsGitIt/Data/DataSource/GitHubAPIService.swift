@@ -129,12 +129,27 @@ final class GitHubAPIService {
     }
 
     // MARK: - Issue API
-    func getIssues(owner: String, repo: String) async throws -> [GitHubIssueDTO] {
-        guard let request = createRequest(for: "/repos/\(owner)/\(repo)/issues?state=open&sort=updated&direction=asc") else {
+    func getIssues(owner: String, repo: String, state: String? = nil) async throws -> [GitHubIssueDTO] {
+        // ✅ state 파라미터 추가하고 기본값을 "all"로 설정
+        let stateParam = state ?? "all"
+        guard let request = createRequest(for: "/repos/\(owner)/\(repo)/issues?state=\(stateParam)&sort=updated&direction=asc") else {
             throw GitHubAPIError.invalidURL
         }
         
         let (data, _) = try await session.data(for: request)
         return try JSONDecoder().decode([GitHubIssueDTO].self, from: data)
+    }
+
+    // ✅ 편의 메서드들 추가
+    func getAllIssues(owner: String, repo: String) async throws -> [GitHubIssueDTO] {
+        return try await getIssues(owner: owner, repo: repo, state: "all")
+    }
+
+    func getOpenIssues(owner: String, repo: String) async throws -> [GitHubIssueDTO] {
+        return try await getIssues(owner: owner, repo: repo, state: "open")
+    }
+
+    func getClosedIssues(owner: String, repo: String) async throws -> [GitHubIssueDTO] {
+        return try await getIssues(owner: owner, repo: repo, state: "closed")
     }
 }

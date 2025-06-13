@@ -29,4 +29,10 @@ final class UseCaseContainer {
     lazy var getRepositoryIssuesUseCase: GetRepositoryIssuesUseCase = {
         return GetRepositoryIssuesUseCase(issueRepository: repositoryContainer.gitHubIssueRepository)
     }()
+    lazy var getMilestoneDetailUseCase: GetMilestoneDetailUseCase = {
+        return GetMilestoneDetailUseCase(
+            milestoneRepository: repositoryContainer.gitHubMilestoneRepository,
+            issueRepository: repositoryContainer.gitHubIssueRepository
+        )
+    }()
 }

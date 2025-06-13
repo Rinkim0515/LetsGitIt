@@ -12,15 +12,17 @@ final class MilestoneDetailCoordinator: NavigationCoordinator {
     let navigationController: UINavigationController
     var onFinished: (() -> Void)?
     private let milestone: GitHubMilestone
+    private let repository: GitHubRepository
     
-    init(navigationController: UINavigationController, milestone: GitHubMilestone) {
+    init(navigationController: UINavigationController, milestone: GitHubMilestone, repository: GitHubRepository) {
         self.navigationController = navigationController
         self.milestone = milestone
+        self.repository = repository // ✅ 추가
     }
     
     func start() {
         print("🚀 MilestoneDetailCoordinator 시작: \(milestone.title)")
-        let milestoneDetailVC = DIContainer.shared.makeMilestoneDetailVC(milestone: milestone)
+        let milestoneDetailVC = DIContainer.shared.makeMilestoneDetailVC(milestone: milestone, repository: repository) // ✅ 수정
         milestoneDetailVC.coordinator = self
         milestoneDetailVC.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(milestoneDetailVC, animated: true)

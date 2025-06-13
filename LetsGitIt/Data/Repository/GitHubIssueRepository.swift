@@ -15,9 +15,22 @@ final class GitHubIssueRepository: GitHubIssueRepositoryProtocol {
     }
     
     func getIssues(owner: String, repo: String, state: GitHubIssueState?) async throws -> [GitHubIssue] {
-        let responses = try await apiService.getIssues(owner: owner, repo: repo)
+        // ✅ state 파라미터를 API 호출에 전달
+        let apiState: String?
+        switch state {
+        case .open:
+            apiState = "open"
+        case .closed:
+            apiState = "closed"
+        case .none:
+            apiState = "all" // ✅ nil일 때 모든 이슈 가져오기
+        }
+        
+        let responses = try await apiService.getIssues(owner: owner, repo: repo, state: apiState)
         return responses.map { $0.toDomain() }
     }
+    
+    
     
     func getIssue(owner: String, repo: String, number: Int) async throws -> GitHubIssue {
         // TODO: 개별 이슈 조회 API 추가 필요 시 구현

@@ -7,10 +7,12 @@
 
 import UIKit
 
-final class MilestoneDetailVC: UIViewController {
+final class MilestoneDetailVC: UIViewController, LoadingCapable, ErrorHandlingCapable {
     var coordinator: MilestoneDetailCoordinator?
-    // MARK: - Properties
-    private let mockData: MockMilestoneDetail
+    
+    private let getMilestoneDetailUseCase: GetMilestoneDetailUseCase
+    private let repository: GitHubRepository
+    private let milestone: GitHubMilestone
     
     // MARK: - UI Components
     private let scrollView = UIScrollView()
@@ -25,11 +27,18 @@ final class MilestoneDetailVC: UIViewController {
     private let refreshControl = UIRefreshControl()
     
     // MARK: - Data
+    private var milestoneDetail: MilestoneDetail?
     private var issues: [GitHubIssue] = []
     
     // MARK: - Initialization
-    init(mockData: MockMilestoneDetail) {
-        self.mockData = mockData
+    init(
+        milestone: GitHubMilestone,
+        repository: GitHubRepository,
+        getMilestoneDetailUseCase: GetMilestoneDetailUseCase
+    ) {
+        self.milestone = milestone
+        self.repository = repository
+        self.getMilestoneDetailUseCase = getMilestoneDetailUseCase
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -105,7 +114,7 @@ final class MilestoneDetailVC: UIViewController {
     
     private func setupNavigationBar() {
         // 타이틀 설정
-        title = mockData.milestone.title
+        title = milestone.title
         navigationController?.navigationBar.prefersLargeTitles = false
         
         // 뒤로가기 버튼
@@ -127,8 +136,8 @@ final class MilestoneDetailVC: UIViewController {
         statusButton.layer.cornerRadius = 16
         statusButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         
-        // Mock 데이터의 상태에 따라 설정
-        let isOpen = mockData.milestone.ddayType == .upcoming // Open 상태로 가정
+        // 마일스톤 상태에 따라 설정
+        let isOpen = milestone.state == .open
         
         if isOpen {
             statusButton.setTitle("Open", for: .normal)
@@ -162,13 +171,55 @@ final class MilestoneDetailVC: UIViewController {
     
     // MARK: - Data Loading
     private func loadData() {
-        // 마일스톤 정보 설정
-        milestoneInfoView.configure(with: mockData.milestone)
+        print("🔄 마일스톤 상세 데이터 로딩 시작: \(milestone.title)")
+        showLoading()
+        
+        Task {
+            do {
+                let milestoneDetail = try await getMilestoneDetailUseCase.execute(
+                    owner: repository.owner.login,
+                    repo: repository.name,
+                    milestone: milestone
+                )
+                
+                await MainActor.run {
+                    self.milestoneDetail = milestoneDetail
+                    self.updateUI(with: milestoneDetail)
+                    self.hideLoading()
+                    print("✅ 마일스톤 상세 로딩 완료: 이슈 \(milestoneDetail.issues.count)개")
+                }
+            } catch {
+                await MainActor.run {
+                    self.hideLoading()
+                    self.showDataLoadingErrorAlert {
+                        print("마일스톤 상세 로딩 실패: \(error)")
+                    }
+                }
+            }
+        }
+    }
+    private func updateUI(with milestoneDetail: MilestoneDetail) {
+        // 마일스톤 정보 설정 (기존 MilestoneItem 대신 GitHubMilestone 사용)
+        let milestoneItem = MilestoneItem(
+            id: String(milestoneDetail.milestone.id),
+            title: milestoneDetail.milestone.title,
+            description: milestoneDetail.milestone.description ?? "설명이 없습니다.",
+            tag: "Milestone",
+            tagColor: .systemBlue,
+            dday: milestoneDetail.milestone.ddayText,
+            ddayType: milestoneDetail.milestone.ddayType,
+            progress: milestoneDetail.milestone.progress
+        )
+        
+        milestoneInfoView.configure(with: milestoneItem)
         
         // 이슈 목록 설정
-        issues = mockData.issues
+        issues = milestoneDetail.issues
         tableView.reloadData()
         updateTableViewHeight()
+        
+        // 헤더 업데이트
+        issueHeaderView.configure(title: "이슈 목록 (\(issues.count)개)", showMoreButton: false)
     }
     
     // MARK: - Actions

@@ -9,6 +9,24 @@ import UIKit
 
 final class IssueFilteringView: UIView {
     
+    enum MilestoneFilter {
+        case all // 모든 이슈
+        case noMilestone // 마일스톤 없는 이슈
+        case milestone(GitHubMilestone) // 특정 마일스톤
+        
+        var displayTitle: String {
+            switch self {
+            case .all:
+                return "모든 이슈"
+            case .noMilestone:
+                return "마일스톤 없는 이슈"
+            case .milestone(let milestone):
+                return milestone.title
+            }
+        }
+    }
+        
+    
     // MARK: - UI Components
     private let milestoneNamesCollectionView: UICollectionView
     private let milestoneNamesFlowLayout = UICollectionViewFlowLayout()
@@ -19,30 +37,42 @@ final class IssueFilteringView: UIView {
     
     // MARK: - Data (GitHubMilestone으로 통일)
     private var milestones: [GitHubMilestone] = []
-    private var selectedMilestoneIndex: Int = 0
+    private var allIssues: [GitHubIssue] = []
+    private var selectedFilterIndex: Int = 0
+    
     private var currentFilter: IssueFilter = .all
+    private var milestoneFilters: [MilestoneFilter] = []
+    
     
     // ✅ Mock data로 이슈 생성 (GitHubMilestone에는 issues 프로퍼티가 없으므로)
-    private var allIssues: [GitHubIssue] = []
+    
     
     private var filteredIssues: [GitHubIssue] {
-        guard selectedMilestoneIndex < milestones.count else { return [] }
-        let selectedMilestone = milestones[selectedMilestoneIndex]
-        
-        // ✅ 선택된 마일스톤의 이슈들만 필터링
-        let milestoneIssues = allIssues.filter { issue in
-            issue.milestone?.id == selectedMilestone.id
+            guard selectedFilterIndex < milestoneFilters.count else { return [] }
+            let selectedMilestoneFilter = milestoneFilters[selectedFilterIndex]
+            
+            // 1단계: 마일스톤 필터링
+            let milestoneFilteredIssues: [GitHubIssue]
+            switch selectedMilestoneFilter {
+            case .all:
+                milestoneFilteredIssues = allIssues
+            case .noMilestone:
+                milestoneFilteredIssues = allIssues.filter { $0.milestone == nil }
+            case .milestone(let milestone):
+                milestoneFilteredIssues = allIssues.filter { $0.milestone?.id == milestone.id }
+            }
+            
+            // 2단계: 상태 필터링 (기존 로직)
+            switch currentFilter {
+            case .all:
+                return milestoneFilteredIssues
+            case .open:
+                return milestoneFilteredIssues.filter { $0.isOpen }
+            case .closed:
+                return milestoneFilteredIssues.filter { !$0.isOpen }
+            }
         }
-        
-        switch currentFilter {
-        case .all:
-            return milestoneIssues
-        case .open:
-            return milestoneIssues.filter { $0.isOpen }
-        case .closed:
-            return milestoneIssues.filter { !$0.isOpen }
-        }
-    }
+    
     
     // MARK: - Callbacks
     var onIssueSelected: ((GitHubIssue) -> Void)?
@@ -181,34 +211,53 @@ final class IssueFilteringView: UIView {
         updateSectionHeader()
     }
     
-    private func updateSectionHeader() {
-        guard selectedMilestoneIndex < milestones.count else { return }
-        let selectedMilestone = milestones[selectedMilestoneIndex]
-        let filteredCount = filteredIssues.count
-        
-        sectionHeaderView.configure(
-            title: "\(selectedMilestone.title)의 이슈들 (\(filteredCount)개)",
-            showMoreButton: false
-        )
-    }
+
     
     func configure(milestones: [GitHubMilestone], issues: [GitHubIssue]) {
-        self.milestones = milestones
-        self.allIssues = issues
-        selectedMilestoneIndex = 0
-        currentFilter = .all
-        
-        milestoneNamesCollectionView.reloadData()
-        issueListCollectionView.reloadData()
-        updateSectionHeader()
-        
-        print("🔧 IssueFilteringView 설정 완료: 마일스톤 \(milestones.count)개, 이슈 \(issues.count)개")
-    }
+            self.milestones = milestones
+            self.allIssues = issues
+            
+            // ✅ 필터링 옵션 배열 구성
+            setupMilestoneFilters()
+            
+            selectedFilterIndex = 0
+            currentFilter = .all
+            
+            milestoneNamesCollectionView.reloadData()
+            issueListCollectionView.reloadData()
+            updateSectionHeader()
+            
+            print("🔧 IssueFilteringView 설정 완료: 마일스톤 \(milestones.count)개, 이슈 \(issues.count)개")
+        }
     
+    private func setupMilestoneFilters() {
+            milestoneFilters = [
+                .all, // 모든 이슈
+                .noMilestone // 마일스톤 없는 이슈
+            ]
+            
+            // 실제 마일스톤들 추가
+            for milestone in milestones {
+                milestoneFilters.append(.milestone(milestone))
+            }
+            
+            print("📊 필터 옵션 생성: \(milestoneFilters.count)개")
+        }
+        
+        private func updateSectionHeader() {
+            guard selectedFilterIndex < milestoneFilters.count else { return }
+            let selectedFilter = milestoneFilters[selectedFilterIndex]
+            let filteredCount = filteredIssues.count
+            
+            let title = "\(selectedFilter.displayTitle)의 이슈들 (\(filteredCount)개)"
+            sectionHeaderView.configure(title: title, showMoreButton: false)
+        }
+    
+
     // MARK: - Public Methods (✅ 타입 수정)
     func updateMilestones(_ milestones: [GitHubMilestone]) {
         self.milestones = milestones
-        selectedMilestoneIndex = 0
+        selectedFilterIndex = 0
         currentFilter = .all
         
         milestoneNamesCollectionView.reloadData()
@@ -236,7 +285,7 @@ final class IssueFilteringView: UIView {
 extension IssueFilteringView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView.tag == 1 { // 마일스톤 이름들
-            return milestones.count
+            return milestoneFilters.count // ✅ 변경
         } else { // 이슈 리스트
             return filteredIssues.count
         }
@@ -245,10 +294,10 @@ extension IssueFilteringView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView.tag == 1 { // 마일스톤 이름들
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MilestoneNameCell.id, for: indexPath) as! MilestoneNameCell
-            let milestone = milestones[indexPath.item]
-            let isSelected = indexPath.item == selectedMilestoneIndex
+            let filter = milestoneFilters[indexPath.item] // ✅ 변경
+            let isSelected = indexPath.item == selectedFilterIndex // ✅ 변경
             
-            cell.configure(name: milestone.title, isSelected: isSelected) // ✅ .name → .title
+            cell.configure(name: filter.displayTitle, isSelected: isSelected) // ✅ 변경
             return cell
             
         } else { // 이슈 리스트
@@ -264,13 +313,15 @@ extension IssueFilteringView: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegate
 extension IssueFilteringView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if collectionView.tag == 1 { // 마일스톤 이름 선택
-            selectedMilestoneIndex = indexPath.item
+        if collectionView.tag == 1 { // 마일스톤 필터 선택
+            selectedFilterIndex = indexPath.item // ✅ 변경
             
             // UI 업데이트
             milestoneNamesCollectionView.reloadData()
             issueListCollectionView.reloadData()
             updateSectionHeader()
+            
+            print("🏷️ 필터 선택: \(milestoneFilters[indexPath.item].displayTitle)")
             
         } else { // 이슈 선택
             let issue = filteredIssues[indexPath.item]
@@ -283,8 +334,8 @@ extension IssueFilteringView: UICollectionViewDelegate {
 extension IssueFilteringView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if collectionView.tag == 1 { // 마일스톤 이름들 (동적 크기)
-            let milestone = milestones[indexPath.item]
-            let width = milestone.title.size(withAttributes: [ // ✅ .name → .title
+            let filter = milestoneFilters[indexPath.item] // ✅ 변경
+            let width = filter.displayTitle.size(withAttributes: [ // ✅ 변경
                 .font: UIFont.pretendard(.semiBold, size: 14)
             ]).width + 24 // 패딩 추가
             

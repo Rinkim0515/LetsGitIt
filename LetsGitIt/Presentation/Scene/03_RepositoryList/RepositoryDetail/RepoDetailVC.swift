@@ -27,7 +27,7 @@ final class RepoDetailVC: UIViewController {
     // MARK: - Data
     private var milestones: [GitHubMilestone] = []
     private var milestoneItems: [MilestoneItem] = []
-    
+    private var issues: [GitHubIssue] = []
     // MARK: - Initialization
     init(
         repository: GitHubRepository,
@@ -63,25 +63,30 @@ final class RepoDetailVC: UIViewController {
                     owner: repository.owner.login,
                     repo: repository.name
                 )
-                async let issuesTask = getIssuesUseCase.execute(
+                // ✅ 모든 이슈 가져오기 (state 파라미터 없음)
+                async let issuesTask = getIssuesUseCase.executeForAllIssues(
                     owner: repository.owner.login,
                     repo: repository.name
                 )
                 
-                let (milestones, issues) = try await (milestonesTask, issuesTask)
+                let (milestonesData, issuesData) = try await (milestonesTask, issuesTask)
                 
                 await MainActor.run {
-                    updateViews(milestones: milestones, issues: issues)
+                    self.milestones = milestonesData
+                    self.issues = issuesData
+                    self.updateViews()
+                    print("✅ 데이터 로딩 완료: 마일스톤 \(milestonesData.count)개, 이슈 \(issuesData.count)개 (Open+Closed)")
                 }
             } catch {
                 await MainActor.run {
-                    showError("데이터 로딩 실패: \(error.localizedDescription)")
+                    self.showError("데이터 로딩 실패: \(error.localizedDescription)")
+                    print("❌ 데이터 로딩 실패: \(error)")
                 }
             }
         }
     }
     
-    private func updateViews(milestones: [GitHubMilestone], issues: [GitHubIssue]) {
+    private func updateViews() {
         issueFilteringView.configure(milestones: milestones, issues: issues)
         milestoneListView.updateMilestones(milestones)
     }
