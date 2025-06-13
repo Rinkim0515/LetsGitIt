@@ -47,7 +47,7 @@ final class MilestonePreviewView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-
+    
     
     // MARK: - Public Methods
     func updateMilestones(_ milestones: [GitHubMilestone]) {
@@ -75,6 +75,7 @@ final class MilestonePreviewView: UIView {
         
         // Cell 등록
         collectionView.register(MilestoneCardCell.self, forCellWithReuseIdentifier: MilestoneCardCell.id)
+        collectionView.register(EmptyStateCell.self, forCellWithReuseIdentifier: EmptyStateCell.id)
         
         // 뷰 계층 구성
         addSubview(collectionView)
@@ -124,16 +125,20 @@ final class MilestonePreviewView: UIView {
 // MARK: - UICollectionViewDataSource
 extension MilestonePreviewView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return milestones.count
+        return milestones.isEmpty ? 1 : milestones.count // ✅ 수정: Empty일 때도 1개 반환
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if milestones.isEmpty {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmptyStateCell.id, for: indexPath) as! EmptyStateCell
+            cell.configure(message: "마일스톤이 없습니다")
+            return cell
+        }
+        
+        // 기존 로직
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MilestoneCardCell.id, for: indexPath) as! MilestoneCardCell
-        
         let milestone = milestones[indexPath.item]
-        
         cell.configure(with: milestone)
-        
         return cell
     }
 }
@@ -141,6 +146,8 @@ extension MilestonePreviewView: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegate
 extension MilestonePreviewView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard !milestones.isEmpty else { return }
+        
         let milestone = milestones[indexPath.item]
         onMilestoneSelected?(milestone)
     }
